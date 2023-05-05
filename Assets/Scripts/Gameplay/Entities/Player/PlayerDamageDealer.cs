@@ -11,8 +11,9 @@ namespace Gameplay.Entities.Player
     {
         [SyncVar(hook = nameof(SyncHitCounter))]private int _hitCount = 0;
         [SerializeField] private TMP_Text _text;
+        [SerializeField] private int _hitsToWinCount = 0;
         
-        public Action Damaged;
+        public Action OnHitsDone;
         private void OnTriggerEnter(Collider other)
         {
             var unitController = other.GetComponent<UnitController>();
@@ -73,9 +74,9 @@ namespace Gameplay.Entities.Player
         {
             Debug.Log($"hitCounter changed from{oldValue}to{newValue}");
             _text.text = _hitCount.ToString();
-            if (_hitCount>2)
+            if (_hitCount>_hitsToWinCount-1)
             {
-                Damaged.Invoke();
+                OnHitsDone.Invoke();
             }
         }
     }

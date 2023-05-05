@@ -260,7 +260,6 @@ GameObject:
   - component: {fileID: 388452522671143744}
   - component: {fileID: 8269448030976357583}
   - component: {fileID: 7109362111453577534}
-  - component: {fileID: 9166394914580314288}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -473,6 +472,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _text: {fileID: 2427360841862926952}
+  _hitsToWinCount: 3
 --- !u!114 &-2469333478829725440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -486,7 +486,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shootRate: 2
-  _playerDamageDealer: {fileID: 4888001692609969234}
   _collider: {fileID: 8356561196530282169}
   _dashDistance: 5
 --- !u!114 &4923819512779855123
@@ -506,7 +505,6 @@ MonoBehaviour:
   syncInterval: 0
   _colorChangeTime: 3
   color: {r: 0, g: 0, b: 0, a: 0}
-  startColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &388452522671143744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,21 +555,6 @@ MonoBehaviour:
   syncInterval: 0
   _image: {fileID: 3180588755718122237}
   _nick: {fileID: 3180588755878602280}
---- !u!114 &9166394914580314288
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8356561196530282172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 124dc830ce824f97a9fd1a2ce4b558ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!1001 &6398149515564537112
 PrefabInstance:
   m_ObjectHideFlags: 0
