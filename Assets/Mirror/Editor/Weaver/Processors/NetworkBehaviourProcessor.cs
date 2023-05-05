@@ -13,28 +13,29 @@ namespace Mirror.Editor.Weaver.Processors
     }
 
     // processes SyncVars, Cmds, Rpcs, etc. of NetworkBehaviours
-    class NetworkBehaviourProcessor
+    internal class NetworkBehaviourProcessor
     {
-        AssemblyDefinition assembly;
-        WeaverTypes weaverTypes;
-        SyncVarAccessLists syncVarAccessLists;
-        SyncVarAttributeProcessor syncVarAttributeProcessor;
-        Writers writers;
-        Readers readers;
-        Logger Log;
+        private AssemblyDefinition assembly;
+        private WeaverTypes weaverTypes;
+        private SyncVarAccessLists syncVarAccessLists;
+        private SyncVarAttributeProcessor syncVarAttributeProcessor;
+        private Writers writers;
+        private Readers readers;
+        private Logger Log;
 
-        List<FieldDefinition> syncVars = new List<FieldDefinition>();
-        List<FieldDefinition> syncObjects = new List<FieldDefinition>();
+        private List<FieldDefinition> syncVars = new List<FieldDefinition>();
+
+        private List<FieldDefinition> syncObjects = new List<FieldDefinition>();
         // <SyncVarField,NetIdField>
-        Dictionary<FieldDefinition, FieldDefinition> syncVarNetIds = new Dictionary<FieldDefinition, FieldDefinition>();
-        readonly List<CmdResult> commands = new List<CmdResult>();
-        readonly List<ClientRpcResult> clientRpcs = new List<ClientRpcResult>();
-        readonly List<MethodDefinition> targetRpcs = new List<MethodDefinition>();
-        readonly List<MethodDefinition> commandInvocationFuncs = new List<MethodDefinition>();
-        readonly List<MethodDefinition> clientRpcInvocationFuncs = new List<MethodDefinition>();
-        readonly List<MethodDefinition> targetRpcInvocationFuncs = new List<MethodDefinition>();
+        private Dictionary<FieldDefinition, FieldDefinition> syncVarNetIds = new Dictionary<FieldDefinition, FieldDefinition>();
+        private readonly List<CmdResult> commands = new List<CmdResult>();
+        private readonly List<ClientRpcResult> clientRpcs = new List<ClientRpcResult>();
+        private readonly List<MethodDefinition> targetRpcs = new List<MethodDefinition>();
+        private readonly List<MethodDefinition> commandInvocationFuncs = new List<MethodDefinition>();
+        private readonly List<MethodDefinition> clientRpcInvocationFuncs = new List<MethodDefinition>();
+        private readonly List<MethodDefinition> targetRpcInvocationFuncs = new List<MethodDefinition>();
 
-        readonly TypeDefinition netBehaviourSubclass;
+        private readonly TypeDefinition netBehaviourSubclass;
 
         public struct CmdResult
         {
@@ -229,7 +230,7 @@ namespace Mirror.Editor.Weaver.Processors
         // helper function to remove 'Ret' from the end of the method if 'Ret'
         // is the last instruction.
         // returns false if there was an issue
-        static bool RemoveFinalRetInstruction(MethodDefinition method)
+        private static bool RemoveFinalRetInstruction(MethodDefinition method)
         {
             // remove the return opcode from end of function. will add our own later.
             if (method.Body.Instructions.Count != 0)
@@ -248,7 +249,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // we need to inject several initializations into NetworkBehaviour cctor
-        void InjectIntoStaticConstructor(ref bool WeavingFailed)
+        private void InjectIntoStaticConstructor(ref bool WeavingFailed)
         {
             if (commands.Count == 0 && clientRpcs.Count == 0 && targetRpcs.Count == 0)
                 return;
@@ -311,7 +312,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // we need to inject several initializations into NetworkBehaviour ctor
-        void InjectIntoInstanceConstructor(ref bool WeavingFailed)
+        private void InjectIntoInstanceConstructor(ref bool WeavingFailed)
         {
             if (syncObjects.Count == 0)
                 return;
@@ -351,7 +352,7 @@ namespace Mirror.Editor.Weaver.Processors
         */
 
         // pass full function name to avoid ClassA.Func <-> ClassB.Func collisions
-        void GenerateRegisterRemoteDelegate(ILProcessor worker, MethodReference registerMethod, MethodDefinition func, string functionFullName)
+        private void GenerateRegisterRemoteDelegate(ILProcessor worker, MethodReference registerMethod, MethodDefinition func, string functionFullName)
         {
             worker.Emit(OpCodes.Ldtoken, netBehaviourSubclass);
             worker.Emit(OpCodes.Call, weaverTypes.getTypeFromHandleReference);
@@ -364,7 +365,7 @@ namespace Mirror.Editor.Weaver.Processors
             worker.Emit(OpCodes.Call, registerMethod);
         }
 
-        void GenerateRegisterCommandDelegate(ILProcessor worker, MethodReference registerMethod, MethodDefinition func, CmdResult cmdResult)
+        private void GenerateRegisterCommandDelegate(ILProcessor worker, MethodReference registerMethod, MethodDefinition func, CmdResult cmdResult)
         {
             // pass full function name to avoid ClassA.Func <-> ClassB.Func collisions
             string cmdName = cmdResult.method.FullName;
@@ -384,7 +385,7 @@ namespace Mirror.Editor.Weaver.Processors
             worker.Emit(OpCodes.Call, registerMethod);
         }
 
-        void GenerateSerialization(ref bool WeavingFailed)
+        private void GenerateSerialization(ref bool WeavingFailed)
         {
             const string SerializeMethodName = "SerializeSyncVars";
             if (netBehaviourSubclass.GetMethod(SerializeMethodName) != null)
@@ -557,7 +558,7 @@ namespace Mirror.Editor.Weaver.Processors
             netBehaviourSubclass.Methods.Add(serialize);
         }
 
-        void DeserializeField(FieldDefinition syncVar, ILProcessor worker, ref bool WeavingFailed)
+        private void DeserializeField(FieldDefinition syncVar, ILProcessor worker, ref bool WeavingFailed)
         {
             // put 'this.' onto stack for 'this.syncvar' below
             worker.Append(worker.Create(OpCodes.Ldarg_0));
@@ -651,7 +652,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        void GenerateDeSerialization(ref bool WeavingFailed)
+        private void GenerateDeSerialization(ref bool WeavingFailed)
         {
             const string DeserializeMethodName = "DeserializeSyncVars";
             if (netBehaviourSubclass.GetMethod(DeserializeMethodName) != null)
@@ -813,7 +814,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // check if a Command/TargetRpc/Rpc function is valid for weaving
-        bool ValidateFunction(MethodReference md, ref bool WeavingFailed)
+        private bool ValidateFunction(MethodReference md, ref bool WeavingFailed)
         {
             if (md.ReturnType.Is<System.Collections.IEnumerator>())
             {
@@ -837,7 +838,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // check if all Command/TargetRpc/Rpc function's parameters are valid for weaving
-        bool ValidateParameters(MethodReference method, RemoteCallType callType, ref bool WeavingFailed)
+        private bool ValidateParameters(MethodReference method, RemoteCallType callType, ref bool WeavingFailed)
         {
             for (int i = 0; i < method.Parameters.Count; ++i)
             {
@@ -851,7 +852,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // validate parameters for a remote function call like Rpc/Cmd
-        bool ValidateParameter(MethodReference method, ParameterDefinition param, RemoteCallType callType, bool firstParam, ref bool WeavingFailed)
+        private bool ValidateParameter(MethodReference method, ParameterDefinition param, RemoteCallType callType, bool firstParam, ref bool WeavingFailed)
         {
             // need to check this before any type lookups since those will fail since generic types don't resolve
             if (param.ParameterType.IsGenericParameter)
@@ -910,7 +911,7 @@ namespace Mirror.Editor.Weaver.Processors
                 || type.Resolve().IsDerivedFrom<NetworkConnectionToClient>();
         }
 
-        void ProcessMethods(ref bool WeavingFailed)
+        private void ProcessMethods(ref bool WeavingFailed)
         {
             HashSet<string> names = new HashSet<string>();
 
@@ -942,7 +943,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        void ProcessClientRpc(HashSet<string> names, MethodDefinition md, CustomAttribute clientRpcAttr, ref bool WeavingFailed)
+        private void ProcessClientRpc(HashSet<string> names, MethodDefinition md, CustomAttribute clientRpcAttr, ref bool WeavingFailed)
         {
             if (md.IsAbstract)
             {
@@ -976,7 +977,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        void ProcessTargetRpc(HashSet<string> names, MethodDefinition md, CustomAttribute targetRpcAttr, ref bool WeavingFailed)
+        private void ProcessTargetRpc(HashSet<string> names, MethodDefinition md, CustomAttribute targetRpcAttr, ref bool WeavingFailed)
         {
             if (md.IsAbstract)
             {
@@ -1000,7 +1001,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        void ProcessCommand(HashSet<string> names, MethodDefinition md, CustomAttribute commandAttr, ref bool WeavingFailed)
+        private void ProcessCommand(HashSet<string> names, MethodDefinition md, CustomAttribute commandAttr, ref bool WeavingFailed)
         {
             if (md.IsAbstract)
             {

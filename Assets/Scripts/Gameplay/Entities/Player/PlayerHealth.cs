@@ -7,13 +7,12 @@ namespace Gameplay.Entities.Player
 {
     public class PlayerHealth : NetworkBehaviour
     {
-        
         [SerializeField] private PlayerColor _color;
         
         [SyncVar(hook = nameof(OnHealthChanged))]
         public int health = 3;
-        
-        void OnHealthChanged(int oldValue, int newValue)
+
+        private void OnHealthChanged(int oldValue, int newValue)
         {
             Debug.Log($"Health changed from{oldValue}to{newValue}");
             
@@ -40,7 +39,7 @@ namespace Gameplay.Entities.Player
             health-=damage;
             if (health <= 0)
             {
-                this.gameObject.SetActive(false);
+                gameObject.SetActive(false);
             }
         }
         

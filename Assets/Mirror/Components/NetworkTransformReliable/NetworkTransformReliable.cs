@@ -17,8 +17,8 @@ namespace Mirror.Components.NetworkTransformReliable
         [Tooltip("When true, changes are not sent unless greater than sensitivity values below.")]
         public bool onlySyncOnChange = true;
 
-        uint sendIntervalCounter = 0;
-        double lastSendIntervalTime = double.MinValue;
+        private uint sendIntervalCounter = 0;
+        private double lastSendIntervalTime = double.MinValue;
 
         [Tooltip("If we only sync on change, then we need to correct old snapshots if more time than sendInterval * multiplier has elapsed.\n\nOtherwise the first move will always start interpolating from the last move sequence's time, which will make it stutter when starting every time.")]
         public float onlySyncOnChangeCorrectionMultiplier = 2;
@@ -64,8 +64,8 @@ namespace Mirror.Components.NetworkTransformReliable
         // When everything works, we are receiving NT snapshots every 10 frames, but start interpolating after 2. 
         // Even if I assume we had 2 snapshots to begin with to start interpolating (which we don't), by the time we reach 13th frame, we are out of snapshots, and have to wait 7 frames for next snapshot to come. This is the reason why we absolutely need the timestamp adjustment. We are starting way too early to interpolate. 
         //
-        double timeStampAdjustment => NetworkServer.sendInterval * (sendIntervalMultiplier - 1);
-        double offset => timelineOffset ? NetworkServer.sendInterval * sendIntervalMultiplier : 0;
+        private double timeStampAdjustment => NetworkServer.sendInterval * (sendIntervalMultiplier - 1);
+        private double offset => timelineOffset ? NetworkServer.sendInterval * sendIntervalMultiplier : 0;
 
         // delta compression needs to remember 'last' to compress against
         protected Vector3Long lastSerializedPosition = Vector3Long.zero;
@@ -80,7 +80,7 @@ namespace Mirror.Components.NetworkTransformReliable
         protected int lastClientCount = 1;
 
         // update //////////////////////////////////////////////////////////////
-        void Update()
+        private void Update()
         {
             // if server then always sync to others.
             if (isServer) UpdateServer();
@@ -89,7 +89,7 @@ namespace Mirror.Components.NetworkTransformReliable
             else if (isClient) UpdateClient();
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             // set dirty to trigger OnSerialize. either always, or only if changed.
             // It has to be checked in LateUpdate() for onlySyncOnChange to avoid
@@ -397,7 +397,7 @@ namespace Mirror.Components.NetworkTransformReliable
         // the fix is quite simple.
 
         // 1. detect if the remaining snapshot is too old from a past move.
-        static bool NeedsCorrection(
+        private static bool NeedsCorrection(
             SortedList<double, TransformSnapshot> snapshots,
             double remoteTimestamp,
             double bufferTime,
@@ -407,7 +407,7 @@ namespace Mirror.Components.NetworkTransformReliable
 
         // 2. insert a fake snapshot at current position,
         //    exactly one 'sendInterval' behind the newly received one.
-        static void RewriteHistory(
+        private static void RewriteHistory(
             SortedList<double, TransformSnapshot> snapshots,
             // timestamp of packet arrival, not interpolated remote time!
             double remoteTimeStamp,

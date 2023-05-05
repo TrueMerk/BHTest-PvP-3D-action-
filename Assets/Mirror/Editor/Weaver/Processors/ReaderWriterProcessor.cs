@@ -23,7 +23,7 @@ namespace Mirror.Editor.Weaver.Processors
             return ProcessAssemblyClasses(CurrentAssembly, CurrentAssembly, writers, readers, ref WeavingFailed);
         }
 
-        static void ProcessMirrorAssemblyClasses(AssemblyDefinition CurrentAssembly, IAssemblyResolver resolver, Logger Log, Writers writers, Readers readers, ref bool WeavingFailed)
+        private static void ProcessMirrorAssemblyClasses(AssemblyDefinition CurrentAssembly, IAssemblyResolver resolver, Logger Log, Writers writers, Readers readers, ref bool WeavingFailed)
         {
             // find Mirror.dll in assembly's references.
             // those are guaranteed to be resolvable and correct.
@@ -45,7 +45,7 @@ namespace Mirror.Editor.Weaver.Processors
             else Log.Error("Failed to find Mirror AssemblyNameReference. Can't register Mirror.dll readers/writers.");
         }
 
-        static bool ProcessAssemblyClasses(AssemblyDefinition CurrentAssembly, AssemblyDefinition assembly, Writers writers, Readers readers, ref bool WeavingFailed)
+        private static bool ProcessAssemblyClasses(AssemblyDefinition CurrentAssembly, AssemblyDefinition assembly, Writers writers, Readers readers, ref bool WeavingFailed)
         {
             bool modified = false;
             foreach (TypeDefinition klass in assembly.MainModule.Types)
@@ -68,7 +68,7 @@ namespace Mirror.Editor.Weaver.Processors
             return modified;
         }
 
-        static bool LoadMessageReadWriter(ModuleDefinition module, Writers writers, Readers readers, TypeDefinition klass, ref bool WeavingFailed)
+        private static bool LoadMessageReadWriter(ModuleDefinition module, Writers writers, Readers readers, TypeDefinition klass, ref bool WeavingFailed)
         {
             bool modified = false;
             if (!klass.IsAbstract && !klass.IsInterface && klass.ImplementsInterface<NetworkMessage>())
@@ -85,7 +85,7 @@ namespace Mirror.Editor.Weaver.Processors
             return modified;
         }
 
-        static bool LoadDeclaredWriters(AssemblyDefinition currentAssembly, TypeDefinition klass, Writers writers)
+        private static bool LoadDeclaredWriters(AssemblyDefinition currentAssembly, TypeDefinition klass, Writers writers)
         {
             // register all the writers in this class.  Skip the ones with wrong signature
             bool modified = false;
@@ -113,7 +113,7 @@ namespace Mirror.Editor.Weaver.Processors
             return modified;
         }
 
-        static bool LoadDeclaredReaders(AssemblyDefinition currentAssembly, TypeDefinition klass, Readers readers)
+        private static bool LoadDeclaredReaders(AssemblyDefinition currentAssembly, TypeDefinition klass, Readers readers)
         {
             // register all the reader in this class.  Skip the ones with wrong signature
             bool modified = false;
@@ -141,7 +141,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // helper function to add [RuntimeInitializeOnLoad] attribute to method
-        static void AddRuntimeInitializeOnLoadAttribute(AssemblyDefinition assembly, WeaverTypes weaverTypes, MethodDefinition method)
+        private static void AddRuntimeInitializeOnLoadAttribute(AssemblyDefinition assembly, WeaverTypes weaverTypes, MethodDefinition method)
         {
             // NOTE: previously we used reflection because according paul,
             // 'weaving Mirror.dll caused unity to rebuild all dlls but in wrong
@@ -164,7 +164,7 @@ namespace Mirror.Editor.Weaver.Processors
 
         // helper function to add [InitializeOnLoad] attribute to method
         // (only works in Editor assemblies. check IsEditorAssembly first.)
-        static void AddInitializeOnLoadAttribute(AssemblyDefinition assembly, WeaverTypes weaverTypes, MethodDefinition method)
+        private static void AddInitializeOnLoadAttribute(AssemblyDefinition assembly, WeaverTypes weaverTypes, MethodDefinition method)
         {
             // NOTE: previously we used reflection because according paul,
             // 'weaving Mirror.dll caused unity to rebuild all dlls but in wrong

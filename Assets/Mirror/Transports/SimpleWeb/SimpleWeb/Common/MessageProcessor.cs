@@ -7,7 +7,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
     public static class MessageProcessor
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static byte FirstLengthByte(byte[] buffer) => (byte)(buffer[1] & 0b0111_1111);
+        private static byte FirstLengthByte(byte[] buffer) => (byte)(buffer[1] & 0b0111_1111);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool NeedToReadShortLength(byte[] buffer)
@@ -78,7 +78,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        static int GetMessageLength(byte[] buffer, int offset, byte lenByte)
+        private static int GetMessageLength(byte[] buffer, int offset, byte lenByte)
         {
             if (lenByte == Constants.UshortPayloadLength)
             {
@@ -115,14 +115,14 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        static void ThrowIfMaskNotExpected(bool hasMask, bool expectMask)
+        private static void ThrowIfMaskNotExpected(bool hasMask, bool expectMask)
         {
             if (hasMask != expectMask)
                 throw new InvalidDataException($"Message expected mask to be {expectMask} but was {hasMask}");
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        static void ThrowIfBadOpCode(int opcode, bool finished, bool opCodeContinuation)
+        private static void ThrowIfBadOpCode(int opcode, bool finished, bool opCodeContinuation)
         {
             // 0 = continuation
             // 2 = binary
@@ -157,7 +157,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        static void ThrowIfLengthZero(int msglen)
+        private static void ThrowIfLengthZero(int msglen)
         {
             if (msglen == 0)
                 throw new InvalidDataException("Message length was zero");

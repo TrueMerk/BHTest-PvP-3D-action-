@@ -11,8 +11,7 @@ namespace Gameplay.Components
           [SerializeField] private int _health;
           
           private int _startHealth ;
-          public WinPopup _winPopup;
-
+          
           private UnitController _unitController;
           
           public event Action Dead;

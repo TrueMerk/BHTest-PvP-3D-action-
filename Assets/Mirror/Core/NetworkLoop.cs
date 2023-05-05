@@ -43,7 +43,7 @@ namespace Mirror.Core
 
         // RuntimeInitializeOnLoadMethod -> fast playmode without domain reload
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void ResetStatics()
+        private static void ResetStatics()
         {
             OnEarlyUpdate = null;
             OnLateUpdate = null;
@@ -159,7 +159,7 @@ namespace Mirror.Core
 
         // hook into Unity runtime to actually add our custom functions
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void RuntimeInitializeOnLoad()
+        private static void RuntimeInitializeOnLoad()
         {
             //Debug.Log("Mirror: adding Network[Early/Late]Update to Unity...");
 
@@ -182,7 +182,7 @@ namespace Mirror.Core
             PlayerLoop.SetPlayerLoop(playerLoop);
         }
 
-        static void NetworkEarlyUpdate()
+        private static void NetworkEarlyUpdate()
         {
             // loop functions run in edit mode and in play mode.
             // however, we only want to call NetworkServer/Client in play mode.
@@ -195,7 +195,7 @@ namespace Mirror.Core
             OnEarlyUpdate?.Invoke();
         }
 
-        static void NetworkLateUpdate()
+        private static void NetworkLateUpdate()
         {
             // loop functions run in edit mode and in play mode.
             // however, we only want to call NetworkServer/Client in play mode.

@@ -28,7 +28,8 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
 
         [Tooltip("Rebuild all every 'rebuildInterval' seconds.")]
         public float rebuildInterval = 1;
-        double lastRebuildTime;
+
+        private double lastRebuildTime;
 
         public enum CheckMethod
         {
@@ -43,10 +44,10 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
 
         // the grid
         // begin with a large capacity to avoid resizing & allocations.
-        Grid2D<NetworkConnectionToClient> grid = new Grid2D<NetworkConnectionToClient>(1024);
+        private Grid2D<NetworkConnectionToClient> grid = new Grid2D<NetworkConnectionToClient>(1024);
 
         // project 3d world position to grid position
-        Vector2Int ProjectToGrid(Vector3 position) =>
+        private Vector2Int ProjectToGrid(Vector3 position) =>
             checkMethod == CheckMethod.XZ_FOR_3D
             ? Vector2Int.RoundToInt(new Vector2(position.x, position.z) / resolution)
             : Vector2Int.RoundToInt(new Vector2(position.x, position.y) / resolution);
@@ -134,7 +135,7 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // slider from dotsnet. it's nice to play around with in the benchmark
         // demo.
-        void OnGUI()
+        private void OnGUI()
         {
             if (!showSlider) return;
 

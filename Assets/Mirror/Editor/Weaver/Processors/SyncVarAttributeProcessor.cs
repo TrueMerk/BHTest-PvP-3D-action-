@@ -13,14 +13,14 @@ namespace Mirror.Editor.Weaver.Processors
     public class SyncVarAttributeProcessor
     {
         // ulong = 64 bytes
-        const int SyncVarLimit = 64;
+        private const int SyncVarLimit = 64;
 
-        AssemblyDefinition assembly;
-        WeaverTypes weaverTypes;
-        SyncVarAccessLists syncVarAccessLists;
-        Logger Log;
+        private AssemblyDefinition assembly;
+        private WeaverTypes weaverTypes;
+        private SyncVarAccessLists syncVarAccessLists;
+        private Logger Log;
 
-        string HookParameterMessage(string hookName, TypeReference ValueType) =>
+        private string HookParameterMessage(string hookName, TypeReference ValueType) =>
             $"void {hookName}({ValueType} oldValue, {ValueType} newValue)";
 
         public SyncVarAttributeProcessor(AssemblyDefinition assembly, WeaverTypes weaverTypes, SyncVarAccessLists syncVarAccessLists, Logger Log)
@@ -105,7 +105,7 @@ namespace Mirror.Editor.Weaver.Processors
             worker.Emit(OpCodes.Newobj, weaverTypes.ActionT_T.MakeHostInstanceGeneric(assembly.MainModule, genericInstance));
         }
 
-        MethodDefinition FindHookMethod(TypeDefinition td, FieldDefinition syncVar, string hookFunctionName, ref bool WeavingFailed)
+        private MethodDefinition FindHookMethod(TypeDefinition td, FieldDefinition syncVar, string hookFunctionName, ref bool WeavingFailed)
         {
             List<MethodDefinition> methods = td.GetMethods(hookFunctionName);
 
@@ -137,7 +137,7 @@ namespace Mirror.Editor.Weaver.Processors
             return null;
         }
 
-        bool MatchesParameters(FieldDefinition syncVar, MethodDefinition method)
+        private bool MatchesParameters(FieldDefinition syncVar, MethodDefinition method)
         {
             // matches void onValueChange(T oldValue, T newValue)
             return method.Parameters[0].ParameterType.FullName == syncVar.FieldType.FullName &&

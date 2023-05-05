@@ -11,9 +11,9 @@ namespace Mirror.Examples.Basic.Scripts
         public RectTransform playersPanel;
 
         // static instance that can be referenced from static methods below.
-        static CanvasUI instance;
+        private static CanvasUI instance;
 
-        void Awake()
+        private void Awake()
         {
             instance = this;
         }

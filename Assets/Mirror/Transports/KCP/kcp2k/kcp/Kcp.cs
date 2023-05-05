@@ -43,7 +43,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
 
         // kcp members.
         internal int state;
-        readonly uint conv;          // conversation
+        private readonly uint conv;          // conversation
         internal uint mtu;
         internal uint mss;           // maximum segment size := MTU - OVERHEAD
         internal uint snd_una;       // unacknowledged. e.g. snd_una is 9 it means 8 has been confirmed, 9 and 10 have been sent
@@ -84,14 +84,14 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         internal readonly List<AckItem> acklist = new List<AckItem>(16);
 
         internal byte[] buffer;
-        readonly Action<byte[], int> output; // buffer, size
+        private readonly Action<byte[], int> output; // buffer, size
 
         // get how many packet is waiting to be sent
         public int WaitSnd => snd_buf.Count + snd_queue.Count;
 
         // segment pool to avoid allocations in C#.
         // this is not part of the original C code.
-        readonly Pool<Segment> SegmentPool = new Pool<Segment>(
+        private readonly Pool<Segment> SegmentPool = new Pool<Segment>(
             // create new segment
             () => new Segment(),
             // reset segment before reuse
@@ -125,12 +125,12 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         // ikcp_segment_new
         // we keep the original function and add our pooling to it.
         // this way we'll never miss it anywhere.
-        Segment SegmentNew() => SegmentPool.Take();
+        private Segment SegmentNew() => SegmentPool.Take();
 
         // ikcp_segment_delete
         // we keep the original function and add our pooling to it.
         // this way we'll never miss it anywhere.
-        void SegmentDelete(Segment seg) => SegmentPool.Return(seg);
+        private void SegmentDelete(Segment seg) => SegmentPool.Return(seg);
 
         // ikcp_recv
         // receive data from kcp state machine
@@ -301,7 +301,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_update_ack
-        void UpdateAck(int rtt) // round trip time
+        private void UpdateAck(int rtt) // round trip time
         {
             // https://tools.ietf.org/html/rfc6298
             if (rx_srtt == 0)
@@ -360,7 +360,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_parse_una
-        void ParseUna(uint una)
+        private void ParseUna(uint una)
         {
             int removed = 0;
             foreach (Segment seg in snd_buf)
@@ -381,7 +381,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_parse_fastack
-        void ParseFastack(uint sn, uint ts)
+        private void ParseFastack(uint sn, uint ts)
         {
             if (Utils.TimeDiff(sn, snd_una) < 0 || Utils.TimeDiff(sn, snd_nxt) >= 0)
                 return;
@@ -406,13 +406,13 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
 
         // ikcp_ack_push
         // appends an ack.
-        void AckPush(uint sn, uint ts)
+        private void AckPush(uint sn, uint ts)
         {
             acklist.Add(new AckItem{ serialNumber = sn, timestamp = ts });
         }
 
         // ikcp_parse_data
-        void ParseData(Segment newseg)
+        private void ParseData(Segment newseg)
         {
             uint sn = newseg.sn;
 
@@ -469,7 +469,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // move available data from rcv_buf -> rcv_queue
-        void MoveReceiveBufferDataToReceiveQueue()
+        private void MoveReceiveBufferDataToReceiveQueue()
         {
             int removed = 0;
             foreach (Segment seg in rcv_buf)
@@ -656,7 +656,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_wnd_unused
-        uint WndUnused()
+        private uint WndUnused()
         {
             if (rcv_queue.Count < rcv_wnd)
                 return rcv_wnd - (uint)rcv_queue.Count;

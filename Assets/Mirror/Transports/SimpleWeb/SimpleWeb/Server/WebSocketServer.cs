@@ -11,18 +11,18 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
     {
         public readonly ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
 
-        readonly TcpConfig tcpConfig;
-        readonly int maxMessageSize;
+        private readonly TcpConfig tcpConfig;
+        private readonly int maxMessageSize;
 
-        TcpListener listener;
-        Thread acceptThread;
-        bool serverStopped;
-        readonly ServerHandshake handShake;
-        readonly ServerSslHelper sslHelper;
-        readonly BufferPool bufferPool;
-        readonly ConcurrentDictionary<int, Connection> connections = new ConcurrentDictionary<int, Connection>();
+        private TcpListener listener;
+        private Thread acceptThread;
+        private bool serverStopped;
+        private readonly ServerHandshake handShake;
+        private readonly ServerSslHelper sslHelper;
+        private readonly BufferPool bufferPool;
+        private readonly ConcurrentDictionary<int, Connection> connections = new ConcurrentDictionary<int, Connection>();
 
-        int _idCounter = 0;
+        private int _idCounter = 0;
 
         public WebSocketServer(TcpConfig tcpConfig, int maxMessageSize, int handshakeMaxSize, SslConfig sslConfig, BufferPool bufferPool)
         {
@@ -66,7 +66,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             connections.Clear();
         }
 
-        void acceptLoop()
+        private void acceptLoop()
         {
             try
             {
@@ -104,7 +104,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             catch (Exception e) { Log.Exception(e); }
         }
 
-        void HandshakeAndReceiveLoop(Connection conn)
+        private void HandshakeAndReceiveLoop(Connection conn)
         {
             try
             {
@@ -192,7 +192,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             }
         }
 
-        void AfterConnectionDisposed(Connection conn)
+        private void AfterConnectionDisposed(Connection conn)
         {
             if (conn.connId != Connection.IdNotSet)
             {

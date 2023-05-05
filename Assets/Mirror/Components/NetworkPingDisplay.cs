@@ -17,7 +17,7 @@ namespace Mirror.Components
         public int width = 150;
         public int height = 25;
 
-        void OnGUI()
+        private void OnGUI()
         {
             // only while client is active
             if (!NetworkClient.active) return;

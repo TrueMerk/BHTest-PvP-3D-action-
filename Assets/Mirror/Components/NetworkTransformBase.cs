@@ -244,7 +244,7 @@ namespace Mirror.Components
         }
 
         [ClientRpc]
-        void RpcReset()
+        private void RpcReset()
         {
             Reset();
         }
@@ -307,7 +307,7 @@ namespace Mirror.Components
         }
 
         [ServerCallback]
-        void OnClientAuthorityChanged(NetworkConnectionToClient conn, NetworkIdentity identity, bool authorityState)
+        private void OnClientAuthorityChanged(NetworkConnectionToClient conn, NetworkIdentity identity, bool authorityState)
         {
             if (identity != netIdentity) return;
 

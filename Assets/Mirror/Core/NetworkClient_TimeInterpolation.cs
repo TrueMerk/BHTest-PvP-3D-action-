@@ -54,7 +54,7 @@ namespace Mirror.Core
         // manually averaging the last second worth of values with a for loop
         // would be the same, but a moving average is faster because we only
         // ever add one value.
-        static ExponentialMovingAverage driftEma;
+        private static ExponentialMovingAverage driftEma;
 
         // dynamic buffer time adjustment //////////////////////////////////////
         // dynamically adjusts bufferTimeMultiplier for smooth results.
@@ -82,13 +82,14 @@ namespace Mirror.Core
 
         [Tooltip("Dynamic adjustment is computed over n-second exponential moving average standard deviation.")]
         public static int deliveryTimeEmaDuration = 2;   // 1-2s recommended to capture average delivery time
-        static ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
+
+        private static ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
 
         // OnValidate: see NetworkClient.cs
         // add snapshot & initialize client interpolation time if needed
 
         // initialization called from Awake
-        static void InitTimeInterpolation()
+        private static void InitTimeInterpolation()
         {
             // reset timeline, localTimescale & snapshots from last session (if any)
             // Don't reset bufferTimeMultiplier here - whatever their network condition
@@ -108,7 +109,7 @@ namespace Mirror.Core
         // batching already includes the remoteTimestamp.
         // we simply insert it on-message here.
         // => only for reliable channel. unreliable would always arrive earlier.
-        static void OnTimeSnapshotMessage(TimeSnapshotMessage _)
+        private static void OnTimeSnapshotMessage(TimeSnapshotMessage _)
         {
             // insert another snapshot for snapshot interpolation.
             // before calling OnDeserialize so components can use
@@ -154,7 +155,7 @@ namespace Mirror.Core
         }
 
         // call this from early update, so the timeline is safe to use in update
-        static void UpdateTimeInterpolation()
+        private static void UpdateTimeInterpolation()
         {
             // only while we have snapshots.
             // timeline starts when the first snapshot arrives.

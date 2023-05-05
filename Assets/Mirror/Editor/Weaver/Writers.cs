@@ -16,12 +16,12 @@ namespace Mirror.Editor.Weaver
         // Writers are only for this assembly.
         // can't be used from another assembly, otherwise we will get:
         // "System.ArgumentException: Member ... is declared in another module and needs to be imported"
-        AssemblyDefinition assembly;
-        WeaverTypes weaverTypes;
-        TypeDefinition GeneratedCodeClass;
-        Logger Log;
+        private AssemblyDefinition assembly;
+        private WeaverTypes weaverTypes;
+        private TypeDefinition GeneratedCodeClass;
+        private Logger Log;
 
-        Dictionary<TypeReference, MethodReference> writeFuncs =
+        private Dictionary<TypeReference, MethodReference> writeFuncs =
             new Dictionary<TypeReference, MethodReference>(new TypeReferenceComparer());
 
         public Writers(AssemblyDefinition assembly, WeaverTypes weaverTypes, TypeDefinition GeneratedCodeClass, Logger Log)
@@ -47,7 +47,7 @@ namespace Mirror.Editor.Weaver
             writeFuncs[imported] = methodReference;
         }
 
-        void RegisterWriteFunc(TypeReference typeReference, MethodDefinition newWriterFunc)
+        private void RegisterWriteFunc(TypeReference typeReference, MethodDefinition newWriterFunc)
         {
             Register(typeReference, newWriterFunc);
             GeneratedCodeClass.Methods.Add(newWriterFunc);
@@ -74,7 +74,7 @@ namespace Mirror.Editor.Weaver
         }
 
         //Throws GenerateWriterException when writer could not be generated for type
-        MethodReference GenerateWriter(TypeReference variableReference, ref bool WeavingFailed)
+        private MethodReference GenerateWriter(TypeReference variableReference, ref bool WeavingFailed)
         {
             if (variableReference.IsByReference)
             {
@@ -158,7 +158,7 @@ namespace Mirror.Editor.Weaver
             return GenerateClassOrStructWriterFunction(variableReference, ref WeavingFailed);
         }
 
-        MethodReference GetNetworkBehaviourWriter(TypeReference variableReference)
+        private MethodReference GetNetworkBehaviourWriter(TypeReference variableReference)
         {
             // all NetworkBehaviours can use the same write function
             if (writeFuncs.TryGetValue(weaverTypes.Import<NetworkBehaviour>(), out MethodReference func))
@@ -176,7 +176,7 @@ namespace Mirror.Editor.Weaver
             }
         }
 
-        MethodDefinition GenerateEnumWriteFunc(TypeReference variable, ref bool WeavingFailed)
+        private MethodDefinition GenerateEnumWriteFunc(TypeReference variable, ref bool WeavingFailed)
         {
             MethodDefinition writerFunc = GenerateWriterFunc(variable);
 
@@ -192,7 +192,7 @@ namespace Mirror.Editor.Weaver
             return writerFunc;
         }
 
-        MethodDefinition GenerateWriterFunc(TypeReference variable)
+        private MethodDefinition GenerateWriterFunc(TypeReference variable)
         {
             string functionName = $"_Write_{variable.FullName}";
             // create new writer for this type
@@ -210,7 +210,7 @@ namespace Mirror.Editor.Weaver
             return writerFunc;
         }
 
-        MethodDefinition GenerateClassOrStructWriterFunction(TypeReference variable, ref bool WeavingFailed)
+        private MethodDefinition GenerateClassOrStructWriterFunction(TypeReference variable, ref bool WeavingFailed)
         {
             MethodDefinition writerFunc = GenerateWriterFunc(variable);
 
@@ -226,7 +226,7 @@ namespace Mirror.Editor.Weaver
             return writerFunc;
         }
 
-        void WriteNullCheck(ILProcessor worker, ref bool WeavingFailed)
+        private void WriteNullCheck(ILProcessor worker, ref bool WeavingFailed)
         {
             // if (value == null)
             // {
@@ -251,7 +251,7 @@ namespace Mirror.Editor.Weaver
         }
 
         // Find all fields in type and write them
-        bool WriteAllFields(TypeReference variable, ILProcessor worker, ref bool WeavingFailed)
+        private bool WriteAllFields(TypeReference variable, ILProcessor worker, ref bool WeavingFailed)
         {
             foreach (FieldDefinition field in variable.FindAllPublicFields())
             {
@@ -270,7 +270,7 @@ namespace Mirror.Editor.Weaver
             return true;
         }
 
-        MethodDefinition GenerateCollectionWriter(TypeReference variable, TypeReference elementType, string writerFunction, ref bool WeavingFailed)
+        private MethodDefinition GenerateCollectionWriter(TypeReference variable, TypeReference elementType, string writerFunction, ref bool WeavingFailed)
         {
 
             MethodDefinition writerFunc = GenerateWriterFunc(variable);

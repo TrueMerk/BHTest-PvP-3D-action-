@@ -13,14 +13,14 @@ namespace Mirror.Core.Tools
     public struct TimeSample
     {
         // UnityEngine.Time isn't thread safe. use stopwatch instead.
-        readonly Stopwatch watch;
+        private readonly Stopwatch watch;
 
         // remember when Begin was called
-        double beginTime;
+        private double beginTime;
 
         // keep accumulating times over the given interval.
         // (not readonly. we modify its contents.)
-        ExponentialMovingAverage ema;
+        private ExponentialMovingAverage ema;
 
         // average in seconds.
         // code often runs in sub-millisecond time. float is more precise.

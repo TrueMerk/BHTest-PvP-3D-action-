@@ -9,7 +9,7 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
         // can't Debug.Log in ILPostProcessor. need to add to this list.
         internal List<DiagnosticMessage> Logs = new List<DiagnosticMessage>();
 
-        void Add(string message, DiagnosticType logType)
+        private void Add(string message, DiagnosticType logType)
         {
             Logs.Add(new DiagnosticMessage
             {

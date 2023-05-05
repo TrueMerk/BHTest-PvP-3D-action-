@@ -7,12 +7,10 @@ namespace Gameplay.Entities.Camera
         private Vector3 _mousePos;
         private UnityEngine.Camera goCamera;
         private float _speed = 5.0f;
-        public GameObject go;
-
+        
         private void Start()
         {
             goCamera = gameObject.GetComponent<UnityEngine.Camera>();
-        
         }
 
         private void Update()

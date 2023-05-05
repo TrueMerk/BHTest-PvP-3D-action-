@@ -22,7 +22,7 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
     public class ILPostProcessorHook : ILPostProcessor
     {
         // from CompilationFinishedHook
-        const string MirrorRuntimeAssemblyName = "Mirror";
+        private const string MirrorRuntimeAssemblyName = "Mirror";
 
         // ILPostProcessor is invoked by Unity.
         // we can not tell it to ignore certain assemblies before processing.
@@ -31,13 +31,13 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
         public const string IgnoreDefine = "ILPP_IGNORE";
 
         // we can't use Debug.Log in ILPP, so we need a custom logger
-        ILPostProcessorLogger Log = new ILPostProcessorLogger();
+        private ILPostProcessorLogger Log = new ILPostProcessorLogger();
 
         // ???
         public override ILPostProcessor GetInstance() => this;
 
         // check if assembly has the 'ignore' define
-        static bool HasDefine(ICompiledAssembly assembly, string define) =>
+        private static bool HasDefine(ICompiledAssembly assembly, string define) =>
             assembly.Defines != null &&
             assembly.Defines.Contains(define);
 

@@ -18,7 +18,7 @@ using UnityEngine;
 
 namespace Mirror.Components
 {
-    struct LogEntry
+    internal struct LogEntry
     {
         public string message;
         public LogType type;
@@ -39,7 +39,7 @@ namespace Mirror.Components
         public int maxLogCount = 50;
 
         // log as queue so we can remove the first entry easily
-        Queue<LogEntry> log = new Queue<LogEntry>();
+        private Queue<LogEntry> log = new Queue<LogEntry>();
 
         // hotkey to show/hide at runtime for easier debugging
         // (sometimes we need to temporarily hide/show it)
@@ -47,10 +47,10 @@ namespace Mirror.Components
         public KeyCode hotKey = KeyCode.F12;
 
         // GUI
-        bool visible;
-        Vector2 scroll = Vector2.zero;
+        private bool visible;
+        private Vector2 scroll = Vector2.zero;
 
-        void Awake()
+        private void Awake()
         {
             Application.logMessageReceived += OnLog;
         }
@@ -58,7 +58,7 @@ namespace Mirror.Components
         // OnLog logs everything, even Debug.Log messages in release builds
         // => this makes a lot of things easier. e.g. addon initialization logs.
         // => it's really better to have than not to have those
-        void OnLog(string message, string stackTrace, LogType type)
+        private void OnLog(string message, string stackTrace, LogType type)
         {
             // is this important?
             // => always show exceptions & errors
@@ -89,13 +89,13 @@ namespace Mirror.Components
             scroll.y = float.MaxValue;
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(hotKey))
                 visible = !visible;
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (!visible) return;
 

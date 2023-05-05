@@ -13,7 +13,7 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
 {
     public class CompiledAssemblyFromFile : ICompiledAssembly
     {
-        readonly string assemblyPath;
+        private readonly string assemblyPath;
 
         public string Name => Path.GetFileNameWithoutExtension(assemblyPath);
         public string[] References { get; set; }

@@ -11,19 +11,19 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
 
         public Rigidbody rigidbody3D;
 
-        void OnValidate()
+        private void OnValidate()
         {
             if (rigidbody3D == null)
                 rigidbody3D = GetComponent<Rigidbody>();
         }
 
-        void Start()
+        private void Start()
         {
             rigidbody3D.isKinematic = !isServer;
         }
 
         [ServerCallback]
-        void OnCollisionStay(Collision other)
+        private void OnCollisionStay(Collision other)
         {
             if (other.gameObject.CompareTag("Player"))
             {

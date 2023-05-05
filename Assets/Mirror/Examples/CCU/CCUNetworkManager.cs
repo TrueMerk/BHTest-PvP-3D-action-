@@ -17,9 +17,9 @@ namespace Mirror.Examples.CCU
         // => deterministic random is ideal
         [Range(0, 1)] public float spawnPositionRatio = 0.01f;
 
-        System.Random random = new System.Random(42);
+        private System.Random random = new System.Random(42);
 
-        void SpawnAll()
+        private void SpawnAll()
         {
             // clear previous player spawn positions in case we start twice
             foreach (Transform position in startPositions)

@@ -57,7 +57,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         internal Guid selectedMatch = Guid.Empty;
 
         // Used in UI for "Player #"
-        int playerIndex = 1;
+        private int playerIndex = 1;
 
         [Header("GUI References")]
         public GameObject matchList;
@@ -72,7 +72,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
 
         // RuntimeInitializeOnLoadMethod -> fast playmode without domain reload
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void ResetStatics()
+        private static void ResetStatics()
         {
             playerMatches.Clear();
             openMatches.Clear();
@@ -100,7 +100,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         // Called from OnStopServer and OnStopClient when shutting down
-        void ResetCanvas()
+        private void ResetCanvas()
         {
             InitializeData();
             lobbyView.SetActive(false);
@@ -232,7 +232,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         internal void OnServerReady(NetworkConnectionToClient conn)
         {
             waitingConnections.Add(conn);
-            playerInfos.Add(conn, new PlayerInfo { playerIndex = this.playerIndex, ready = false });
+            playerInfos.Add(conn, new PlayerInfo { playerIndex = playerIndex, ready = false });
             playerIndex++;
 
             SendMatchList();
@@ -298,7 +298,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         [ClientCallback]
         internal void OnClientConnect()
         {
-            playerInfos.Add(NetworkClient.connection, new PlayerInfo { playerIndex = this.playerIndex, ready = false });
+            playerInfos.Add(NetworkClient.connection, new PlayerInfo { playerIndex = playerIndex, ready = false });
         }
 
         [ClientCallback]
@@ -328,7 +328,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         #region Server Match Message Handlers
 
         [ServerCallback]
-        void OnServerMatchMessage(NetworkConnectionToClient conn, ServerMatchMessage msg)
+        private void OnServerMatchMessage(NetworkConnectionToClient conn, ServerMatchMessage msg)
         {
             switch (msg.serverMatchOperation)
             {
@@ -371,7 +371,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        void OnServerPlayerReady(NetworkConnectionToClient conn, Guid matchId)
+        private void OnServerPlayerReady(NetworkConnectionToClient conn, Guid matchId)
         {
             PlayerInfo playerInfo = playerInfos[conn];
             playerInfo.ready = !playerInfo.ready;
@@ -385,7 +385,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        void OnServerLeaveMatch(NetworkConnectionToClient conn, Guid matchId)
+        private void OnServerLeaveMatch(NetworkConnectionToClient conn, Guid matchId)
         {
             MatchInfo matchInfo = openMatches[matchId];
             matchInfo.players--;
@@ -411,7 +411,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        void OnServerCreateMatch(NetworkConnectionToClient conn)
+        private void OnServerCreateMatch(NetworkConnectionToClient conn)
         {
             if (playerMatches.ContainsKey(conn)) return;
 
@@ -434,7 +434,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        void OnServerCancelMatch(NetworkConnectionToClient conn)
+        private void OnServerCancelMatch(NetworkConnectionToClient conn)
         {
             if (!playerMatches.ContainsKey(conn)) return;
 
@@ -460,7 +460,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        void OnServerStartMatch(NetworkConnectionToClient conn)
+        private void OnServerStartMatch(NetworkConnectionToClient conn)
         {
             if (!playerMatches.ContainsKey(conn)) return;
 
@@ -505,7 +505,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        void OnServerJoinMatch(NetworkConnectionToClient conn, Guid matchId)
+        private void OnServerJoinMatch(NetworkConnectionToClient conn, Guid matchId)
         {
             if (!matchConnections.ContainsKey(matchId) || !openMatches.ContainsKey(matchId)) return;
 
@@ -547,7 +547,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         #region Client Match Message Handler
 
         [ClientCallback]
-        void OnClientMatchMessage(ClientMatchMessage msg)
+        private void OnClientMatchMessage(ClientMatchMessage msg)
         {
             switch (msg.clientMatchOperation)
             {
@@ -608,7 +608,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ClientCallback]
-        void ShowLobbyView()
+        private void ShowLobbyView()
         {
             lobbyView.SetActive(true);
             roomView.SetActive(false);
@@ -622,14 +622,14 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ClientCallback]
-        void ShowRoomView()
+        private void ShowRoomView()
         {
             lobbyView.SetActive(false);
             roomView.SetActive(true);
         }
 
         [ClientCallback]
-        void RefreshMatchList()
+        private void RefreshMatchList()
         {
             foreach (Transform child in matchList.transform)
                 Destroy(child.gameObject);

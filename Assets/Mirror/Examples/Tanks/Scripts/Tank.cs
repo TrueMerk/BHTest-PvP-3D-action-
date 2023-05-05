@@ -23,7 +23,7 @@ namespace Mirror.Examples.Tanks.Scripts
         [Header("Stats")]
         [SyncVar] public int health = 4;
 
-        void Update()
+        private void Update()
         {
             // always update health bar.
             // (SyncVar hook would only update on clients, not on server)
@@ -57,7 +57,7 @@ namespace Mirror.Examples.Tanks.Scripts
 
         // this is called on the server
         [Command]
-        void CmdFire()
+        private void CmdFire()
         {
             GameObject projectile = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation);
             NetworkServer.Spawn(projectile);
@@ -66,13 +66,13 @@ namespace Mirror.Examples.Tanks.Scripts
 
         // this is called on the tank that fired for all observers
         [ClientRpc]
-        void RpcOnFire()
+        private void RpcOnFire()
         {
             animator.SetTrigger("Shoot");
         }
 
         [ServerCallback]
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<Projectile>() != null)
             {
@@ -82,7 +82,7 @@ namespace Mirror.Examples.Tanks.Scripts
             }
         }
 
-        void RotateTurret()
+        private void RotateTurret()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100))

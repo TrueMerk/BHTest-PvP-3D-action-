@@ -12,13 +12,13 @@ namespace Mirror.Examples.Basic.Scripts
         public event System.Action<ushort> OnPlayerDataChanged;
 
         // Players List to manage playerNumber
-        static readonly List<Player> playersList = new List<Player>();
+        private static readonly List<Player> playersList = new List<Player>();
 
         [Header("Player UI")]
         public GameObject playerUIPrefab;
 
-        GameObject playerUIObject;
-        PlayerUI playerUI = null;
+        private GameObject playerUIObject;
+        private PlayerUI playerUI = null;
 
         #region SyncVars
 
@@ -43,19 +43,19 @@ namespace Mirror.Examples.Basic.Scripts
         public ushort playerData = 0;
 
         // This is called by the hook of playerNumber SyncVar above
-        void PlayerNumberChanged(byte _, byte newPlayerNumber)
+        private void PlayerNumberChanged(byte _, byte newPlayerNumber)
         {
             OnPlayerNumberChanged?.Invoke(newPlayerNumber);
         }
 
         // This is called by the hook of playerColor SyncVar above
-        void PlayerColorChanged(Color32 _, Color32 newPlayerColor)
+        private void PlayerColorChanged(Color32 _, Color32 newPlayerColor)
         {
             OnPlayerColorChanged?.Invoke(newPlayerColor);
         }
 
         // This is called by the hook of playerData SyncVar above
-        void PlayerDataChanged(ushort _, ushort newPlayerData)
+        private void PlayerDataChanged(ushort _, ushort newPlayerData)
         {
             OnPlayerDataChanged?.Invoke(newPlayerData);
         }
@@ -98,7 +98,7 @@ namespace Mirror.Examples.Basic.Scripts
 
         // This only runs on the server, called from OnStartServer via InvokeRepeating
         [ServerCallback]
-        void UpdateData()
+        private void UpdateData()
         {
             playerData = (ushort)Random.Range(100, 1000);
         }

@@ -40,7 +40,7 @@ namespace Mirror.Components.Discovery
         [SerializeField]
         [Tooltip("Time in seconds between multi-cast messages")]
         [Range(1, 60)]
-        float ActiveDiscoveryInterval = 3;
+        private float ActiveDiscoveryInterval = 3;
         
         [Tooltip("Transport to be advertised during discovery")]
         public Transport transport;
@@ -99,25 +99,25 @@ namespace Mirror.Components.Discovery
         }
 
         // Ensure the ports are cleared no matter when Game/Unity UI exits
-        void OnApplicationQuit()
+        private void OnApplicationQuit()
         {
             //Debug.Log("NetworkDiscoveryBase OnApplicationQuit");
             Shutdown();
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             //Debug.Log("NetworkDiscoveryBase OnDisable");
             Shutdown();
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             //Debug.Log("NetworkDiscoveryBase OnDestroy");
             Shutdown();
         }
 
-        void Shutdown()
+        private void Shutdown()
         {
             EndpMulticastLock();
             if (serverUdpClient != null)
@@ -192,7 +192,7 @@ namespace Mirror.Components.Discovery
             }
         }
 
-        async Task ReceiveRequestAsync(UdpClient udpClient)
+        private async Task ReceiveRequestAsync(UdpClient udpClient)
         {
             // only proceed if there is available data in network buffer, or otherwise Receive() will block
             // average time for UdpClient.Available : 10 us
@@ -268,7 +268,7 @@ namespace Mirror.Components.Discovery
         bool hasMulticastLock;
 #endif
 
-        void BeginMulticastLock()
+        private void BeginMulticastLock()
 		{
 #if UNITY_ANDROID
             if (hasMulticastLock) return;
@@ -288,7 +288,7 @@ namespace Mirror.Components.Discovery
 #endif
         }
 
-        void EndpMulticastLock()
+        private void EndpMulticastLock()
         {
 #if UNITY_ANDROID
             if (!hasMulticastLock) return;
@@ -436,7 +436,7 @@ namespace Mirror.Components.Discovery
         /// <returns>An instance of ServerRequest with data to be broadcasted</returns>
         protected virtual Request GetRequest() => default;
 
-        async Task ReceiveGameBroadcastAsync(UdpClient udpClient)
+        private async Task ReceiveGameBroadcastAsync(UdpClient udpClient)
         {
             // only proceed if there is available data in network buffer, or otherwise Receive() will block
             // average time for UdpClient.Available : 10 us

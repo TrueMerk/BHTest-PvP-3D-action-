@@ -114,7 +114,7 @@ namespace Mirror.Editor.Weaver.Processors
             return cmd;
         }
 
-        static void AddSenderConnection(MethodDefinition method, ILProcessor worker)
+        private static void AddSenderConnection(MethodDefinition method, ILProcessor worker)
         {
             foreach (ParameterDefinition param in method.Parameters)
             {

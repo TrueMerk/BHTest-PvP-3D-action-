@@ -14,8 +14,8 @@ namespace Mirror.Core
         // this way we don't need one NetworkMessage per rpc.
         // => prepares for LocalWorldState as well.
         // ensure max size when adding!
-        readonly NetworkWriter reliableRpcs = new NetworkWriter();
-        readonly NetworkWriter unreliableRpcs = new NetworkWriter();
+        private readonly NetworkWriter reliableRpcs = new NetworkWriter();
+        private readonly NetworkWriter unreliableRpcs = new NetworkWriter();
 
         public virtual string address => Transport.active.ServerGetClientAddress(connectionId);
 
@@ -36,15 +36,15 @@ namespace Mirror.Core
         // TODO move them along server's timeline in the future.
         //      perhaps with an offset.
         //      for now, keep compatibility by manually constructing a timeline.
-        ExponentialMovingAverage driftEma;
-        ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
+        private ExponentialMovingAverage driftEma;
+        private ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
         public double remoteTimeline;
         public double remoteTimescale;
-        double bufferTimeMultiplier = 2;
-        double bufferTime => NetworkServer.sendInterval * bufferTimeMultiplier;
+        private double bufferTimeMultiplier = 2;
+        private double bufferTime => NetworkServer.sendInterval * bufferTimeMultiplier;
 
         // <clienttime, snaps>
-        readonly SortedList<double, TimeSnapshot> snapshots = new SortedList<double, TimeSnapshot>();
+        private readonly SortedList<double, TimeSnapshot> snapshots = new SortedList<double, TimeSnapshot>();
 
         // Snapshot Buffer size limit to avoid ever growing list memory consumption attacks from clients.
         public int snapshotBufferSizeLimit = 64;
@@ -118,7 +118,7 @@ namespace Mirror.Core
         protected override void SendToTransport(ArraySegment<byte> segment, int channelId = Channels.Reliable) =>
             Transport.active.ServerSend(connectionId, segment, channelId);
 
-        void FlushRpcs(NetworkWriter buffer, int channelId)
+        private void FlushRpcs(NetworkWriter buffer, int channelId)
         {
             if (buffer.Position > 0)
             {
@@ -128,7 +128,7 @@ namespace Mirror.Core
         }
 
         // helper for both channels
-        void BufferRpc(RpcMessage message, NetworkWriter buffer, int channelId, int maxMessageSize)
+        private void BufferRpc(RpcMessage message, NetworkWriter buffer, int channelId, int maxMessageSize)
         {
             // calculate buffer limit. we can only fit so much into a message.
             // max - message header - WriteArraySegment size header - batch header

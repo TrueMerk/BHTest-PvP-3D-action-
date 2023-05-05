@@ -16,14 +16,14 @@ namespace Mirror.Examples.Tanks.Scripts
 
         // set velocity for server and client. this way we don't have to sync the
         // position, because both the server and the client simulate it.
-        void Start()
+        private void Start()
         {
             rigidBody.AddForce(transform.forward * force);
         }
 
         // destroy for everyone on the server
         [Server]
-        void DestroySelf()
+        private void DestroySelf()
         {
             NetworkServer.Destroy(gameObject);
         }
@@ -31,6 +31,6 @@ namespace Mirror.Examples.Tanks.Scripts
         // ServerCallback because we don't want a warning
         // if OnTriggerEnter is called on the client
         [ServerCallback]
-        void OnTriggerEnter(Collider co) => DestroySelf();
+        private void OnTriggerEnter(Collider co) => DestroySelf();
     }
 }

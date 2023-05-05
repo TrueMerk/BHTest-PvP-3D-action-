@@ -130,7 +130,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <returns>new offset in buffer</returns>
-        static int SendMessage(byte[] buffer, int startOffset, ArrayBuffer msg, bool setMask, MaskHelper maskHelper)
+        private static int SendMessage(byte[] buffer, int startOffset, ArrayBuffer msg, bool setMask, MaskHelper maskHelper)
         {
             int msgLength = msg.count;
             int offset = WriteHeader(buffer, startOffset, msgLength, setMask);
@@ -199,10 +199,11 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
     }
-    sealed class MaskHelper : IDisposable
+
+    internal sealed class MaskHelper : IDisposable
     {
-        readonly byte[] maskBuffer;
-        readonly RNGCryptoServiceProvider random;
+        private readonly byte[] maskBuffer;
+        private readonly RNGCryptoServiceProvider random;
 
         public MaskHelper()
         {

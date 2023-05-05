@@ -11,7 +11,7 @@ namespace Mirror.Core
     public abstract class InterestManagement : InterestManagementBase
     {
         // allocate newObservers helper HashSet
-        readonly HashSet<NetworkConnectionToClient> newObservers =
+        private readonly HashSet<NetworkConnectionToClient> newObservers =
             new HashSet<NetworkConnectionToClient>();
 
         // rebuild observers for the given NetworkIdentity.

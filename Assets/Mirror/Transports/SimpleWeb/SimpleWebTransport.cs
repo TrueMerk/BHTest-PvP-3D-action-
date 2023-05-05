@@ -69,7 +69,8 @@ namespace Mirror.Transports.SimpleWeb
         [Header("Debug")]
         [Tooltip("Log functions uses ConditionalAttribute which will effect which log methods are allowed. DEBUG allows warn/error, SIMPLEWEB_LOG_ENABLED allows all")]
         [FormerlySerializedAs("logLevels")]
-        [SerializeField] Log.Levels _logLevels = Log.Levels.info;
+        [SerializeField]
+        private Log.Levels _logLevels = Log.Levels.info;
 
         /// <summary>
         /// <para>Gets _logLevels field</para>
@@ -85,17 +86,17 @@ namespace Mirror.Transports.SimpleWeb
             }
         }
 
-        SimpleWebClient client;
-        SimpleWebServer server;
+        private SimpleWebClient client;
+        private SimpleWebServer server;
 
-        TcpConfig TcpConfig => new TcpConfig(noDelay, sendTimeout, receiveTimeout);
+        private TcpConfig TcpConfig => new TcpConfig(noDelay, sendTimeout, receiveTimeout);
 
-        void Awake()
+        private void Awake()
         {
             Log.level = _logLevels;
         }
 
-        void OnValidate()
+        private void OnValidate()
         {
             Log.level = _logLevels;
         }
@@ -114,7 +115,7 @@ namespace Mirror.Transports.SimpleWeb
 
         #region Client
 
-        string GetClientScheme() => (sslEnabled || clientUseWss) ? SecureScheme : NormalScheme;
+        private string GetClientScheme() => (sslEnabled || clientUseWss) ? SecureScheme : NormalScheme;
 
         public override bool ClientConnected()
         {
@@ -210,7 +211,7 @@ namespace Mirror.Transports.SimpleWeb
 
         #region Server
 
-        string GetServerScheme() => sslEnabled ? SecureScheme : NormalScheme;
+        private string GetServerScheme() => sslEnabled ? SecureScheme : NormalScheme;
 
         public override Uri ServerUri()
         {

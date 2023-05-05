@@ -7,7 +7,7 @@ namespace Mirror.Editor.Weaver.Processors
     public static class SyncObjectProcessor
     {
         // ulong = 64 bytes
-        const int SyncObjectsLimit = 64;
+        private const int SyncObjectsLimit = 64;
 
         // Finds SyncObjects fields in a type
         // Type should be a NetworkBehaviour
@@ -68,7 +68,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // Generates serialization methods for synclists
-        static void GenerateReadersAndWriters(Writers writers, Readers readers, TypeReference tr, ref bool WeavingFailed)
+        private static void GenerateReadersAndWriters(Writers writers, Readers readers, TypeReference tr, ref bool WeavingFailed)
         {
             if (tr is GenericInstanceType genericInstance)
             {

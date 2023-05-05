@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace Mirror.Editor
 {
-    class SyncObjectCollectionField
+    internal class SyncObjectCollectionField
     {
         public bool visible;
         public readonly FieldInfo field;
@@ -26,8 +26,8 @@ namespace Mirror.Editor
 
     public class SyncObjectCollectionsDrawer
     {
-        readonly UnityEngine.Object targetObject;
-        readonly List<SyncObjectCollectionField> syncObjectCollectionFields;
+        private readonly UnityEngine.Object targetObject;
+        private readonly List<SyncObjectCollectionField> syncObjectCollectionFields;
 
         public SyncObjectCollectionsDrawer(UnityEngine.Object targetObject)
         {
@@ -58,7 +58,7 @@ namespace Mirror.Editor
             }
         }
 
-        void DrawSyncObjectCollection(SyncObjectCollectionField syncObjectCollectionField)
+        private void DrawSyncObjectCollection(SyncObjectCollectionField syncObjectCollectionField)
         {
             syncObjectCollectionField.visible = EditorGUILayout.Foldout(syncObjectCollectionField.visible, syncObjectCollectionField.label);
             if (syncObjectCollectionField.visible)

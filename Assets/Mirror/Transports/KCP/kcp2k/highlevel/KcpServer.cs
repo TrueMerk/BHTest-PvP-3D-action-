@@ -29,7 +29,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // state
         protected Socket socket;
-        EndPoint newClientEP;
+        private EndPoint newClientEP;
 
         // raw receive buffer always needs to be of 'MTU' size, even if
         // MaxMessageSize is larger. kcp always sends in MTU segments and having
@@ -65,7 +65,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         public virtual bool IsActive() => socket != null;
 
-        static Socket CreateServerSocket(bool DualMode, ushort port)
+        private static Socket CreateServerSocket(bool DualMode, ushort port)
         {
             if (DualMode)
             {
@@ -271,7 +271,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // receive + add + process once.
         // best to call this as long as there is more data to receive.
-        void ProcessMessage(ArraySegment<byte> segment, int connectionId)
+        private void ProcessMessage(ArraySegment<byte> segment, int connectionId)
         {
             //Log.Info($"KCP: server raw recv {msgLength} bytes = {BitConverter.ToString(buffer, 0, msgLength)}");
 
@@ -321,7 +321,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // process incoming messages. should be called before updating the world.
         // virtual because relay may need to inject their own ping or similar.
-        readonly HashSet<int> connectionsToRemove = new HashSet<int>();
+        private readonly HashSet<int> connectionsToRemove = new HashSet<int>();
         public virtual void TickIncoming()
         {
             // input all received messages into kcp

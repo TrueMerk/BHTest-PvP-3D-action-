@@ -10,11 +10,11 @@ namespace Mirror.Editor
     [CanEditMultipleObjects]
     public class NetworkBehaviourInspector : UnityEditor.Editor
     {
-        bool syncsAnything;
-        SyncObjectCollectionsDrawer syncObjectCollectionsDrawer;
+        private bool syncsAnything;
+        private SyncObjectCollectionsDrawer syncObjectCollectionsDrawer;
 
         // does this type sync anything? otherwise we don't need to show syncInterval
-        bool SyncsAnything(Type scriptClass)
+        private bool SyncsAnything(Type scriptClass)
         {
             // check for all SyncVar fields, they don't have to be visible
             foreach (FieldInfo field in InspectorHelper.GetAllFields(scriptClass, typeof(NetworkBehaviour)))
@@ -42,7 +42,7 @@ namespace Mirror.Editor
             return ((NetworkBehaviour)serializedObject.targetObject).HasSyncObjects();
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             if (target == null) { Debug.LogWarning("NetworkBehaviourInspector had no target object"); return; }
 

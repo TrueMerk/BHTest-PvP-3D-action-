@@ -13,8 +13,8 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         internal readonly SyncDictionary<NetworkIdentity, MatchPlayerData> matchPlayerData = new SyncDictionary<NetworkIdentity, MatchPlayerData>();
         internal readonly Dictionary<CellValue, CellGUI> MatchCells = new Dictionary<CellValue, CellGUI>();
 
-        CellValue boardScore = CellValue.None;
-        bool playAgain = false;
+        private CellValue boardScore = CellValue.None;
+        private bool playAgain = false;
 
         [Header("GUI References")]
         public CanvasGroup canvasGroup;
@@ -33,7 +33,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         [SyncVar(hook = nameof(UpdateGameUI))]
         public NetworkIdentity currentPlayer;
 
-        void Awake()
+        private void Awake()
         {
             canvasController = FindObjectOfType<CanvasController>();
         }
@@ -45,7 +45,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
 
         // For the SyncDictionary to properly fire the update callback, we must
         // wait a frame before adding the players to the already spawned MatchController
-        IEnumerator AddPlayersToMatchController()
+        private IEnumerator AddPlayersToMatchController()
         {
             yield return null;
 
@@ -128,7 +128,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        bool CheckWinner(CellValue currentScore)
+        private bool CheckWinner(CellValue currentScore)
         {
             if ((currentScore & CellValue.TopRow) == CellValue.TopRow)
                 return true;

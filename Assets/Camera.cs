@@ -9,13 +9,13 @@ public class Ca : MonoBehaviour
 
     private void Start()
     {
-        goCamera = this.gameObject.GetComponent<Camera>();
+        goCamera = gameObject.GetComponent<Camera>();
         
     }
 
     private void Update()
     {
-        _mousePos = UnityEngine.Input.mousePosition;
+        _mousePos = Input.mousePosition;
     }
 
     private void FixedUpdate()

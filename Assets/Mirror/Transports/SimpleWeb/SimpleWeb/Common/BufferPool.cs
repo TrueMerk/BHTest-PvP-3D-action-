@@ -13,7 +13,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
 
     public sealed class ArrayBuffer : IDisposable
     {
-        readonly IBufferOwner owner;
+        private readonly IBufferOwner owner;
 
         public readonly byte[] array;
 
@@ -38,7 +38,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         /// <remarks>
         /// This value is normally 0, but can be changed to require release to be called multiple times
         /// </remarks>
-        int releasesRequired;
+        private int releasesRequired;
 
         public ArrayBuffer(IBufferOwner owner, int size)
         {
@@ -105,7 +105,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
     internal class BufferBucket : IBufferOwner
     {
         public readonly int arraySize;
-        readonly ConcurrentQueue<ArrayBuffer> buffers;
+        private readonly ConcurrentQueue<ArrayBuffer> buffers;
 
         /// <summary>
         /// keeps track of how many arrays are taken vs returned
@@ -138,13 +138,13 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         [Conditional("DEBUG")]
-        void IncrementCreated()
+        private void IncrementCreated()
         {
             int next = Interlocked.Increment(ref _current);
             Log.Verbose($"[SimpleWebTransport] BufferBucket({arraySize}) count:{next}");
         }
         [Conditional("DEBUG")]
-        void DecrementCreated()
+        private void DecrementCreated()
         {
             int next = Interlocked.Decrement(ref _current);
             Log.Verbose($"[SimpleWebTransport] BufferBucket({arraySize}) count:{next}");
@@ -172,9 +172,9 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
     public class BufferPool
     {
         internal readonly BufferBucket[] buckets;
-        readonly int bucketCount;
-        readonly int smallest;
-        readonly int largest;
+        private readonly int bucketCount;
+        private readonly int smallest;
+        private readonly int largest;
 
         public BufferPool(int bucketCount, int smallest, int largest)
         {
@@ -224,7 +224,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         [Conditional("UNITY_ASSERTIONS")]
-        void Validate()
+        private void Validate()
         {
             if (buckets[0].arraySize != smallest)
                 Log.Error($"[SimpleWebTransport] BufferPool Failed to create bucket for smallest. bucket:{buckets[0].arraySize} smallest{smallest}");

@@ -47,7 +47,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
             StartCoroutine(DoServerDisconnect(conn));
         }
 
-        IEnumerator DoServerDisconnect(NetworkConnectionToClient conn)
+        private IEnumerator DoServerDisconnect(NetworkConnectionToClient conn)
         {
             yield return canvasController.OnServerDisconnect(conn);
             base.OnServerDisconnect(conn);

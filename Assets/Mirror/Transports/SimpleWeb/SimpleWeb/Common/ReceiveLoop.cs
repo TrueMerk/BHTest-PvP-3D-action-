@@ -38,7 +38,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             }
         }
 
-        struct Header
+        private struct Header
         {
             public int payloadLength;
             public int offset;
@@ -107,7 +107,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             }
         }
 
-        static void ReadOneMessage(Config config, byte[] buffer)
+        private static void ReadOneMessage(Config config, byte[] buffer)
         {
             (Connection conn, int maxMessageSize, bool expectMask, ConcurrentQueue<Message> queue, BufferPool bufferPool) = config;
             Stream stream = conn.stream;
@@ -168,7 +168,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             }
         }
 
-        static Header ReadHeader(Config config, byte[] buffer, bool opCodeContinuation = false)
+        private static Header ReadHeader(Config config, byte[] buffer, bool opCodeContinuation = false)
         {
             (Connection conn, int maxMessageSize, bool expectMask, ConcurrentQueue<Message> queue, BufferPool bufferPool) = config;
             Stream stream = conn.stream;
@@ -200,7 +200,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             return header;
         }
 
-        static void HandleArrayMessage(Config config, byte[] buffer, int msgOffset, int payloadLength)
+        private static void HandleArrayMessage(Config config, byte[] buffer, int msgOffset, int payloadLength)
         {
             (Connection conn, int _, bool expectMask, ConcurrentQueue<Message> queue, BufferPool bufferPool) = config;
 
@@ -212,7 +212,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             queue.Enqueue(new Message(conn.connId, arrayBuffer));
         }
 
-        static ArrayBuffer CopyMessageToBuffer(BufferPool bufferPool, bool expectMask, byte[] buffer, int msgOffset, int payloadLength)
+        private static ArrayBuffer CopyMessageToBuffer(BufferPool bufferPool, bool expectMask, byte[] buffer, int msgOffset, int payloadLength)
         {
             ArrayBuffer arrayBuffer = bufferPool.Take(payloadLength);
 
@@ -228,7 +228,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             return arrayBuffer;
         }
 
-        static void HandleCloseMessage(Config config, byte[] buffer, int msgOffset, int payloadLength)
+        private static void HandleCloseMessage(Config config, byte[] buffer, int msgOffset, int payloadLength)
         {
             (Connection conn, int _, bool expectMask, ConcurrentQueue<Message> _, BufferPool _) = config;
 
@@ -245,10 +245,10 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
             conn.Dispose();
         }
 
-        static string GetCloseMessage(byte[] buffer, int msgOffset, int payloadLength)
+        private static string GetCloseMessage(byte[] buffer, int msgOffset, int payloadLength)
             => Encoding.UTF8.GetString(buffer, msgOffset + 2, payloadLength - 2);
 
-        static int GetCloseCode(byte[] buffer, int msgOffset)
+        private static int GetCloseCode(byte[] buffer, int msgOffset)
             => buffer[msgOffset + 0] << 8 | buffer[msgOffset + 1];
     }
 }

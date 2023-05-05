@@ -16,15 +16,15 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         [Range(1, 100), Tooltip("Rate of fade in / out: higher is faster")]
         public byte stepRate = 2;
 
-        float step;
+        private float step;
 
-        void OnValidate()
+        private void OnValidate()
         {
             if (fadeImage == null)
                 fadeImage = GetComponentInChildren<Image>();
         }
 
-        void Start()
+        private void Start()
         {
             // Convert user-friendly setting value to working value
             step = stepRate * 0.001f;

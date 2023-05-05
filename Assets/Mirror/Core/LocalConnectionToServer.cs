@@ -20,8 +20,8 @@ namespace Mirror.Core
         public string address => "localhost";
 
         // see caller for comments on why we need this
-        bool connectedEventPending;
-        bool disconnectedEventPending;
+        private bool connectedEventPending;
+        private bool disconnectedEventPending;
         internal void QueueConnectedEvent() => connectedEventPending = true;
         internal void QueueDisconnectedEvent() => disconnectedEventPending = true;
 

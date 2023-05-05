@@ -5,7 +5,7 @@ using Mono.CecilX;
 
 namespace Mirror.Editor.Weaver
 {
-    static class Helpers
+    internal static class Helpers
     {
         // This code is taken from SerializationWeaver
         public static string UnityEngineDllDirectoryName()

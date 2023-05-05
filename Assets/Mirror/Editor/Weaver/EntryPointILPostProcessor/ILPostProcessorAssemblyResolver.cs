@@ -23,15 +23,17 @@ using Unity.CompilationPipeline.Common.ILPostProcessing;
 
 namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
 {
-    class ILPostProcessorAssemblyResolver : IAssemblyResolver
+    internal class ILPostProcessorAssemblyResolver : IAssemblyResolver
     {
-        readonly string[] assemblyReferences;
-        readonly Dictionary<string, AssemblyDefinition> assemblyCache =
-            new Dictionary<string, AssemblyDefinition>();
-        readonly ICompiledAssembly compiledAssembly;
-        AssemblyDefinition selfAssembly;
+        private readonly string[] assemblyReferences;
 
-        Logger Log;
+        private readonly Dictionary<string, AssemblyDefinition> assemblyCache =
+            new Dictionary<string, AssemblyDefinition>();
+
+        private readonly ICompiledAssembly compiledAssembly;
+        private AssemblyDefinition selfAssembly;
+
+        private Logger Log;
 
         public ILPostProcessorAssemblyResolver(ICompiledAssembly compiledAssembly, Logger Log)
         {
@@ -94,7 +96,7 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
         }
 
         // find assemblyname in assembly's references
-        string FindFile(AssemblyNameReference name)
+        private string FindFile(AssemblyNameReference name)
         {
             string fileName = assemblyReferences.FirstOrDefault(r => Path.GetFileName(r) == name.Name + ".dll");
             if (fileName != null)
@@ -124,7 +126,7 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
 
         // open file as MemoryStream
         // attempts multiple times, not sure why..
-        static MemoryStream MemoryStreamFor(string fileName)
+        private static MemoryStream MemoryStreamFor(string fileName)
         {
             return Retry(10, TimeSpan.FromSeconds(1), () =>
             {
@@ -141,7 +143,7 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
             });
         }
 
-        static MemoryStream Retry(int retryCount, TimeSpan waitTime, Func<MemoryStream> func)
+        private static MemoryStream Retry(int retryCount, TimeSpan waitTime, Func<MemoryStream> func)
         {
             try
             {

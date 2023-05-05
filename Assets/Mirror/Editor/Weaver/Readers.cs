@@ -16,12 +16,12 @@ namespace Mirror.Editor.Weaver
         // Readers are only for this assembly.
         // can't be used from another assembly, otherwise we will get:
         // "System.ArgumentException: Member ... is declared in another module and needs to be imported"
-        AssemblyDefinition assembly;
-        WeaverTypes weaverTypes;
-        TypeDefinition GeneratedCodeClass;
-        Logger Log;
+        private AssemblyDefinition assembly;
+        private WeaverTypes weaverTypes;
+        private TypeDefinition GeneratedCodeClass;
+        private Logger Log;
 
-        Dictionary<TypeReference, MethodReference> readFuncs =
+        private Dictionary<TypeReference, MethodReference> readFuncs =
             new Dictionary<TypeReference, MethodReference>(new TypeReferenceComparer());
 
         public Readers(AssemblyDefinition assembly, WeaverTypes weaverTypes, TypeDefinition GeneratedCodeClass, Logger Log)
@@ -47,7 +47,7 @@ namespace Mirror.Editor.Weaver
             readFuncs[imported] = methodReference;
         }
 
-        void RegisterReadFunc(TypeReference typeReference, MethodDefinition newReaderFunc)
+        private void RegisterReadFunc(TypeReference typeReference, MethodDefinition newReaderFunc)
         {
             Register(typeReference, newReaderFunc);
             GeneratedCodeClass.Methods.Add(newReaderFunc);
@@ -63,7 +63,7 @@ namespace Mirror.Editor.Weaver
             return GenerateReader(importedVariable, ref WeavingFailed);
         }
 
-        MethodReference GenerateReader(TypeReference variableReference, ref bool WeavingFailed)
+        private MethodReference GenerateReader(TypeReference variableReference, ref bool WeavingFailed)
         {
             // Arrays are special,  if we resolve them, we get the element type,
             // so the following ifs might choke on it for scriptable objects
@@ -162,7 +162,7 @@ namespace Mirror.Editor.Weaver
             return GenerateClassOrStructReadFunction(variableReference, ref WeavingFailed);
         }
 
-        MethodReference GetNetworkBehaviourReader(TypeReference variableReference)
+        private MethodReference GetNetworkBehaviourReader(TypeReference variableReference)
         {
             // uses generic ReadNetworkBehaviour rather than having weaver create one for each NB
             MethodReference generic = weaverTypes.readNetworkBehaviourGeneric;
@@ -176,7 +176,7 @@ namespace Mirror.Editor.Weaver
             return readFunc;
         }
 
-        MethodDefinition GenerateEnumReadFunc(TypeReference variable, ref bool WeavingFailed)
+        private MethodDefinition GenerateEnumReadFunc(TypeReference variable, ref bool WeavingFailed)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
 
@@ -192,7 +192,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        MethodDefinition GenerateArraySegmentReadFunc(TypeReference variable, ref bool WeavingFailed)
+        private MethodDefinition GenerateArraySegmentReadFunc(TypeReference variable, ref bool WeavingFailed)
         {
             GenericInstanceType genericInstance = (GenericInstanceType)variable;
             TypeReference elementType = genericInstance.GenericArguments[0];
@@ -212,7 +212,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        MethodDefinition GenerateReaderFunction(TypeReference variable)
+        private MethodDefinition GenerateReaderFunction(TypeReference variable)
         {
             string functionName = $"_Read_{variable.FullName}";
 
@@ -230,7 +230,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        MethodDefinition GenerateReadCollection(TypeReference variable, TypeReference elementType, string readerFunction, ref bool WeavingFailed)
+        private MethodDefinition GenerateReadCollection(TypeReference variable, TypeReference elementType, string readerFunction, ref bool WeavingFailed)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
             // generate readers for the element
@@ -255,7 +255,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        MethodDefinition GenerateClassOrStructReadFunction(TypeReference variable, ref bool WeavingFailed)
+        private MethodDefinition GenerateClassOrStructReadFunction(TypeReference variable, ref bool WeavingFailed)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
 
@@ -277,7 +277,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        void GenerateNullCheck(ILProcessor worker, ref bool WeavingFailed)
+        private void GenerateNullCheck(ILProcessor worker, ref bool WeavingFailed)
         {
             // if (!reader.ReadBoolean()) {
             //   return null;
@@ -294,7 +294,7 @@ namespace Mirror.Editor.Weaver
         }
 
         // Initialize the local variable with a new instance
-        void CreateNew(TypeReference variable, ILProcessor worker, TypeDefinition td, ref bool WeavingFailed)
+        private void CreateNew(TypeReference variable, ILProcessor worker, TypeDefinition td, ref bool WeavingFailed)
         {
             if (variable.IsValueType)
             {
@@ -327,7 +327,7 @@ namespace Mirror.Editor.Weaver
             }
         }
 
-        void ReadAllFields(TypeReference variable, ILProcessor worker, ref bool WeavingFailed)
+        private void ReadAllFields(TypeReference variable, ILProcessor worker, ref bool WeavingFailed)
         {
             foreach (FieldDefinition field in variable.FindAllPublicFields())
             {

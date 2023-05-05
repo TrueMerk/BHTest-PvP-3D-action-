@@ -9,13 +9,13 @@ namespace Mirror.Components.InterestManagement.Scene
     {
         // Use Scene instead of string scene.name because when additively
         // loading multiples of a subscene the name won't be unique
-        readonly Dictionary<UnityEngine.SceneManagement.Scene, HashSet<NetworkIdentity>> sceneObjects =
+        private readonly Dictionary<UnityEngine.SceneManagement.Scene, HashSet<NetworkIdentity>> sceneObjects =
             new Dictionary<UnityEngine.SceneManagement.Scene, HashSet<NetworkIdentity>>();
 
-        readonly Dictionary<NetworkIdentity, UnityEngine.SceneManagement.Scene> lastObjectScene =
+        private readonly Dictionary<NetworkIdentity, UnityEngine.SceneManagement.Scene> lastObjectScene =
             new Dictionary<NetworkIdentity, UnityEngine.SceneManagement.Scene>();
 
-        HashSet<UnityEngine.SceneManagement.Scene> dirtyScenes = new HashSet<UnityEngine.SceneManagement.Scene>();
+        private HashSet<UnityEngine.SceneManagement.Scene> dirtyScenes = new HashSet<UnityEngine.SceneManagement.Scene>();
 
         [ServerCallback]
         public override void OnSpawned(NetworkIdentity identity)
@@ -92,7 +92,7 @@ namespace Mirror.Components.InterestManagement.Scene
             dirtyScenes.Clear();
         }
 
-        void RebuildSceneObservers(UnityEngine.SceneManagement.Scene scene)
+        private void RebuildSceneObservers(UnityEngine.SceneManagement.Scene scene)
         {
             foreach (NetworkIdentity netIdentity in sceneObjects[scene])
                 if (netIdentity != null)

@@ -17,7 +17,7 @@ namespace Mirror.Authenticators
         public string username;
         public string password;
 
-        readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
+        private readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
 
         #region Messages
 
@@ -115,7 +115,7 @@ namespace Mirror.Authenticators
             }
         }
 
-        IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
+        private IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
 

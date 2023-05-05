@@ -13,9 +13,9 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
         public event Action<int, ArraySegment<byte>> onData;
         public event Action<int, Exception> onError;
 
-        readonly int maxMessagesPerTick;
-        readonly WebSocketServer server;
-        readonly BufferPool bufferPool;
+        private readonly int maxMessagesPerTick;
+        private readonly WebSocketServer server;
+        private readonly BufferPool bufferPool;
 
         public bool Active { get; private set; }
 

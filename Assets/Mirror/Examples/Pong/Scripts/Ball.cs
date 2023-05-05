@@ -19,7 +19,7 @@ namespace Mirror.Examples.Pong.Scripts
             rigidbody2d.velocity = Vector2.right * speed;
         }
 
-        float HitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
+        private float HitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
         {
             // ascii art:
             // ||  1 <- at the top of the racket
@@ -32,7 +32,7 @@ namespace Mirror.Examples.Pong.Scripts
 
         // only call this on server
         [ServerCallback]
-        void OnCollisionEnter2D(Collision2D col)
+        private void OnCollisionEnter2D(Collision2D col)
         {
             // Note: 'col' holds the collision information. If the
             // Ball collided with a racket, then:

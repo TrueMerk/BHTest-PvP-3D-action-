@@ -139,7 +139,7 @@ namespace Mirror.Core
         // if we then modify the [SyncVar] from inside the setter,
         // the setter would call the hook and we deadlock.
         // hook guard prevents that.
-        ulong syncVarHookGuard;
+        private ulong syncVarHookGuard;
 
         // USED BY WEAVER to set syncvars in host mode without deadlocking
         protected bool GetSyncVarHookGuard(ulong dirtyBit) =>
@@ -157,7 +157,7 @@ namespace Mirror.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void SetSyncObjectDirtyBit(ulong dirtyBit)
+        private void SetSyncObjectDirtyBit(ulong dirtyBit)
         {
             syncObjectDirtyBits |= dirtyBit;
         }
@@ -1073,7 +1073,7 @@ namespace Mirror.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void SerializeSyncObjects(NetworkWriter writer, bool initialState)
+        private void SerializeSyncObjects(NetworkWriter writer, bool initialState)
         {
             // if initialState: write all SyncVars.
             // otherwise write dirtyBits+dirty SyncVars
@@ -1084,7 +1084,7 @@ namespace Mirror.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void DeserializeSyncObjects(NetworkReader reader, bool initialState)
+        private void DeserializeSyncObjects(NetworkReader reader, bool initialState)
         {
             if (initialState)
             {

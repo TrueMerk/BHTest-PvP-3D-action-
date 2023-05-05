@@ -12,7 +12,7 @@ namespace Mirror.Transports.Multiplex
     {
         public Transport[] transports;
 
-        Transport available;
+        private Transport available;
 
         // underlying transport connectionId to multiplexed connectionId lookup.
         //
@@ -33,15 +33,15 @@ namespace Mirror.Transports.Multiplex
         // with initial capacity to avoid runtime allocations.
 
         // (original connectionId, transport#) to multiplexed connectionId
-        readonly Dictionary<KeyValuePair<int, int>, int> originalToMultiplexedId =
+        private readonly Dictionary<KeyValuePair<int, int>, int> originalToMultiplexedId =
             new Dictionary<KeyValuePair<int, int>, int>(100);
 
         // multiplexed connectionId to (original connectionId, transport#)
-        readonly Dictionary<int, KeyValuePair<int, int>> multiplexedToOriginalId =
+        private readonly Dictionary<int, KeyValuePair<int, int>> multiplexedToOriginalId =
             new Dictionary<int, KeyValuePair<int, int>>(100);
 
         // next multiplexed id counter. start at 1 because 0 is reserved for host.
-        int nextMultiplexedId = 1;
+        private int nextMultiplexedId = 1;
 
         // add to bidirection lookup. returns the multiplexed connectionId.
         public int AddToLookup(int originalConnectionId, int transportIndex)
@@ -113,13 +113,13 @@ namespace Mirror.Transports.Multiplex
                 transport.ServerLateUpdate();
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             foreach (Transport transport in transports)
                 transport.enabled = true;
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             foreach (Transport transport in transports)
                 transport.enabled = false;
@@ -199,7 +199,8 @@ namespace Mirror.Transports.Multiplex
         #endregion
 
         #region Server
-        void AddServerCallbacks()
+
+        private void AddServerCallbacks()
         {
             // all underlying transports should call the multiplex transport's events
             for (int i = 0; i < transports.Length; i++)

@@ -7,14 +7,14 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
     public class LookAtMainCamera : MonoBehaviour
     {
         // This will be enabled by Portal script in OnStartClient
-        void OnValidate()
+        private void OnValidate()
         {
-            this.enabled = false;
+            enabled = false;
         }
 
         // LateUpdate so that all camera updates are finished.
         [ClientCallback]
-        void LateUpdate()
+        private void LateUpdate()
         {
             transform.forward = Camera.main.transform.forward;
         }

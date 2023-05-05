@@ -38,7 +38,6 @@ namespace Multiplayer
             }
             
             CmdChangeColor(newColor);
-
         }
 
         [Command]

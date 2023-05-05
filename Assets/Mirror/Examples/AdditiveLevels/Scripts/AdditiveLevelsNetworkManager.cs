@@ -31,10 +31,10 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         public FadeInOut fadeInOut;
 
         // This is set true after server loads all subscene instances
-        bool subscenesLoaded;
+        private bool subscenesLoaded;
 
         // This is managed in LoadAdditive, UnloadAdditive, and checked in OnClientSceneChanged
-        bool isInTransition;
+        private bool isInTransition;
 
         #region Scene Management
 
@@ -50,7 +50,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
                 StartCoroutine(ServerLoadSubScenes());
         }
 
-        IEnumerator ServerLoadSubScenes()
+        private IEnumerator ServerLoadSubScenes()
         {
             foreach (string additiveScene in additiveScenes)
                 yield return SceneManager.LoadSceneAsync(additiveScene, new LoadSceneParameters
@@ -80,7 +80,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
                 StartCoroutine(LoadAdditive(sceneName));
         }
 
-        IEnumerator LoadAdditive(string sceneName)
+        private IEnumerator LoadAdditive(string sceneName)
         {
             isInTransition = true;
 
@@ -108,7 +108,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
             yield return fadeInOut.FadeOut();
         }
 
-        IEnumerator UnloadAdditive(string sceneName)
+        private IEnumerator UnloadAdditive(string sceneName)
         {
             isInTransition = true;
 
@@ -168,7 +168,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
 
         // This delay is mostly for the host player that loads too fast for the
         // server to have subscenes async loaded from OnServerSceneChanged ahead of it.
-        IEnumerator AddPlayerDelayed(NetworkConnectionToClient conn)
+        private IEnumerator AddPlayerDelayed(NetworkConnectionToClient conn)
         {
             // Wait for server to async load all subscenes for game instances
             while (!subscenesLoaded)

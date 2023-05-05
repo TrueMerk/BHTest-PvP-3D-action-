@@ -12,8 +12,8 @@ namespace Mirror.Examples.Common
         public bool showLog = false;
 
         // helpers
-        int count;
-        double startTime;
+        private int count;
+        private double startTime;
 
         protected void Update()
         {

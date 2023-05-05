@@ -22,12 +22,12 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.Webgl
 
     public class WebSocketClientWebGl : SimpleWebClient
     {
-        static readonly Dictionary<int, WebSocketClientWebGl> instances = new Dictionary<int, WebSocketClientWebGl>();
+        private static readonly Dictionary<int, WebSocketClientWebGl> instances = new Dictionary<int, WebSocketClientWebGl>();
 
         /// <summary>
         /// key for instances sent between c# and js
         /// </summary>
-        int index;
+        private int index;
 
         /// <summary>
         /// Queue for messages sent by high level while still connecting, they will be sent after onOpen is called.
@@ -36,7 +36,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.Webgl
         ///     Without this the JS websocket will give errors.
         /// </para>
         /// </summary>
-        Queue<byte[]> ConnectingSendQueue;
+        private Queue<byte[]> ConnectingSendQueue;
 
         internal WebSocketClientWebGl(int maxMessageSize, int maxMessagesPerTick) : base(maxMessageSize, maxMessagesPerTick)
         {
@@ -82,7 +82,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.Webgl
             }
         }
 
-        void onOpen()
+        private void onOpen()
         {
             receiveQueue.Enqueue(new Message(EventType.Connected));
             state = ClientState.Connected;
@@ -99,7 +99,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.Webgl
             }
         }
 
-        void onClose()
+        private void onClose()
         {
             // this code should be last in this class
 
@@ -108,7 +108,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.Webgl
             instances.Remove(index);
         }
 
-        void onMessage(IntPtr bufferPtr, int count)
+        private void onMessage(IntPtr bufferPtr, int count)
         {
             try
             {
@@ -124,22 +124,22 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.Webgl
             }
         }
 
-        void onErr()
+        private void onErr()
         {
             receiveQueue.Enqueue(new Message(new Exception("Javascript Websocket error")));
             Disconnect();
         }
 
         [MonoPInvokeCallback(typeof(Action<int>))]
-        static void OpenCallback(int index) => instances[index].onOpen();
+        private static void OpenCallback(int index) => instances[index].onOpen();
 
         [MonoPInvokeCallback(typeof(Action<int>))]
-        static void CloseCallBack(int index) => instances[index].onClose();
+        private static void CloseCallBack(int index) => instances[index].onClose();
 
         [MonoPInvokeCallback(typeof(Action<int, IntPtr, int>))]
-        static void MessageCallback(int index, IntPtr bufferPtr, int count) => instances[index].onMessage(bufferPtr, count);
+        private static void MessageCallback(int index, IntPtr bufferPtr, int count) => instances[index].onMessage(bufferPtr, count);
 
         [MonoPInvokeCallback(typeof(Action<int>))]
-        static void ErrorCallback(int index) => instances[index].onErr();
+        private static void ErrorCallback(int index) => instances[index].onErr();
     }
 }

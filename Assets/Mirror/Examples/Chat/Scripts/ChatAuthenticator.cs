@@ -13,7 +13,7 @@ namespace Mirror.Examples.Chat.Scripts
     [AddComponentMenu("")]
     public class ChatAuthenticator : NetworkAuthenticator
     {
-        readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
+        private readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
         internal static readonly HashSet<string> playerNames = new HashSet<string>();
 
         [Header("Client Username")]
@@ -39,8 +39,8 @@ namespace Mirror.Examples.Chat.Scripts
         #region Server
 
         // RuntimeInitializeOnLoadMethod -> fast playmode without domain reload
-        [UnityEngine.RuntimeInitializeOnLoadMethod]
-        static void ResetStatics()
+        [RuntimeInitializeOnLoadMethod]
+        private static void ResetStatics()
         {
             playerNames.Clear();
         }
@@ -129,7 +129,7 @@ namespace Mirror.Examples.Chat.Scripts
             }
         }
 
-        IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
+        private IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
 

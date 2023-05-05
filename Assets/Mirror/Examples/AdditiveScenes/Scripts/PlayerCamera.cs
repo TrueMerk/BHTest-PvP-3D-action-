@@ -8,9 +8,9 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
 {
     public class PlayerCamera : NetworkBehaviour
     {
-        Camera mainCam;
+        private Camera mainCam;
 
-        void Awake()
+        private void Awake()
         {
             mainCam = Camera.main;
         }

@@ -58,7 +58,7 @@ namespace Mirror.Editor.Weaver
         public TypeDefinition initializeOnLoadMethodAttribute;
         public TypeDefinition runtimeInitializeOnLoadMethodAttribute;
 
-        AssemblyDefinition assembly;
+        private AssemblyDefinition assembly;
 
         public TypeReference Import<T>() => Import(typeof(T));
 
@@ -120,7 +120,7 @@ namespace Mirror.Editor.Weaver
                 md => md.Name == "CreateInstance" && md.HasGenericParameters,
                 ref WeavingFailed);
 
-            TypeReference unityDebug = Import(typeof(UnityEngine.Debug));
+            TypeReference unityDebug = Import(typeof(Debug));
             // these have multiple methods with same name, so need to check parameters too
             logErrorReference = Resolvers.ResolveMethod(unityDebug, assembly, Log, md =>
                 md.Name == "LogError" &&

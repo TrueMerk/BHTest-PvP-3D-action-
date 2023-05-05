@@ -9,7 +9,7 @@ namespace Mirror.Examples.RigidbodyPhysics.Scripts
         public Rigidbody rigidbody3d;
         public float force = 500f;
 
-        void OnValidate()
+        private void OnValidate()
         {
             rigidbody3d = GetComponent<Rigidbody>();
             rigidbody3d.isKinematic = true;
@@ -21,7 +21,7 @@ namespace Mirror.Examples.RigidbodyPhysics.Scripts
         }
 
         [ServerCallback]
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
                 rigidbody3d.AddForce(Vector3.up * force);

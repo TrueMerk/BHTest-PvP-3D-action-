@@ -173,13 +173,13 @@ namespace Mirror.Core.Tools
             return largestIndex;
         }
 
-        const float QuaternionMinRange = -0.707107f;
-        const float QuaternionMaxRange =  0.707107f;
-        const ushort TenBitsMax = 0x3FF;
+        private const float QuaternionMinRange = -0.707107f;
+        private const float QuaternionMaxRange =  0.707107f;
+        private const ushort TenBitsMax = 0x3FF;
 
         // helper function to access 'nth' component of quaternion
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static float QuaternionElement(Quaternion q, int element)
+        private static float QuaternionElement(Quaternion q, int element)
         {
             switch (element)
             {
@@ -240,7 +240,7 @@ namespace Mirror.Core.Tools
         // => useful to produce valid quaternions even if client sends invalid
         //    data
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static Quaternion QuaternionNormalizeSafe(Quaternion value)
+        private static Quaternion QuaternionNormalizeSafe(Quaternion value)
         {
             // The smallest positive normal number representable in a float.
             const float FLT_MIN_NORMAL = 1.175494351e-38F;

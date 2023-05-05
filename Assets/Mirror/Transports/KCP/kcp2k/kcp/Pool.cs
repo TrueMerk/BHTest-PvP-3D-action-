@@ -8,14 +8,14 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
     public class Pool<T>
     {
         // Mirror is single threaded, no need for concurrent collections
-        readonly Stack<T> objects = new Stack<T>();
+        private readonly Stack<T> objects = new Stack<T>();
 
         // some types might need additional parameters in their constructor, so
         // we use a Func<T> generator
-        readonly Func<T> objectGenerator;
+        private readonly Func<T> objectGenerator;
 
         // some types might need additional cleanup for returned objects
-        readonly Action<T> objectResetter;
+        private readonly Action<T> objectResetter;
 
         public Pool(Func<T> objectGenerator, Action<T> objectResetter, int initialCapacity)
         {

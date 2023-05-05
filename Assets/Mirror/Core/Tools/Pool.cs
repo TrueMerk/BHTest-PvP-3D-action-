@@ -11,11 +11,11 @@ namespace Mirror.Core.Tools
     {
         // Mirror is single threaded, no need for concurrent collections.
         // stack increases the chance that a reused writer remains in cache.
-        readonly Stack<T> objects = new Stack<T>();
+        private readonly Stack<T> objects = new Stack<T>();
 
         // some types might need additional parameters in their constructor, so
         // we use a Func<T> generator
-        readonly Func<T> objectGenerator;
+        private readonly Func<T> objectGenerator;
 
         public Pool(Func<T> objectGenerator, int initialCapacity)
         {

@@ -9,13 +9,13 @@ namespace Mirror.Examples.CCU
         public float movementProbability = 0.5f;
         public float movementDistance = 20;
 
-        bool moving;
-        Vector3 start;
-        Vector3 destination;
+        private bool moving;
+        private Vector3 start;
+        private Vector3 destination;
 
         // cache .transform for benchmark demo.
         // Component.get_transform shows in profiler otherwise.
-        Transform tf;
+        private Transform tf;
 
         public override void OnStartServer()
         {
@@ -24,7 +24,7 @@ namespace Mirror.Examples.CCU
         }
 
         [ServerCallback]
-        void Update()
+        private void Update()
         {
             if (moving)
             {

@@ -11,7 +11,7 @@ namespace Mirror.Core
     // remote call function delegate
     public delegate void RemoteCallDelegate(NetworkBehaviour obj, NetworkReader reader, NetworkConnectionToClient senderConnection);
 
-    class Invoker
+    internal class Invoker
     {
         // GameObjects might have multiple components of TypeA.CommandA().
         // when invoking, we check if 'TypeA' is an instance of the type.
@@ -24,8 +24,8 @@ namespace Mirror.Core
 
         public bool AreEqual(Type componentType, RemoteCallType remoteCallType, RemoteCallDelegate invokeFunction) =>
             this.componentType == componentType &&
-            this.callType == remoteCallType &&
-            this.function == invokeFunction;
+            callType == remoteCallType &&
+            function == invokeFunction;
     }
 
     /// <summary>Used to help manage remote calls for NetworkBehaviours</summary>
@@ -43,9 +43,9 @@ namespace Mirror.Core
         //     https://github.com/vis2k/Mirror/issues/3138
         // BUT: 2 byte hash is enough if we check for collisions. that's what we
         //      do for NetworkMessage as well.
-        static readonly Dictionary<ushort, Invoker> remoteCallDelegates = new Dictionary<ushort, Invoker>();
+        private static readonly Dictionary<ushort, Invoker> remoteCallDelegates = new Dictionary<ushort, Invoker>();
 
-        static bool CheckIfDelegateExists(Type componentType, RemoteCallType remoteCallType, RemoteCallDelegate func, ushort functionHash)
+        private static bool CheckIfDelegateExists(Type componentType, RemoteCallType remoteCallType, RemoteCallDelegate func, ushort functionHash)
         {
             if (remoteCallDelegates.ContainsKey(functionHash))
             {
@@ -103,7 +103,7 @@ namespace Mirror.Core
         // note: no need to throw an error if not found.
         // an attacker might just try to call a cmd with an rpc's hash etc.
         // returning false is enough.
-        static bool GetInvokerForHash(ushort functionHash, RemoteCallType remoteCallType, out Invoker invoker) =>
+        private static bool GetInvokerForHash(ushort functionHash, RemoteCallType remoteCallType, out Invoker invoker) =>
             remoteCallDelegates.TryGetValue(functionHash, out invoker) &&
             invoker != null &&
             invoker.callType == remoteCallType;

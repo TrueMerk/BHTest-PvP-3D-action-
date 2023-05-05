@@ -322,7 +322,7 @@ namespace Mirror.Editor.Weaver
         // Finds the type reference for a generic parameter with the provided name in the child reference
         // Originally by James-Frowen under MIT
         // https://github.com/MirageNet/Mirage/commit/cf91e1d54796866d2cf87f8e919bb5c681977e45
-        static TypeReference FindMatchingGenericArgument(TypeReference childReference, string paramName)
+        private static TypeReference FindMatchingGenericArgument(TypeReference childReference, string paramName)
         {
             TypeDefinition def = childReference.Resolve();
             // child class must be generic if we are in this part of the code

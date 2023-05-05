@@ -4,7 +4,7 @@ using Mono.CecilX;
 namespace Mirror.Editor.Weaver.Processors
 {
     // only shows warnings in case we use SyncVars etc. for MonoBehaviour.
-    static class MonoBehaviourProcessor
+    internal static class MonoBehaviourProcessor
     {
         public static void Process(Logger Log, TypeDefinition td, ref bool WeavingFailed)
         {
@@ -12,7 +12,7 @@ namespace Mirror.Editor.Weaver.Processors
             ProcessMethods(Log, td, ref WeavingFailed);
         }
 
-        static void ProcessSyncVars(Logger Log, TypeDefinition td, ref bool WeavingFailed)
+        private static void ProcessSyncVars(Logger Log, TypeDefinition td, ref bool WeavingFailed)
         {
             // find syncvars
             foreach (FieldDefinition fd in td.Fields)
@@ -31,7 +31,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        static void ProcessMethods(Logger Log, TypeDefinition td, ref bool WeavingFailed)
+        private static void ProcessMethods(Logger Log, TypeDefinition td, ref bool WeavingFailed)
         {
             // find command and RPC functions
             foreach (MethodDefinition md in td.Methods)

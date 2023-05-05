@@ -7,7 +7,6 @@ namespace Gameplay.Entities.Player
     public class PlayerShooter : AttackComponent
     {
         [SerializeField] private float _shootRate;
-        [SerializeField] private PlayerDamageDealer _playerDamageDealer;
         [SerializeField] private BoxCollider _collider;
         [SerializeField] private int _dashDistance;
         private bool _isReload;
@@ -21,8 +20,7 @@ namespace Gameplay.Entities.Player
             transform.Translate(Vector3.forward*_dashDistance);
             StartCoroutine(Reload());
         }
-
-       
+        
         private IEnumerator Reload()
         {
             _isReload = true;
@@ -38,9 +36,6 @@ namespace Gameplay.Entities.Player
             {
                 Shoot();
             }
-            
         }
-        
-        
     }
 }

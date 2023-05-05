@@ -16,7 +16,7 @@ namespace Mirror.Examples.Pong.Scripts
     {
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
-        GameObject ball;
+        private GameObject ball;
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {

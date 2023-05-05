@@ -30,14 +30,14 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.StandAlone
             }
         }
 
-        Stream CreateStream(NetworkStream stream, Uri uri)
+        private Stream CreateStream(NetworkStream stream, Uri uri)
         {
             SslStream sslStream = new SslStream(stream, true, ValidateServerCertificate);
             sslStream.AuthenticateAsClient(uri.Host);
             return sslStream;
         }
 
-        static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             // Do not allow this client to communicate with unauthenticated servers.
 

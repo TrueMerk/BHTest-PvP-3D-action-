@@ -30,7 +30,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client
 #endif
         }
 
-        readonly int maxMessagesPerTick;
+        private readonly int maxMessagesPerTick;
         protected readonly int maxMessageSize;
         public readonly ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
         protected readonly BufferPool bufferPool;

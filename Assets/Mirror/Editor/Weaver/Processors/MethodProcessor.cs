@@ -5,7 +5,7 @@ namespace Mirror.Editor.Weaver.Processors
 {
     public static class MethodProcessor
     {
-        const string RpcPrefix = "UserCode_";
+        private const string RpcPrefix = "UserCode_";
 
         // For a function like
         //   [ClientRpc] void RpcTest(int value),
@@ -121,7 +121,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        static bool IsCallToMethod(Instruction instruction, out MethodDefinition calledMethod)
+        private static bool IsCallToMethod(Instruction instruction, out MethodDefinition calledMethod)
         {
             if (instruction.OpCode == OpCodes.Call &&
                 instruction.Operand is MethodDefinition method)

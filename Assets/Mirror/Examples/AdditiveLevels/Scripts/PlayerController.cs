@@ -56,7 +56,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         public Vector3Int velocity;
         public Vector3 direction;
 
-        void OnValidate()
+        private void OnValidate()
         {
             if (characterController == null)
                 characterController = GetComponent<CharacterController>();
@@ -68,22 +68,22 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
 
             GetComponent<Rigidbody>().isKinematic = true;
 
-            this.enabled = false;
+            enabled = false;
         }
 
         public override void OnStartAuthority()
         {
             characterController.enabled = true;
-            this.enabled = true;
+            enabled = true;
         }
 
         public override void OnStopAuthority()
         {
-            this.enabled = false;
+            enabled = false;
             characterController.enabled = false;
         }
 
-        void Update()
+        private void Update()
         {
             if (!characterController.enabled)
                 return;
@@ -103,7 +103,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         }
 
         // TODO: Turning works while airborne...feature?
-        void HandleTurning()
+        private void HandleTurning()
         {
             // Q and E cancel each other out, reducing the turn to zero.
             if (Input.GetKey(KeyCode.Q))
@@ -122,7 +122,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
             transform.Rotate(0f, turnSpeed * Time.deltaTime, 0f);
         }
 
-        void HandleJumping()
+        private void HandleJumping()
         {
             // Handle variable force jumping.
             // Jump starts with initial power on takeoff, and jumps higher / longer
@@ -158,7 +158,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         }
 
         // TODO: Directional input works while airborne...feature?
-        void HandleMove()
+        private void HandleMove()
         {
             // Capture inputs
             horizontal = Input.GetAxis("Horizontal");

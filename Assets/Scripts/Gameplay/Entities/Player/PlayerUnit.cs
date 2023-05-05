@@ -13,7 +13,6 @@ namespace Gameplay.Entities.Player
 
         private void Dead()
         {
-            
         }
     }
 }

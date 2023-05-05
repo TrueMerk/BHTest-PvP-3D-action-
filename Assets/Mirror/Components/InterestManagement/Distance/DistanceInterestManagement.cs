@@ -14,14 +14,15 @@ namespace Mirror.Components.InterestManagement.Distance
 
         [Tooltip("Rebuild all every 'rebuildInterval' seconds.")]
         public float rebuildInterval = 1;
-        double lastRebuildTime;
+
+        private double lastRebuildTime;
 
         // cache custom ranges to avoid runtime TryGetComponent lookups
-        readonly Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange> CustomRanges = new Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange>();
+        private readonly Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange> CustomRanges = new Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange>();
 
         // helper function to get vis range for a given object, or default.
         [ServerCallback]
-        int GetVisRange(NetworkIdentity identity)
+        private int GetVisRange(NetworkIdentity identity)
         {
             return CustomRanges.TryGetValue(identity, out DistanceInterestManagementCustomRange custom) ? custom.visRange : visRange;
         }

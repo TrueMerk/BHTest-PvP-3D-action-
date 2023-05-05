@@ -12,13 +12,13 @@ namespace Mirror.Examples.Snapshot_Interpolation
         [Header("Movement")]
         public float distance = 10;
         public float speed = 3;
-        Vector3 start;
+        private Vector3 start;
 
         [Header("Snapshot Interpolation")]
         [Tooltip("Send N snapshots per second. Multiples of frame rate make sense.")]
         public int sendRate = 30; // in Hz. easier to work with as int for EMA. easier to display '30' than '0.333333333'
         public float sendInterval => 1f / sendRate;
-        float lastSendTime;
+        private float lastSendTime;
 
         [Header("Latency Simulation")]
         [Tooltip("Latency in seconds")]
@@ -35,22 +35,22 @@ namespace Mirror.Examples.Snapshot_Interpolation
         // but we need the upper bound to be exclusive, so using System.Random instead.
         // => NextDouble() is NEVER < 0 so loss=0 never drops!
         // => NextDouble() is ALWAYS < 1 so loss=1 always drops!
-        System.Random random = new System.Random();
+        private System.Random random = new System.Random();
 
         // hold on to snapshots for a little while before delivering
         // <deliveryTime, snapshot>
-        List<(double, Snapshot3D)> queue = new List<(double, Snapshot3D)>();
+        private List<(double, Snapshot3D)> queue = new List<(double, Snapshot3D)>();
 
         // latency simulation:
         // always a fixed value + some jitter.
-        float SimulateLatency() => latency + Random.value * jitter;
+        private float SimulateLatency() => latency + Random.value * jitter;
 
-        void Start()
+        private void Start()
         {
             start = transform.position;
         }
 
-        void Update()
+        private void Update()
         {
             // move on XY plane
             float x = Mathf.PingPong(Time.time * speed, distance);
@@ -66,7 +66,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
             Flush();
         }
 
-        void Send(Vector3 position)
+        private void Send(Vector3 position)
         {
             // create snapshot
             // Unity 2019 doesn't have Time.timeAsDouble yet
@@ -89,7 +89,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
             }
         }
 
-        void Flush()
+        private void Flush()
         {
             // flush ready snapshots to client
             for (int i = 0; i < queue.Count; ++i)

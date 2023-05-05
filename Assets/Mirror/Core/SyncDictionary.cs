@@ -21,7 +21,7 @@ namespace Mirror.Core
             OP_SET
         }
 
-        struct Change
+        private struct Change
         {
             internal Operation operation;
             internal TKey key;
@@ -33,13 +33,13 @@ namespace Mirror.Core
         // -> changing the same slot 10x caues 10 changes.
         // -> note that this grows until next sync(!)
         // TODO Dictionary<key, change> to avoid ever growing changes / redundant changes!
-        readonly List<Change> changes = new List<Change>();
+        private readonly List<Change> changes = new List<Change>();
 
         // how many changes we need to ignore
         // this is needed because when we initialize the list,
         // we might later receive changes that have already been applied
         // so we need to skip them
-        int changesAhead;
+        private int changesAhead;
 
         public override void Reset()
         {
@@ -65,7 +65,7 @@ namespace Mirror.Core
             this.objects = objects;
         }
 
-        void AddOperation(Operation op, TKey key, TValue item, bool checkAccess)
+        private void AddOperation(Operation op, TKey key, TValue item, bool checkAccess)
         {
             if (checkAccess && IsReadOnly)
             {

@@ -73,7 +73,7 @@ namespace Mirror.Examples.Room.Scripts
             is set as DontDestroyOnLoad = true.
         */
 
-        bool showStartButton;
+        private bool showStartButton;
 
         public override void OnRoomServerPlayersReady()
         {

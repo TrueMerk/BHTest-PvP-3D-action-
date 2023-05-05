@@ -12,10 +12,10 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         [SyncVar]
         public Quaternion rotation;
 
-        NetworkAnimator networkAnimator;
+        private NetworkAnimator networkAnimator;
 
         [ServerCallback]
-        void Start()
+        private void Start()
         {
             networkAnimator = GetComponent<NetworkAnimator>();
         }
@@ -23,7 +23,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         [Range(0, 1)]
         public float turnSpeed = 0.1f;
 
-        void Update()
+        private void Update()
         {
             if (isServer && netIdentity.observers.Count > 0)
                 ShootNearestPlayer();
@@ -33,7 +33,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         }
 
         [Server]
-        void ShootNearestPlayer()
+        private void ShootNearestPlayer()
         {
             GameObject target = null;
             float distance = 100f;

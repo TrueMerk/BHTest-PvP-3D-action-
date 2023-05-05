@@ -7,7 +7,7 @@ namespace Mirror.Examples.Benchmark.Scripts
     {
         public float speed = 5;
 
-        void Update()
+        private void Update()
         {
             if (!isLocalPlayer) return;
 

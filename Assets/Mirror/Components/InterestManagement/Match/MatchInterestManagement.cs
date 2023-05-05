@@ -8,13 +8,13 @@ namespace Mirror.Components.InterestManagement.Match
     [AddComponentMenu("Network/ Interest Management/ Match/Match Interest Management")]
     public class MatchInterestManagement : Core.InterestManagement
     {
-        readonly Dictionary<Guid, HashSet<NetworkIdentity>> matchObjects =
+        private readonly Dictionary<Guid, HashSet<NetworkIdentity>> matchObjects =
             new Dictionary<Guid, HashSet<NetworkIdentity>>();
 
-        readonly Dictionary<NetworkIdentity, Guid> lastObjectMatch =
+        private readonly Dictionary<NetworkIdentity, Guid> lastObjectMatch =
             new Dictionary<NetworkIdentity, Guid>();
 
-        readonly HashSet<Guid> dirtyMatches = new HashSet<Guid>();
+        private readonly HashSet<Guid> dirtyMatches = new HashSet<Guid>();
 
         [ServerCallback]
         public override void OnSpawned(NetworkIdentity identity)
@@ -97,7 +97,7 @@ namespace Mirror.Components.InterestManagement.Match
             dirtyMatches.Clear();
         }
 
-        void UpdateDirtyMatches(Guid newMatch, Guid currentMatch)
+        private void UpdateDirtyMatches(Guid newMatch, Guid currentMatch)
         {
             // Guid.Empty is never a valid matchId
             if (currentMatch != Guid.Empty)
@@ -106,7 +106,7 @@ namespace Mirror.Components.InterestManagement.Match
             dirtyMatches.Add(newMatch);
         }
 
-        void UpdateMatchObjects(NetworkIdentity netIdentity, Guid newMatch, Guid currentMatch)
+        private void UpdateMatchObjects(NetworkIdentity netIdentity, Guid newMatch, Guid currentMatch)
         {
             // Remove this object from the hashset of the match it just left
             // Guid.Empty is never a valid matchId
@@ -124,7 +124,7 @@ namespace Mirror.Components.InterestManagement.Match
             matchObjects[newMatch].Add(netIdentity);
         }
 
-        void RebuildMatchObservers(Guid matchId)
+        private void RebuildMatchObservers(Guid matchId)
         {
             foreach (NetworkIdentity netIdentity in matchObjects[matchId])
                 if (netIdentity != null)

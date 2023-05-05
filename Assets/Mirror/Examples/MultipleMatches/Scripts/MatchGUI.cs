@@ -7,7 +7,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
 {
     public class MatchGUI : MonoBehaviour
     {
-        Guid matchId;
+        private Guid matchId;
 
         [Header("GUI Elements")]
         public Image image;

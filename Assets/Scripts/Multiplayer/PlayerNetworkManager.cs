@@ -15,7 +15,6 @@ namespace Multiplayer
         
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
-            
             var player = (GameObject)Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
             players.Add(player);
             player.GetComponent<PlayerDamageDealer>().Damaged += RespawnPlayers;
@@ -51,6 +50,5 @@ namespace Multiplayer
                 conn.identity.transform.position = GetStartPosition().position;
             }
         }
-        
     }
 }

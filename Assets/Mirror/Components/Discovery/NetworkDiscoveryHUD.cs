@@ -10,13 +10,13 @@ namespace Mirror.Components.Discovery
     [RequireComponent(typeof(NetworkDiscovery))]
     public class NetworkDiscoveryHUD : MonoBehaviour
     {
-        readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
-        Vector2 scrollViewPos = Vector2.zero;
+        private readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
+        private Vector2 scrollViewPos = Vector2.zero;
 
         public NetworkDiscovery networkDiscovery;
 
 #if UNITY_EDITOR
-        void OnValidate()
+        private void OnValidate()
         {
             if (networkDiscovery == null)
             {
@@ -27,7 +27,7 @@ namespace Mirror.Components.Discovery
         }
 #endif
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (NetworkManager.singleton == null)
                 return;
@@ -39,7 +39,7 @@ namespace Mirror.Components.Discovery
                 StopButtons();
         }
 
-        void DrawGUI()
+        private void DrawGUI()
         {
             GUILayout.BeginArea(new Rect(10, 10, 300, 500));
             GUILayout.BeginHorizontal();
@@ -83,7 +83,7 @@ namespace Mirror.Components.Discovery
             GUILayout.EndArea();
         }
 
-        void StopButtons()
+        private void StopButtons()
         {
             GUILayout.BeginArea(new Rect(10, 40, 100, 25));
 
@@ -118,7 +118,7 @@ namespace Mirror.Components.Discovery
             GUILayout.EndArea();
         }
 
-        void Connect(ServerResponse info)
+        private void Connect(ServerResponse info)
         {
             networkDiscovery.StopDiscovery();
             NetworkManager.singleton.StartClient(info.uri);

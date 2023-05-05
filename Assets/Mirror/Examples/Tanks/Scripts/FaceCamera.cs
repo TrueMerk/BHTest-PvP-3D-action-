@@ -7,7 +7,7 @@ namespace Mirror.Examples.Tanks.Scripts
     public class FaceCamera : MonoBehaviour
     {
         // LateUpdate so that all camera updates are finished.
-        void LateUpdate()
+        private void LateUpdate()
         {
             transform.forward = Camera.main.transform.forward;
         }

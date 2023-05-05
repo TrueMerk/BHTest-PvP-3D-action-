@@ -11,7 +11,7 @@ namespace Mirror.Examples.Benchmark.Scripts
         public int spawnAmount = 5000;
         public float interleave = 1;
 
-        void SpawnAll()
+        private void SpawnAll()
         {
             // calculate sqrt so we can spawn N * N = Amount
             float sqrt = Mathf.Sqrt(spawnAmount);

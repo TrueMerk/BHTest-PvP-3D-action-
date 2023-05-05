@@ -10,7 +10,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
     {
         public const int IdNotSet = -1;
 
-        readonly object disposedLock = new object();
+        private readonly object disposedLock = new object();
 
         public TcpClient client;
 
@@ -24,7 +24,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
 
         public Action<Connection> onDispose;
 
-        volatile bool hasDisposed;
+        private volatile bool hasDisposed;
 
         public Connection(TcpClient client, Action<Connection> onDispose)
         {

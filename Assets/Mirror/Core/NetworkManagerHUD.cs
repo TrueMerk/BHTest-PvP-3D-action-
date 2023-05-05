@@ -12,17 +12,17 @@ namespace Mirror.Core
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-manager-hud")]
     public class NetworkManagerHUD : MonoBehaviour
     {
-        NetworkManager manager;
+        private NetworkManager manager;
 
         public int offsetX;
         public int offsetY;
 
-        void Awake()
+        private void Awake()
         {
             manager = GetComponent<NetworkManager>();
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             GUILayout.BeginArea(new Rect(10 + offsetX, 40 + offsetY, 250, 9999));
             if (!NetworkClient.isConnected && !NetworkServer.active)
@@ -52,7 +52,7 @@ namespace Mirror.Core
             GUILayout.EndArea();
         }
 
-        void StartButtons()
+        private void StartButtons()
         {
             if (!NetworkClient.active)
             {
@@ -97,7 +97,7 @@ namespace Mirror.Core
             }
         }
 
-        void StatusLabels()
+        private void StatusLabels()
         {
             // host mode
             // display separately because this always confused people:
@@ -119,7 +119,7 @@ namespace Mirror.Core
             }
         }
 
-        void StopButtons()
+        private void StopButtons()
         {
             // stop host if host mode
             if (NetworkServer.active && NetworkClient.isConnected)

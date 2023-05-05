@@ -49,7 +49,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
                 StartCoroutine(UnloadScenes());
         }
 
-        IEnumerator LoadSubScenes()
+        private IEnumerator LoadSubScenes()
         {
             Debug.Log("Loading Scenes");
 
@@ -57,7 +57,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
                 yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         }
 
-        IEnumerator UnloadScenes()
+        private IEnumerator UnloadScenes()
         {
             Debug.Log("Unloading Subscenes");
 

@@ -66,7 +66,8 @@ namespace Mirror.Components
         /// </summary>
         [Tooltip("Diagnostic flag indicating all players are ready to play")]
         [FormerlySerializedAs("allPlayersReady")]
-        [SerializeField] bool _allPlayersReady;
+        [SerializeField]
+        private bool _allPlayersReady;
 
         /// <summary>
         /// These slots track players that enter the room.
@@ -120,7 +121,7 @@ namespace Mirror.Components
             }
         }
 
-        void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        private void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             Debug.Log($"NetworkRoom SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
 

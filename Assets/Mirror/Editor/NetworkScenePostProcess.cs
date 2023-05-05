@@ -75,7 +75,7 @@ namespace Mirror.Editor
             }
         }
 
-        static void PrepareSceneObject(NetworkIdentity identity)
+        private static void PrepareSceneObject(NetworkIdentity identity)
         {
             // set scene hash
             identity.SetSceneIdSceneHashPartInternal();

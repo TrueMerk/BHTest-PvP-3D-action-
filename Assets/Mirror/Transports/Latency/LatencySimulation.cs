@@ -16,7 +16,7 @@ using UnityEngine.Serialization;
 
 namespace Mirror.Transports.Latency
 {
-    struct QueuedMessage
+    internal struct QueuedMessage
     {
         public int connectionId;
         public byte[] bytes;
@@ -54,17 +54,17 @@ namespace Mirror.Transports.Latency
 
         // message queues
         // list so we can insert randomly (scramble)
-        List<QueuedMessage> reliableClientToServer = new List<QueuedMessage>();
-        List<QueuedMessage> reliableServerToClient = new List<QueuedMessage>();
-        List<QueuedMessage> unreliableClientToServer = new List<QueuedMessage>();
-        List<QueuedMessage> unreliableServerToClient = new List<QueuedMessage>();
+        private List<QueuedMessage> reliableClientToServer = new List<QueuedMessage>();
+        private List<QueuedMessage> reliableServerToClient = new List<QueuedMessage>();
+        private List<QueuedMessage> unreliableClientToServer = new List<QueuedMessage>();
+        private List<QueuedMessage> unreliableServerToClient = new List<QueuedMessage>();
 
         // random
         // UnityEngine.Random.value is [0, 1] with both upper and lower bounds inclusive
         // but we need the upper bound to be exclusive, so using System.Random instead.
         // => NextDouble() is NEVER < 0 so loss=0 never drops!
         // => NextDouble() is ALWAYS < 1 so loss=1 always drops!
-        System.Random random = new System.Random();
+        private System.Random random = new System.Random();
 
         public void Awake()
         {
@@ -73,14 +73,14 @@ namespace Mirror.Transports.Latency
         }
 
         // forward enable/disable to the wrapped transport
-        void OnEnable() { wrap.enabled = true; }
-        void OnDisable() { wrap.enabled = false; }
+        private void OnEnable() { wrap.enabled = true; }
+        private void OnDisable() { wrap.enabled = false; }
 
         // noise function can be replaced if needed
         protected virtual float Noise(float time) => Mathf.PerlinNoise(time, time);
 
         // helper function to simulate latency
-        float SimulateLatency(int channeldId)
+        private float SimulateLatency(int channeldId)
         {
             // spike over perlin noise.
             // no spikes isn't realistic.
@@ -105,7 +105,7 @@ namespace Mirror.Transports.Latency
         }
 
         // helper function to simulate a send with latency/loss/scramble
-        void SimulateSend(
+        private void SimulateSend(
             int connectionId,
             ArraySegment<byte> segment,
             int channelId,

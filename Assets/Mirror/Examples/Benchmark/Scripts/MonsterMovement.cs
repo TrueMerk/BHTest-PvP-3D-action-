@@ -9,9 +9,9 @@ namespace Mirror.Examples.Benchmark.Scripts
         public float movementProbability = 0.5f;
         public float movementDistance = 20;
 
-        bool moving;
-        Vector3 start;
-        Vector3 destination;
+        private bool moving;
+        private Vector3 start;
+        private Vector3 destination;
 
         public override void OnStartServer()
         {
@@ -19,7 +19,7 @@ namespace Mirror.Examples.Benchmark.Scripts
         }
 
         [ServerCallback]
-        void Update()
+        private void Update()
         {
             if (moving)
             {

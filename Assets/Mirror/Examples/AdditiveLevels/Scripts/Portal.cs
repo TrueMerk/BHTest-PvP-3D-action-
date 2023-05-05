@@ -42,7 +42,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
 
         // Note that I have created layers called Player(6) and Portal(7) and set them
         // up in the Physics collision matrix so only Player collides with Portal.
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             // tag check in case you didn't set up the layers and matrix as noted above
             if (!other.CompareTag("Player")) return;
@@ -56,7 +56,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         }
 
         [ServerCallback]
-        IEnumerator SendPlayerToNewScene(GameObject player)
+        private IEnumerator SendPlayerToNewScene(GameObject player)
         {
             if (player.TryGetComponent(out NetworkIdentity identity))
             {

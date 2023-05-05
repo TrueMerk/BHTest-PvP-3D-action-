@@ -57,15 +57,15 @@ namespace Mirror.Transports.Telepathy
         [Tooltip("Client receive queue limit for pending messages. Telepathy will disconnect if the connection's queues reach that limit in order to avoid ever growing latencies.")]
         public int clientReceiveQueueLimit = 10000;
 
-        Telepathy.Client client;
-        Telepathy.Server server;
+        private Telepathy.Client client;
+        private Telepathy.Server server;
 
         // scene change message needs to halt  message processing immediately
         // Telepathy.Tick() has a enabledCheck parameter that we can use, but
         // let's only allocate it once.
-        Func<bool> enabledCheck;
+        private Func<bool> enabledCheck;
 
-        void Awake()
+        private void Awake()
         {
             // tell Telepathy to use Unity's Debug.Log
             Telepathy.Log.Info = Debug.Log;

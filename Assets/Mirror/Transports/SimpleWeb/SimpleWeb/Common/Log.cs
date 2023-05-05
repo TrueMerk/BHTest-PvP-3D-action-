@@ -7,8 +7,8 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
     public static class Log
     {
         // used for Conditional
-        const string SIMPLEWEB_LOG_ENABLED = nameof(SIMPLEWEB_LOG_ENABLED);
-        const string DEBUG = nameof(DEBUG);
+        private const string SIMPLEWEB_LOG_ENABLED = nameof(SIMPLEWEB_LOG_ENABLED);
+        private const string DEBUG = nameof(DEBUG);
 
         public enum Levels
         {

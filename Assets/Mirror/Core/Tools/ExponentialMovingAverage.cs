@@ -8,8 +8,8 @@ namespace Mirror.Core.Tools
 {
     public struct ExponentialMovingAverage
     {
-        readonly double alpha;
-        bool initialized;
+        private readonly double alpha;
+        private bool initialized;
 
         public double Value;
         public double Variance;

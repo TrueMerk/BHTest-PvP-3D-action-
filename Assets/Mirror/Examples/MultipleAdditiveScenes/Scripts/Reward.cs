@@ -9,14 +9,14 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
         public bool available = true;
         public RandomColor randomColor;
 
-        void OnValidate()
+        private void OnValidate()
         {
             if (randomColor == null)
                 randomColor = GetComponent<RandomColor>();
         }
 
         [ServerCallback]
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.CompareTag("Player"))
                 ClaimPrize(other.gameObject);

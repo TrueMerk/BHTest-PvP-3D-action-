@@ -62,7 +62,7 @@ namespace Mirror.Editor
     }
 #endif
 
-        static void AddOrRemoveTag(XmlDocument doc, string @namespace, string path, string elementName, string name, bool required, bool modifyIfFound, params string[] attrs) // name, value pairs
+        private static void AddOrRemoveTag(XmlDocument doc, string @namespace, string path, string elementName, string name, bool required, bool modifyIfFound, params string[] attrs) // name, value pairs
         {
             var nodes = doc.SelectNodes(path + "/" + elementName);
             XmlElement element = null;

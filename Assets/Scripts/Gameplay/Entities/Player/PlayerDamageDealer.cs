@@ -24,7 +24,6 @@ namespace Gameplay.Entities.Player
             gameObject.GetComponent<BoxCollider>().isTrigger = false;
         }
         
-        
         private void DealDamage(UnitController unitController, PlayerColor playerColor,PlayerHealth health)
         {
             if ( unitController!=null && !unitController.gameObject.GetComponent<NetworkIdentity>().isOwned)

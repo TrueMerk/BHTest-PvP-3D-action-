@@ -28,7 +28,7 @@ namespace Mirror.Editor.Weaver.Processors
             Console.WriteLine($"  ProcessSitesModule {moduleDef.Name} elapsed time:{(DateTime.Now - startTime)}");
         }
 
-        static void ProcessClass(SyncVarAccessLists syncVarAccessLists, TypeDefinition td)
+        private static void ProcessClass(SyncVarAccessLists syncVarAccessLists, TypeDefinition td)
         {
             //Console.WriteLine($"    ProcessClass {td}");
 
@@ -45,7 +45,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        static void ProcessMethod(SyncVarAccessLists syncVarAccessLists, MethodDefinition md)
+        private static void ProcessMethod(SyncVarAccessLists syncVarAccessLists, MethodDefinition md)
         {
             // process all references to replaced members with properties
             //Log.Warning($"      ProcessSiteMethod {md}");
@@ -73,7 +73,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        static int ProcessInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction instr, int iCount)
+        private static int ProcessInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction instr, int iCount)
         {
             // stfld (sets value of a field)?
             if (instr.OpCode == OpCodes.Stfld && instr.Operand is FieldDefinition opFieldst)
@@ -101,7 +101,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // replaces syncvar write access with the NetworkXYZ.set property calls
-        static void ProcessSetInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction i, FieldDefinition opField)
+        private static void ProcessSetInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction i, FieldDefinition opField)
         {
             // don't replace property call sites in constructors
             if (md.Name == ".ctor")
@@ -119,7 +119,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // replaces syncvar read access with the NetworkXYZ.get property calls
-        static void ProcessGetInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction i, FieldDefinition opField)
+        private static void ProcessGetInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction i, FieldDefinition opField)
         {
             // don't replace property call sites in constructors
             if (md.Name == ".ctor")
@@ -136,7 +136,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        static int ProcessLoadAddressInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction instr, FieldDefinition opField, int iCount)
+        private static int ProcessLoadAddressInstruction(SyncVarAccessLists syncVarAccessLists, MethodDefinition md, Instruction instr, FieldDefinition opField, int iCount)
         {
             // don't replace property call sites in constructors
             if (md.Name == ".ctor")

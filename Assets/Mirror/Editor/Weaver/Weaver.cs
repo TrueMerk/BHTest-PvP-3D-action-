@@ -15,24 +15,24 @@ namespace Mirror.Editor.Weaver
         // generated code class
         public const string GeneratedCodeNamespace = "Mirror";
         public const string GeneratedCodeClassName = "GeneratedNetworkCode";
-        TypeDefinition GeneratedCodeClass;
+        private TypeDefinition GeneratedCodeClass;
 
         // for resolving Mirror.dll in ReaderWriterProcessor, we need to know
         // Mirror.dll name
         public const string MirrorAssemblyName = "Mirror";
 
-        WeaverTypes weaverTypes;
-        SyncVarAccessLists syncVarAccessLists;
-        AssemblyDefinition CurrentAssembly;
-        Writers writers;
-        Readers readers;
+        private WeaverTypes weaverTypes;
+        private SyncVarAccessLists syncVarAccessLists;
+        private AssemblyDefinition CurrentAssembly;
+        private Writers writers;
+        private Readers readers;
 
         // in case of weaver errors, we don't stop immediately.
         // we log all errors and then eventually return false if
         // weaving has failed.
         // this way the user can fix multiple errors at once, instead of having
         // to fix -> recompile -> fix -> recompile for one error at a time.
-        bool WeavingFailed;
+        private bool WeavingFailed;
 
         // logger functions can be set from the outside.
         // for example, Debug.Log or ILPostProcessor Diagnostics log for
@@ -68,7 +68,7 @@ namespace Mirror.Editor.Weaver
         }
 
         // returns 'true' if modified (=if we did anything)
-        bool WeaveNetworkBehavior(TypeDefinition td)
+        private bool WeaveNetworkBehavior(TypeDefinition td)
         {
             if (!td.IsClass)
                 return false;
@@ -113,7 +113,7 @@ namespace Mirror.Editor.Weaver
             return modified;
         }
 
-        bool WeaveModule(ModuleDefinition moduleDefinition)
+        private bool WeaveModule(ModuleDefinition moduleDefinition)
         {
             bool modified = false;
 
@@ -135,7 +135,7 @@ namespace Mirror.Editor.Weaver
             return modified;
         }
 
-        void CreateGeneratedCodeClass()
+        private void CreateGeneratedCodeClass()
         {
             // create "Mirror.GeneratedNetworkCode" class which holds all
             // Readers<T> and Writers<T>

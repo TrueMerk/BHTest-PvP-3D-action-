@@ -67,7 +67,7 @@ namespace Mirror.Core
         // Authenticator will reassign itself if a value in the inspector is changed.
         // My change switches OnValidate to Reset since Reset is only called when the component is first 
         // added (or reset is pressed).
-        void Reset()
+        private void Reset()
         {
 #if UNITY_EDITOR
             // automatically assign authenticator field if we add this to NetworkManager

@@ -15,20 +15,20 @@ namespace Mirror.Core.Batching
     {
         // supporting adding multiple batches before GetNextMessage is called.
         // just in case.
-        Queue<NetworkWriterPooled> batches = new Queue<NetworkWriterPooled>();
+        private Queue<NetworkWriterPooled> batches = new Queue<NetworkWriterPooled>();
 
         public int BatchesCount => batches.Count;
 
         // NetworkReader is only created once,
         // then pointed to the first batch.
-        NetworkReader reader = new NetworkReader(new byte[0]);
+        private NetworkReader reader = new NetworkReader(new byte[0]);
 
         // timestamp that was written into the batch remotely.
         // for the batch that our reader is currently pointed at.
-        double readerRemoteTimeStamp;
+        private double readerRemoteTimeStamp;
 
         // helper function to start reading a batch.
-        void StartReadingBatch(NetworkWriterPooled batch)
+        private void StartReadingBatch(NetworkWriterPooled batch)
         {
             // point reader to it
             reader.SetBuffer(batch.ToArraySegment());

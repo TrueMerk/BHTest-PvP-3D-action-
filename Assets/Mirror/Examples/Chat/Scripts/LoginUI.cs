@@ -13,7 +13,7 @@ namespace Mirror.Examples.Chat.Scripts
 
         public static LoginUI instance;
 
-        void Awake()
+        private void Awake()
         {
             instance = this;
         }

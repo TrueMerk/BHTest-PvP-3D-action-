@@ -197,7 +197,7 @@ namespace Mirror.Core
         public void WriteBytes(byte[] array, int offset, int count)
         {
             EnsureCapacity(Position + count);
-            Array.ConstrainedCopy(array, offset, this.buffer, Position, count);
+            Array.ConstrainedCopy(array, offset, buffer, Position, count);
             Position += count;
         }
         // write an unsafe byte* array.

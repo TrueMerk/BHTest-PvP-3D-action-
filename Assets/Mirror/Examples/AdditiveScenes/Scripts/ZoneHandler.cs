@@ -15,7 +15,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         public string subScene;
 
         [ServerCallback]
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             // ignore collisions with non-Player objects
             if (!other.CompareTag("Player")) return;
@@ -28,7 +28,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         }
 
         [ServerCallback]
-        void OnTriggerExit(Collider other)
+        private void OnTriggerExit(Collider other)
         {
             // ignore collisions with non-Player objects
             if (!other.CompareTag("Player")) return;

@@ -23,9 +23,9 @@ namespace Mirror.Core
         /// <summary>Average out the last few results from Ping</summary>
         public static int PingWindowSize = 6;
 
-        static double lastPingTime;
+        private static double lastPingTime;
 
-        static ExponentialMovingAverage _rtt = new ExponentialMovingAverage(PingWindowSize);
+        private static ExponentialMovingAverage _rtt = new ExponentialMovingAverage(PingWindowSize);
 
         /// <summary>Returns double precision clock time _in this system_, unaffected by the network.</summary>
 #if UNITY_2020_3_OR_NEWER
