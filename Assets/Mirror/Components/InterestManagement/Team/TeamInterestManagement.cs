@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components.InterestManagement.Team
+namespace Mirror
 {
     [AddComponentMenu("Network/ Interest Management/ Team/Team Interest Management")]
-    public class TeamInterestManagement : Core.InterestManagement
+    public class TeamInterestManagement : InterestManagement
     {
-        private readonly Dictionary<string, HashSet<NetworkIdentity>> teamObjects = new Dictionary<string, HashSet<NetworkIdentity>>();
-        private readonly Dictionary<NetworkIdentity, string> lastObjectTeam = new Dictionary<NetworkIdentity, string>();
-        private readonly HashSet<string> dirtyTeams = new HashSet<string>();
+        readonly Dictionary<string, HashSet<NetworkIdentity>> teamObjects = new Dictionary<string, HashSet<NetworkIdentity>>();
+        readonly Dictionary<NetworkIdentity, string> lastObjectTeam = new Dictionary<NetworkIdentity, string>();
+        readonly HashSet<string> dirtyTeams = new HashSet<string>();
 
         [ServerCallback]
         public override void OnSpawned(NetworkIdentity identity)
@@ -93,7 +92,7 @@ namespace Mirror.Components.InterestManagement.Team
             dirtyTeams.Clear();
         }
 
-        private void UpdateDirtyTeams(string newTeam, string currentTeam)
+        void UpdateDirtyTeams(string newTeam, string currentTeam)
         {
             // Null / Empty string is never a valid teamId
             if (!string.IsNullOrWhiteSpace(currentTeam))
@@ -102,7 +101,7 @@ namespace Mirror.Components.InterestManagement.Team
             dirtyTeams.Add(newTeam);
         }
 
-        private void UpdateTeamObjects(NetworkIdentity netIdentity, string newTeam, string currentTeam)
+        void UpdateTeamObjects(NetworkIdentity netIdentity, string newTeam, string currentTeam)
         {
             // Remove this object from the hashset of the team it just left
             // string.Empty is never a valid teamId
@@ -120,7 +119,7 @@ namespace Mirror.Components.InterestManagement.Team
             teamObjects[newTeam].Add(netIdentity);
         }
 
-        private void RebuildTeamObservers(string teamId)
+        void RebuildTeamObservers(string teamId)
         {
             foreach (NetworkIdentity netIdentity in teamObjects[teamId])
                 if (netIdentity != null)
@@ -184,7 +183,7 @@ namespace Mirror.Components.InterestManagement.Team
                     newObservers.Add(networkIdentity.connectionToClient);
         }
 
-        private void AddAllConnections(HashSet<NetworkConnectionToClient> newObservers)
+        void AddAllConnections(HashSet<NetworkConnectionToClient> newObservers)
         {
             foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
             {

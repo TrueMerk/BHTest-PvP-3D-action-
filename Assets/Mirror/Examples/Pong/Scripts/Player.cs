@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.Pong.Scripts
+namespace Mirror.Examples.Pong
 {
     public class Player : NetworkBehaviour
     {
@@ -9,7 +8,7 @@ namespace Mirror.Examples.Pong.Scripts
         public Rigidbody2D rigidbody2d;
 
         // need to use FixedUpdate for rigidbody
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             // only let the local player control the racket.
             // don't control other player's rackets

@@ -1,8 +1,7 @@
 using System;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components
+namespace Mirror
 {
     /// <summary>
     /// Component that will display the clients ping in milliseconds
@@ -17,7 +16,7 @@ namespace Mirror.Components
         public int width = 150;
         public int height = 25;
 
-        private void OnGUI()
+        void OnGUI()
         {
             // only while client is active
             if (!NetworkClient.active) return;

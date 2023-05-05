@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Entities.Player;
-using Mirror.Core;
+using Mirror;
 using UnityEngine;
 
 namespace Multiplayer

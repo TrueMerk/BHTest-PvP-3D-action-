@@ -1,7 +1,6 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Mirror.Examples.SyncDirection // ".SyncDirection" would overshadow the enum
+namespace Mirror.Examples.SyncDir // ".SyncDirection" would overshadow the enum
 {
     public class Player : NetworkBehaviour
     {
@@ -9,14 +8,14 @@ namespace Mirror.Examples.SyncDirection // ".SyncDirection" would overshadow the
         public Color localColor = Color.white;
 
         [SyncVar] public int health;
-        private readonly SyncList<int> list = new SyncList<int>();
+        readonly SyncList<int> list = new SyncList<int>();
 
         public override void OnStartLocalPlayer()
         {
             textMesh.color = localColor;
         }
 
-        private void Update()
+        void Update()
         {
             // show health and list for everyone
             textMesh.text = $"{health} / {list.Count}";
@@ -44,7 +43,7 @@ namespace Mirror.Examples.SyncDirection // ".SyncDirection" would overshadow the
         }
 
         // show instructions
-        private void OnGUI()
+        void OnGUI()
         {
             if (!isLocalPlayer) return;
 

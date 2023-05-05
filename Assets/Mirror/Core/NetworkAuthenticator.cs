@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Mirror.Core
+namespace Mirror
 {
     [Serializable] public class UnityEventNetworkConnection : UnityEvent<NetworkConnectionToClient> {}
 
@@ -67,7 +67,7 @@ namespace Mirror.Core
         // Authenticator will reassign itself if a value in the inspector is changed.
         // My change switches OnValidate to Reset since Reset is only called when the component is first 
         // added (or reset is pressed).
-        private void Reset()
+        void Reset()
         {
 #if UNITY_EDITOR
             // automatically assign authenticator field if we add this to NetworkManager

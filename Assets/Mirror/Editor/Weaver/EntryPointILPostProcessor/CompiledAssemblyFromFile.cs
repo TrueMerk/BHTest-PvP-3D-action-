@@ -5,15 +5,14 @@
 //
 // this is in Weaver folder becuase CompilationPipeline can only be accessed
 // from assemblies with the name "Unity.*.CodeGen"
-
 using System.IO;
 using Unity.CompilationPipeline.Common.ILPostProcessing;
 
-namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
+namespace Mirror.Weaver
 {
     public class CompiledAssemblyFromFile : ICompiledAssembly
     {
-        private readonly string assemblyPath;
+        readonly string assemblyPath;
 
         public string Name => Path.GetFileNameWithoutExtension(assemblyPath);
         public string[] References { get; set; }

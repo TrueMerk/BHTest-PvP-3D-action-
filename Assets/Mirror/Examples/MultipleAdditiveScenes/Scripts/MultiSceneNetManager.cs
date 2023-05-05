@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
+namespace Mirror.Examples.MultipleAdditiveScenes
 {
     [AddComponentMenu("")]
     public class MultiSceneNetManager : NetworkManager
@@ -20,13 +19,13 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
         public string gameScene;
 
         // This is set true after server loads all subscene instances
-        private bool subscenesLoaded;
+        bool subscenesLoaded;
 
         // subscenes are added to this list as they're loaded
-        private readonly List<Scene> subScenes = new List<Scene>();
+        readonly List<Scene> subScenes = new List<Scene>();
 
         // Sequential index used in round-robin deployment of players into instances and score positioning
-        private int clientIndex;
+        int clientIndex;
 
         public static new MultiSceneNetManager singleton { get; private set; }
 
@@ -54,7 +53,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
 
         // This delay is mostly for the host player that loads too fast for the
         // server to have subscenes async loaded from OnStartServer ahead of it.
-        private IEnumerator OnServerAddPlayerDelayed(NetworkConnectionToClient conn)
+        IEnumerator OnServerAddPlayerDelayed(NetworkConnectionToClient conn)
         {
             // wait for server to async load all subscenes for game instances
             while (!subscenesLoaded)
@@ -98,7 +97,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
         // We're additively loading scenes, so GetSceneAt(0) will return the main "container" scene,
         // therefore we start the index at one and loop through instances value inclusively.
         // If instances is zero, the loop is bypassed entirely.
-        private IEnumerator ServerLoadSubScenes()
+        IEnumerator ServerLoadSubScenes()
         {
             for (int index = 1; index <= instances; index++)
             {
@@ -123,7 +122,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
         }
 
         // Unload the subScenes and unused assets and clear the subScenes list.
-        private IEnumerator ServerUnloadSubScenes()
+        IEnumerator ServerUnloadSubScenes()
         {
             for (int index = 0; index < subScenes.Count; index++)
                 if (subScenes[index].IsValid())
@@ -146,7 +145,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
         }
 
         // Unload all but the active scene, which is the "container" scene
-        private IEnumerator ClientUnloadSubScenes()
+        IEnumerator ClientUnloadSubScenes()
         {
             for (int index = 0; index < SceneManager.sceneCount; index++)
                 if (SceneManager.GetSceneAt(index) != SceneManager.GetActiveScene())

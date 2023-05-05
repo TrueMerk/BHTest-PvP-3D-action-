@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
+namespace Mirror.Examples.MultipleAdditiveScenes
 {
     [RequireComponent(typeof(Rigidbody))]
     public class PhysicsCollision : NetworkBehaviour
@@ -11,19 +10,19 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
 
         public Rigidbody rigidbody3D;
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (rigidbody3D == null)
                 rigidbody3D = GetComponent<Rigidbody>();
         }
 
-        private void Start()
+        void Start()
         {
             rigidbody3D.isKinematic = !isServer;
         }
 
         [ServerCallback]
-        private void OnCollisionStay(Collision other)
+        void OnCollisionStay(Collision other)
         {
             if (other.gameObject.CompareTag("Player"))
             {

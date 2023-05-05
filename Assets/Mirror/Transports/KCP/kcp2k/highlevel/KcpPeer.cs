@@ -2,15 +2,13 @@
 // timeouts, authentication, state, etc.
 //
 // still IO agnostic to work with udp, nonalloc, relays, native, etc.
-
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
-using Mirror.Transports.KCP.kcp2k.kcp;
 
-namespace Mirror.Transports.KCP.kcp2k.highlevel
+namespace kcp2k
 {
-    internal enum KcpState { Connected, Authenticated, Disconnected }
+    enum KcpState { Connected, Authenticated, Disconnected }
 
     public class KcpPeer
     {
@@ -26,48 +24,47 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
         // => cookie can be a random number, but it needs to be cryptographically
         //    secure random that can't be easily predicted.
         // => cookie can be hash(ip, port) BUT only if salted to be not predictable
-        private readonly uint cookie;
+        readonly uint cookie;
 
         // this is the cookie that the other end received during handshake.
         // store byte[] representation to avoid runtime int->byte[] conversions.
         internal readonly byte[] receivedCookie = new byte[4];
 
         // IO agnostic
-        private readonly Action<ArraySegment<byte>> RawSend;
+        readonly Action<ArraySegment<byte>> RawSend;
 
         // state: connected as soon as we create the peer.
         // leftover from KcpConnection. remove it after refactoring later.
-        private KcpState state = KcpState.Connected;
+        KcpState state = KcpState.Connected;
 
         // events are readonly, set in constructor.
         // this ensures they are always initialized when used.
         // fixes https://github.com/MirrorNetworking/Mirror/issues/3337 and more
-        private readonly Action OnAuthenticated;
-        private readonly Action<ArraySegment<byte>, KcpChannel> OnData;
-
-        private readonly Action OnDisconnected;
+        readonly Action OnAuthenticated;
+        readonly Action<ArraySegment<byte>, KcpChannel> OnData;
+        readonly Action OnDisconnected;
         // error callback instead of logging.
         // allows libraries to show popups etc.
         // (string instead of Exception for ease of use and to avoid user panic)
-        private readonly Action<ErrorCode, string> OnError;
+        readonly Action<ErrorCode, string> OnError;
 
         // If we don't receive anything these many milliseconds
         // then consider us disconnected
         public const int DEFAULT_TIMEOUT = 10000;
         public int timeout;
-        private uint lastReceiveTime;
+        uint lastReceiveTime;
 
         // internal time.
         // StopWatch offers ElapsedMilliSeconds and should be more precise than
         // Unity's time.deltaTime over long periods.
-        private readonly Stopwatch watch = new Stopwatch();
+        readonly Stopwatch watch = new Stopwatch();
 
         // we need to subtract the channel and cookie bytes from every
         // MaxMessageSize calculation.
         // we also need to tell kcp to use MTU-1 to leave space for the byte.
-        private const int CHANNEL_HEADER_SIZE = 1;
-        private const int COOKIE_HEADER_SIZE = 4;
-        private const int METADATA_SIZE = CHANNEL_HEADER_SIZE + COOKIE_HEADER_SIZE;
+        const int CHANNEL_HEADER_SIZE = 1;
+        const int COOKIE_HEADER_SIZE = 4;
+        const int METADATA_SIZE = CHANNEL_HEADER_SIZE + COOKIE_HEADER_SIZE;
 
         // reliable channel (= kcp) MaxMessageSize so the outside knows largest
         // allowed message to send. the calculation in Send() is not obvious at
@@ -91,7 +88,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
         //               for batching.
         //            => sending UNRELIABLE max message size most of the time is
         //               best for performance (use that one for batching!)
-        private static int ReliableMaxMessageSize_Unconstrained(int mtu, uint rcv_wnd) =>
+        static int ReliableMaxMessageSize_Unconstrained(int mtu, uint rcv_wnd) =>
             (mtu - Kcp.OVERHEAD - METADATA_SIZE) * ((int)rcv_wnd - 1) - 1;
 
         // kcp encodes 'frg' as 1 byte.
@@ -109,23 +106,23 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
         // buffer to receive kcp's processed messages (avoids allocations).
         // IMPORTANT: this is for KCP messages. so it needs to be of size:
         //            1 byte header + MaxMessageSize content
-        private readonly byte[] kcpMessageBuffer;// = new byte[1 + ReliableMaxMessageSize];
+        readonly byte[] kcpMessageBuffer;// = new byte[1 + ReliableMaxMessageSize];
 
         // send buffer for handing user messages to kcp for processing.
         // (avoids allocations).
         // IMPORTANT: needs to be of size:
         //            1 byte header + MaxMessageSize content
-        private readonly byte[] kcpSendBuffer;// = new byte[1 + ReliableMaxMessageSize];
+        readonly byte[] kcpSendBuffer;// = new byte[1 + ReliableMaxMessageSize];
 
         // raw send buffer is exactly MTU.
-        private readonly byte[] rawSendBuffer;
+        readonly byte[] rawSendBuffer;
 
         // send a ping occasionally so we don't time out on the other end.
         // for example, creating a character in an MMO could easily take a
         // minute of no data being sent. which doesn't mean we want to time out.
         // same goes for slow paced card games etc.
         public const int PING_INTERVAL = 1000;
-        private uint lastPingTime;
+        uint lastPingTime;
 
         // if we send more than kcp can handle, we will get ever growing
         // send/recv buffers and queues and minutes of latency.
@@ -181,7 +178,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             this.OnData = OnData;
             this.OnDisconnected = OnDisconnected;
             this.OnError = OnError;
-            RawSend = output;
+            this.RawSend = output;
 
             // set up kcp over reliable channel (that's what kcp is for)
             kcp = new Kcp(0, RawSendReliable);
@@ -220,7 +217,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             watch.Start();
         }
 
-        private void HandleTimeout(uint time)
+        void HandleTimeout(uint time)
         {
             // note: we are also sending a ping regularly, so timeout should
             //       only ever happen if the connection is truly gone.
@@ -233,7 +230,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             }
         }
 
-        private void HandleDeadLink()
+        void HandleDeadLink()
         {
             // kcp has 'dead_link' detection. might as well use it.
             if (kcp.state == -1)
@@ -246,7 +243,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
         }
 
         // send a ping occasionally in order to not time out on the other end.
-        private void HandlePing(uint time)
+        void HandlePing(uint time)
         {
             // enough time elapsed since last ping?
             if (time >= lastPingTime + PING_INTERVAL)
@@ -258,7 +255,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             }
         }
 
-        private void HandleChoked()
+        void HandleChoked()
         {
             // disconnect connections that can't process the load.
             // see QueueSizeDisconnect comments.
@@ -287,7 +284,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // reads the next reliable message type & content from kcp.
         // -> to avoid buffering, unreliable messages call OnData directly.
-        private bool ReceiveNextReliable(out KcpHeader header, out ArraySegment<byte> message)
+        bool ReceiveNextReliable(out KcpHeader header, out ArraySegment<byte> message)
         {
             message = default;
             header = KcpHeader.Disconnect;
@@ -326,7 +323,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             return true;
         }
 
-        private void TickIncoming_Connected(uint time)
+        void TickIncoming_Connected(uint time)
         {
             // detect common events & ping
             HandleTimeout(time);
@@ -383,7 +380,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             }
         }
 
-        private void TickIncoming_Authenticated(uint time)
+        void TickIncoming_Authenticated(uint time)
         {
             // detect common events & ping
             HandleTimeout(time);
@@ -541,7 +538,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             }
         }
 
-        private void OnRawInputReliable(ArraySegment<byte> message)
+        void OnRawInputReliable(ArraySegment<byte> message)
         {
             // input into kcp, but skip channel byte
             int input = kcp.Input(message.Array, message.Offset, message.Count);
@@ -552,7 +549,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             }
         }
 
-        private void OnRawInputUnreliable(ArraySegment<byte> message)
+        void OnRawInputUnreliable(ArraySegment<byte> message)
         {
             // ideally we would queue all unreliable messages and
             // then process them in ReceiveNext() together with the
@@ -648,7 +645,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
         }
 
         // raw send called by kcp
-        private void RawSendReliable(byte[] data, int length)
+        void RawSendReliable(byte[] data, int length)
         {
             // write channel header
             // from 0, with 1 byte
@@ -667,7 +664,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             RawSend(segment);
         }
 
-        private void SendReliable(KcpHeader header, ArraySegment<byte> content)
+        void SendReliable(KcpHeader header, ArraySegment<byte> content)
         {
             // 1 byte header + content needs to fit into send buffer
             if (1 + content.Count > kcpSendBuffer.Length) // TODO
@@ -694,7 +691,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
             }
         }
 
-        private void SendUnreliable(ArraySegment<byte> message)
+        void SendUnreliable(ArraySegment<byte> message)
         {
             // message size needs to be <= unreliable max size
             if (message.Count > unreliableMax)
@@ -772,10 +769,10 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // ping goes through kcp to keep it from timing out, so it goes over the
         // reliable channel.
-        private void SendPing() => SendReliable(KcpHeader.Ping, default);
+        void SendPing() => SendReliable(KcpHeader.Ping, default);
 
         // disconnect info needs to be delivered, so it goes over reliable
-        private void SendDisconnect() => SendReliable(KcpHeader.Disconnect, default);
+        void SendDisconnect() => SendReliable(KcpHeader.Disconnect, default);
 
         // disconnect this connection
         public void Disconnect()

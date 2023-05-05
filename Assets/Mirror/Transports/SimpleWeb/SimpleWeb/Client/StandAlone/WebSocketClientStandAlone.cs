@@ -1,16 +1,15 @@
 using System;
 using System.Net.Sockets;
 using System.Threading;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Common;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.StandAlone
+namespace Mirror.SimpleWeb
 {
     public class WebSocketClientStandAlone : SimpleWebClient
     {
-        private readonly ClientSslHelper sslHelper;
-        private readonly ClientHandshake handshake;
-        private readonly TcpConfig tcpConfig;
-        private Connection conn;
+        readonly ClientSslHelper sslHelper;
+        readonly ClientHandshake handshake;
+        readonly TcpConfig tcpConfig;
+        Connection conn;
 
         internal WebSocketClientStandAlone(int maxMessageSize, int maxMessagesPerTick, TcpConfig tcpConfig) : base(maxMessageSize, maxMessagesPerTick)
         {
@@ -39,7 +38,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.StandAlone
             receiveThread.Start();
         }
 
-        private void ConnectAndReceiveLoop(Uri serverAddress)
+        void ConnectAndReceiveLoop(Uri serverAddress)
         {
             try
             {
@@ -111,7 +110,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client.StandAlone
             }
         }
 
-        private void AfterConnectionDisposed(Connection conn)
+        void AfterConnectionDisposed(Connection conn)
         {
             state = ClientState.NotConnected;
             // make sure Disconnected event is only called once

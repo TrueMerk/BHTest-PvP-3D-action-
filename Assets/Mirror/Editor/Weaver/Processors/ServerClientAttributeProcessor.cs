@@ -1,12 +1,10 @@
 // Injects server/client active checks for [Server/Client] attributes
-
-using Mirror.Core;
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 
-namespace Mirror.Editor.Weaver.Processors
+namespace Mirror.Weaver
 {
-    internal static class ServerClientAttributeProcessor
+    static class ServerClientAttributeProcessor
     {
         public static bool Process(WeaverTypes weaverTypes, Logger Log, TypeDefinition td, ref bool WeavingFailed)
         {
@@ -23,7 +21,7 @@ namespace Mirror.Editor.Weaver.Processors
             return modified;
         }
 
-        private static bool ProcessSiteMethod(WeaverTypes weaverTypes, Logger Log, MethodDefinition md, ref bool WeavingFailed)
+        static bool ProcessSiteMethod(WeaverTypes weaverTypes, Logger Log, MethodDefinition md, ref bool WeavingFailed)
         {
             if (md.Name == ".cctor" ||
                 md.Name == NetworkBehaviourProcessor.ProcessedFunctionName ||
@@ -81,7 +79,7 @@ namespace Mirror.Editor.Weaver.Processors
             return true;
         }
 
-        private static void InjectServerGuard(WeaverTypes weaverTypes, MethodDefinition md, bool logWarning)
+        static void InjectServerGuard(WeaverTypes weaverTypes, MethodDefinition md, bool logWarning)
         {
             ILProcessor worker = md.Body.GetILProcessor();
             Instruction top = md.Body.Instructions[0];
@@ -98,7 +96,7 @@ namespace Mirror.Editor.Weaver.Processors
             worker.InsertBefore(top, worker.Create(OpCodes.Ret));
         }
 
-        private static void InjectClientGuard(WeaverTypes weaverTypes, MethodDefinition md, bool logWarning)
+        static void InjectClientGuard(WeaverTypes weaverTypes, MethodDefinition md, bool logWarning)
         {
             ILProcessor worker = md.Body.GetILProcessor();
             Instruction top = md.Body.Instructions[0];
@@ -117,7 +115,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // this is required to early-out from a function with "ref" or "out" parameters
-        private static void InjectGuardParameters(MethodDefinition md, ILProcessor worker, Instruction top)
+        static void InjectGuardParameters(MethodDefinition md, ILProcessor worker, Instruction top)
         {
             int offset = md.Resolve().IsStatic ? 0 : 1;
             for (int index = 0; index < md.Parameters.Count; index++)
@@ -140,7 +138,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // this is required to early-out from a function with a return value.
-        private static void InjectGuardReturnValue(MethodDefinition md, ILProcessor worker, Instruction top)
+        static void InjectGuardReturnValue(MethodDefinition md, ILProcessor worker, Instruction top)
         {
             if (!md.ReturnType.Is(typeof(void)))
             {

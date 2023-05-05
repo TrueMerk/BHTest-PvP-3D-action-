@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Mirror.Core.SnapshotInterpolation;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     public static partial class NetworkClient
     {
@@ -54,7 +52,7 @@ namespace Mirror.Core
         // manually averaging the last second worth of values with a for loop
         // would be the same, but a moving average is faster because we only
         // ever add one value.
-        private static ExponentialMovingAverage driftEma;
+        static ExponentialMovingAverage driftEma;
 
         // dynamic buffer time adjustment //////////////////////////////////////
         // dynamically adjusts bufferTimeMultiplier for smooth results.
@@ -82,14 +80,13 @@ namespace Mirror.Core
 
         [Tooltip("Dynamic adjustment is computed over n-second exponential moving average standard deviation.")]
         public static int deliveryTimeEmaDuration = 2;   // 1-2s recommended to capture average delivery time
-
-        private static ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
+        static ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
 
         // OnValidate: see NetworkClient.cs
         // add snapshot & initialize client interpolation time if needed
 
         // initialization called from Awake
-        private static void InitTimeInterpolation()
+        static void InitTimeInterpolation()
         {
             // reset timeline, localTimescale & snapshots from last session (if any)
             // Don't reset bufferTimeMultiplier here - whatever their network condition
@@ -109,7 +106,7 @@ namespace Mirror.Core
         // batching already includes the remoteTimestamp.
         // we simply insert it on-message here.
         // => only for reliable channel. unreliable would always arrive earlier.
-        private static void OnTimeSnapshotMessage(TimeSnapshotMessage _)
+        static void OnTimeSnapshotMessage(TimeSnapshotMessage _)
         {
             // insert another snapshot for snapshot interpolation.
             // before calling OnDeserialize so components can use
@@ -129,7 +126,7 @@ namespace Mirror.Core
             {
                 // set bufferTime on the fly.
                 // shows in inspector for easier debugging :)
-                snapshotSettings.bufferTimeMultiplier = SnapshotInterpolation.SnapshotInterpolation.DynamicAdjustment(
+                snapshotSettings.bufferTimeMultiplier = SnapshotInterpolation.DynamicAdjustment(
                     NetworkServer.sendInterval,
                     deliveryTimeEma.StandardDeviation,
                     snapshotSettings.dynamicAdjustmentTolerance
@@ -137,7 +134,7 @@ namespace Mirror.Core
             }
 
             // insert into the buffer & initialize / adjust / catchup
-            SnapshotInterpolation.SnapshotInterpolation.InsertAndAdjust(
+            SnapshotInterpolation.InsertAndAdjust(
                 snapshots,
                 snap,
                 ref localTimeline,
@@ -155,19 +152,19 @@ namespace Mirror.Core
         }
 
         // call this from early update, so the timeline is safe to use in update
-        private static void UpdateTimeInterpolation()
+        static void UpdateTimeInterpolation()
         {
             // only while we have snapshots.
             // timeline starts when the first snapshot arrives.
             if (snapshots.Count > 0)
             {
                 // progress local timeline.
-                SnapshotInterpolation.SnapshotInterpolation.StepTime(Time.unscaledDeltaTime, ref localTimeline, localTimescale);
+                SnapshotInterpolation.StepTime(Time.unscaledDeltaTime, ref localTimeline, localTimescale);
 
                 // progress local interpolation.
                 // TimeSnapshot doesn't interpolate anything.
                 // this is merely to keep removing older snapshots.
-                SnapshotInterpolation.SnapshotInterpolation.StepInterpolation(snapshots, localTimeline, out _, out _, out double t);
+                SnapshotInterpolation.StepInterpolation(snapshots, localTimeline, out _, out _, out double t);
                 // Debug.Log($"NetworkClient SnapshotInterpolation @ {localTimeline:F2} t={t:F2}");
             }
         }

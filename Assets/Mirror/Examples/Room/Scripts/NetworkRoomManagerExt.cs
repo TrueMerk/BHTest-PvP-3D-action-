@@ -1,5 +1,3 @@
-using Mirror.Components;
-using Mirror.Core;
 using UnityEngine;
 
 /*
@@ -7,7 +5,7 @@ using UnityEngine;
 	API Reference: https://mirror-networking.com/docs/api/Mirror.NetworkManager.html
 */
 
-namespace Mirror.Examples.Room.Scripts
+namespace Mirror.Examples.NetworkRoom
 {
     [AddComponentMenu("")]
     public class NetworkRoomManagerExt : NetworkRoomManager
@@ -73,7 +71,7 @@ namespace Mirror.Examples.Room.Scripts
             is set as DontDestroyOnLoad = true.
         */
 
-        private bool showStartButton;
+        bool showStartButton;
 
         public override void OnRoomServerPlayersReady()
         {

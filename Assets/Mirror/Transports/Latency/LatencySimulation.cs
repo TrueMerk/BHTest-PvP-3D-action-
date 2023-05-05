@@ -6,17 +6,14 @@
 // IMPORTANT: use Time.unscaledTime instead of Time.time.
 //            some games might have Time.timeScale modified.
 //            see also: https://github.com/vis2k/Mirror/issues/2907
-
 using System;
 using System.Collections.Generic;
-using Mirror.Core;
-using Mirror.Core.Tools;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Mirror.Transports.Latency
+namespace Mirror
 {
-    internal struct QueuedMessage
+    struct QueuedMessage
     {
         public int connectionId;
         public byte[] bytes;
@@ -54,17 +51,17 @@ namespace Mirror.Transports.Latency
 
         // message queues
         // list so we can insert randomly (scramble)
-        private List<QueuedMessage> reliableClientToServer = new List<QueuedMessage>();
-        private List<QueuedMessage> reliableServerToClient = new List<QueuedMessage>();
-        private List<QueuedMessage> unreliableClientToServer = new List<QueuedMessage>();
-        private List<QueuedMessage> unreliableServerToClient = new List<QueuedMessage>();
+        List<QueuedMessage> reliableClientToServer = new List<QueuedMessage>();
+        List<QueuedMessage> reliableServerToClient = new List<QueuedMessage>();
+        List<QueuedMessage> unreliableClientToServer = new List<QueuedMessage>();
+        List<QueuedMessage> unreliableServerToClient = new List<QueuedMessage>();
 
         // random
         // UnityEngine.Random.value is [0, 1] with both upper and lower bounds inclusive
         // but we need the upper bound to be exclusive, so using System.Random instead.
         // => NextDouble() is NEVER < 0 so loss=0 never drops!
         // => NextDouble() is ALWAYS < 1 so loss=1 always drops!
-        private System.Random random = new System.Random();
+        System.Random random = new System.Random();
 
         public void Awake()
         {
@@ -73,14 +70,14 @@ namespace Mirror.Transports.Latency
         }
 
         // forward enable/disable to the wrapped transport
-        private void OnEnable() { wrap.enabled = true; }
-        private void OnDisable() { wrap.enabled = false; }
+        void OnEnable() { wrap.enabled = true; }
+        void OnDisable() { wrap.enabled = false; }
 
         // noise function can be replaced if needed
         protected virtual float Noise(float time) => Mathf.PerlinNoise(time, time);
 
         // helper function to simulate latency
-        private float SimulateLatency(int channeldId)
+        float SimulateLatency(int channeldId)
         {
             // spike over perlin noise.
             // no spikes isn't realistic.
@@ -105,7 +102,7 @@ namespace Mirror.Transports.Latency
         }
 
         // helper function to simulate a send with latency/loss/scramble
-        private void SimulateSend(
+        void SimulateSend(
             int connectionId,
             ArraySegment<byte> segment,
             int channelId,

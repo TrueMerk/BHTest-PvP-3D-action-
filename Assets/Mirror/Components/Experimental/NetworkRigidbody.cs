@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components.Experimental
+namespace Mirror.Experimental
 {
     [AddComponentMenu("Network/ Experimental/Network Rigidbody")]
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-rigidbody")]
@@ -15,36 +14,30 @@ namespace Mirror.Components.Experimental
 
         [Header("Velocity")]
         [Tooltip("Syncs Velocity every SyncInterval")]
-        [SerializeField]
-        private bool syncVelocity = true;
+        [SerializeField] bool syncVelocity = true;
 
         [Tooltip("Set velocity to 0 each frame (only works if syncVelocity is false")]
-        [SerializeField]
-        private bool clearVelocity = false;
+        [SerializeField] bool clearVelocity = false;
 
         [Tooltip("Only Syncs Value if distance between previous and current is great than sensitivity")]
-        [SerializeField]
-        private float velocitySensitivity = 0.1f;
+        [SerializeField] float velocitySensitivity = 0.1f;
 
         [Header("Angular Velocity")]
         [Tooltip("Syncs AngularVelocity every SyncInterval")]
-        [SerializeField]
-        private bool syncAngularVelocity = true;
+        [SerializeField] bool syncAngularVelocity = true;
 
         [Tooltip("Set angularVelocity to 0 each frame (only works if syncAngularVelocity is false")]
-        [SerializeField]
-        private bool clearAngularVelocity = false;
+        [SerializeField] bool clearAngularVelocity = false;
 
         [Tooltip("Only Syncs Value if distance between previous and current is great than sensitivity")]
-        [SerializeField]
-        private float angularVelocitySensitivity = 0.1f;
+        [SerializeField] float angularVelocitySensitivity = 0.1f;
 
         /// <summary>
         /// Values sent on client with authority after they are sent to the server
         /// </summary>
-        private readonly ClientSyncState previousValue = new ClientSyncState();
+        readonly ClientSyncState previousValue = new ClientSyncState();
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (target == null)
                 target = GetComponent<Rigidbody>();
@@ -53,32 +46,32 @@ namespace Mirror.Components.Experimental
         #region Sync vars
 
         [SyncVar(hook = nameof(OnVelocityChanged))]
-        private Vector3 velocity;
+        Vector3 velocity;
 
         [SyncVar(hook = nameof(OnAngularVelocityChanged))]
-        private Vector3 angularVelocity;
+        Vector3 angularVelocity;
 
         [SyncVar(hook = nameof(OnIsKinematicChanged))]
-        private bool isKinematic;
+        bool isKinematic;
 
         [SyncVar(hook = nameof(OnUseGravityChanged))]
-        private bool useGravity;
+        bool useGravity;
 
         [SyncVar(hook = nameof(OnuDragChanged))]
-        private float drag;
+        float drag;
 
         [SyncVar(hook = nameof(OnAngularDragChanged))]
-        private float angularDrag;
+        float angularDrag;
 
         /// <summary>
         /// Ignore value if is host or client with Authority
         /// </summary>
         /// <returns></returns>
-        private bool IgnoreSync => isServer || ClientWithAuthority;
+        bool IgnoreSync => isServer || ClientWithAuthority;
 
-        private bool ClientWithAuthority => clientAuthority && isOwned;
+        bool ClientWithAuthority => clientAuthority && isOwned;
 
-        private void OnVelocityChanged(Vector3 _, Vector3 newValue)
+        void OnVelocityChanged(Vector3 _, Vector3 newValue)
         {
             if (IgnoreSync)
                 return;
@@ -86,7 +79,7 @@ namespace Mirror.Components.Experimental
             target.velocity = newValue;
         }
 
-        private void OnAngularVelocityChanged(Vector3 _, Vector3 newValue)
+        void OnAngularVelocityChanged(Vector3 _, Vector3 newValue)
         {
             if (IgnoreSync)
                 return;
@@ -94,7 +87,7 @@ namespace Mirror.Components.Experimental
             target.angularVelocity = newValue;
         }
 
-        private void OnIsKinematicChanged(bool _, bool newValue)
+        void OnIsKinematicChanged(bool _, bool newValue)
         {
             if (IgnoreSync)
                 return;
@@ -102,7 +95,7 @@ namespace Mirror.Components.Experimental
             target.isKinematic = newValue;
         }
 
-        private void OnUseGravityChanged(bool _, bool newValue)
+        void OnUseGravityChanged(bool _, bool newValue)
         {
             if (IgnoreSync)
                 return;
@@ -110,7 +103,7 @@ namespace Mirror.Components.Experimental
             target.useGravity = newValue;
         }
 
-        private void OnuDragChanged(float _, float newValue)
+        void OnuDragChanged(float _, float newValue)
         {
             if (IgnoreSync)
                 return;
@@ -118,7 +111,7 @@ namespace Mirror.Components.Experimental
             target.drag = newValue;
         }
 
-        private void OnAngularDragChanged(float _, float newValue)
+        void OnAngularDragChanged(float _, float newValue)
         {
             if (IgnoreSync)
                 return;
@@ -149,7 +142,7 @@ namespace Mirror.Components.Experimental
         /// Updates sync var values on server so that they sync to the client
         /// </summary>
         [Server]
-        private void SyncToClients()
+        void SyncToClients()
         {
             // only update if they have changed more than Sensitivity
 
@@ -182,7 +175,7 @@ namespace Mirror.Components.Experimental
         /// Uses Command to send values to server
         /// </summary>
         [Client]
-        private void SendToServer()
+        void SendToServer()
         {
             if (!isOwned)
             {
@@ -195,7 +188,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Client]
-        private void SendVelocity()
+        void SendVelocity()
         {
             double now = NetworkTime.localTime; // Unity 2019 doesn't have Time.timeAsDouble yet
             if (now < previousValue.nextSyncTime)
@@ -228,7 +221,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Client]
-        private void SendRigidBodySettings()
+        void SendRigidBodySettings()
         {
             // These shouldn't change often so it is ok to send in their own Command
             if (previousValue.isKinematic != target.isKinematic)
@@ -257,7 +250,7 @@ namespace Mirror.Components.Experimental
         /// Called when only Velocity has changed on the client
         /// </summary>
         [Command]
-        private void CmdSendVelocity(Vector3 velocity)
+        void CmdSendVelocity(Vector3 velocity)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -271,7 +264,7 @@ namespace Mirror.Components.Experimental
         /// Called when angularVelocity has changed on the client
         /// </summary>
         [Command]
-        private void CmdSendVelocityAndAngular(Vector3 velocity, Vector3 angularVelocity)
+        void CmdSendVelocityAndAngular(Vector3 velocity, Vector3 angularVelocity)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -288,7 +281,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Command]
-        private void CmdSendIsKinematic(bool isKinematic)
+        void CmdSendIsKinematic(bool isKinematic)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -299,7 +292,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Command]
-        private void CmdSendUseGravity(bool useGravity)
+        void CmdSendUseGravity(bool useGravity)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -310,7 +303,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Command]
-        private void CmdSendDrag(float drag)
+        void CmdSendDrag(float drag)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -321,7 +314,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Command]
-        private void CmdSendAngularDrag(float angularDrag)
+        void CmdSendAngularDrag(float angularDrag)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)

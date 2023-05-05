@@ -1,4 +1,4 @@
-using Mirror.Core;
+using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

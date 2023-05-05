@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mirror.Core.SnapshotInterpolation;
-using Mirror.Core.Tools;
+using Mirror.RemoteCalls;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Mirror.Core
+namespace Mirror
 {
     /// <summary>NetworkServer handles remote connections and has a local connection for a local client.</summary>
     public static partial class NetworkServer
     {
-        private static bool initialized;
+        static bool initialized;
         public static int maxConnections;
 
         /// <summary>Server Update frequency, per second. Use around 60Hz for fast paced games like Counter-Strike to minimize latency. Use around 30Hz for games like WoW to minimize computations. Use around 1-10Hz for slow paced games like EVE.</summary>
@@ -32,7 +30,7 @@ namespace Mirror.Core
         // however, both need to be on the same send interval.
         public static int sendRate => tickRate;
         public static float sendInterval => sendRate < int.MaxValue ? 1f / sendRate : 0; // for 30 Hz, that's 33ms
-        private static double lastSendTime;
+        static double lastSendTime;
 
         /// <summary>Connection to host mode client (if any)</summary>
         public static LocalConnectionToClient localConnection { get; private set; }
@@ -86,8 +84,8 @@ namespace Mirror.Core
         // very useful for profiling etc.
         // measured over 1s each, same as frame rate. no EMA here.
         public static int actualTickRate;
-        private static double actualTickRateStart;   // start time when counting
-        private static int actualTickRateCounter; // current counter since start
+        static double actualTickRateStart;   // start time when counting
+        static int actualTickRateCounter; // current counter since start
 
         // profiling
         // includes transport update time, because transport calls handlers etc.
@@ -116,7 +114,7 @@ namespace Mirror.Core
         }
 
         // initialization / shutdown ///////////////////////////////////////////
-        private static void Initialize()
+        static void Initialize()
         {
             if (initialized)
                 return;
@@ -144,7 +142,7 @@ namespace Mirror.Core
             fullUpdateDuration = new TimeSample(sendRate);
         }
 
-        private static void AddTransportHandlers()
+        static void AddTransportHandlers()
         {
             // += so that other systems can also hook into it (i.e. statistics)
             Transport.active.OnServerConnected += OnTransportConnected;
@@ -214,7 +212,7 @@ namespace Mirror.Core
             if (aoi != null) aoi.Reset();
         }
 
-        private static void RemoveTransportHandlers()
+        static void RemoveTransportHandlers()
         {
             // -= so that other systems can also hook into it (i.e. statistics)
             Transport.active.OnServerConnected -= OnTransportConnected;
@@ -224,7 +222,7 @@ namespace Mirror.Core
         }
 
         // Note: NetworkClient.DestroyAllClientObjects does the same on client.
-        private static void CleanupSpawned()
+        static void CleanupSpawned()
         {
             // iterate a COPY of spawned.
             // DestroyObject removes them from the original collection.
@@ -267,13 +265,13 @@ namespace Mirror.Core
         // Handle command from specific player, this could be one of multiple
         // players on a single client
         // default ready handler.
-        private static void OnClientReadyMessage(NetworkConnectionToClient conn, ReadyMessage msg)
+        static void OnClientReadyMessage(NetworkConnectionToClient conn, ReadyMessage msg)
         {
             // Debug.Log($"Default handler for ready message from {conn}");
             SetClientReady(conn);
         }
 
-        private static void OnCommandMessage(NetworkConnectionToClient conn, CommandMessage msg, int channelId)
+        static void OnCommandMessage(NetworkConnectionToClient conn, CommandMessage msg, int channelId)
         {
             if (!conn.isReady)
             {
@@ -314,7 +312,7 @@ namespace Mirror.Core
 
         // client to server broadcast //////////////////////////////////////////
         // for client's owned ClientToServer components.
-        private static void OnEntityStateMessage(NetworkConnectionToClient connection, EntityStateMessage message)
+        static void OnEntityStateMessage(NetworkConnectionToClient connection, EntityStateMessage message)
         {
             // need to validate permissions carefully.
             // an attacker may attempt to modify a not-owned or not-ClientToServer component.
@@ -351,7 +349,7 @@ namespace Mirror.Core
         // batching already includes the remoteTimestamp.
         // we simply insert it on-message here.
         // => only for reliable channel. unreliable would always arrive earlier.
-        private static void OnTimeSnapshotMessage(NetworkConnectionToClient connection, TimeSnapshotMessage _)
+        static void OnTimeSnapshotMessage(NetworkConnectionToClient connection, TimeSnapshotMessage _)
         {
             // insert another snapshot for snapshot interpolation.
             // before calling OnDeserialize so components can use
@@ -475,7 +473,7 @@ namespace Mirror.Core
 
         // this is like SendToReadyObservers - but it doesn't check the ready flag on the connection.
         // this is used for ObjectDestroy messages.
-        private static void SendToObservers<T>(NetworkIdentity identity, T message, int channelId = Channels.Reliable)
+        static void SendToObservers<T>(NetworkIdentity identity, T message, int channelId = Channels.Reliable)
             where T : struct, NetworkMessage
         {
             // Debug.Log($"Server.SendToObservers {typeof(T)}");
@@ -537,7 +535,7 @@ namespace Mirror.Core
 
         // transport events ////////////////////////////////////////////////////
         // called by transport
-        private static void OnTransportConnected(int connectionId)
+        static void OnTransportConnected(int connectionId)
         {
             // Debug.Log($"Server accepted client:{connectionId}");
 
@@ -587,7 +585,7 @@ namespace Mirror.Core
             OnConnectedEvent?.Invoke(conn);
         }
 
-        private static bool UnpackAndInvoke(NetworkConnectionToClient connection, NetworkReader reader, int channelId)
+        static bool UnpackAndInvoke(NetworkConnectionToClient connection, NetworkReader reader, int channelId)
         {
             if (NetworkMessages.UnpackId(reader, out ushort msgType))
             {
@@ -735,7 +733,7 @@ namespace Mirror.Core
         }
 
         // transport errors are forwarded to high level
-        private static void OnTransportError(int connectionId, TransportError error, string reason)
+        static void OnTransportError(int connectionId, TransportError error, string reason)
         {
             // transport errors will happen. logging a warning is enough.
             // make sure the user does not panic.
@@ -1039,7 +1037,7 @@ namespace Mirror.Core
                 SpawnObserversForConnection(conn);
         }
 
-        private static void SpawnObserversForConnection(NetworkConnectionToClient conn)
+        static void SpawnObserversForConnection(NetworkConnectionToClient conn)
         {
             //Debug.Log($"Spawning {spawned.Count} objects for conn {conn}");
 
@@ -1174,7 +1172,7 @@ namespace Mirror.Core
             }
         }
 
-        private static ArraySegment<byte> CreateSpawnMessagePayload(bool isOwner, NetworkIdentity identity, NetworkWriterPooled ownerWriter, NetworkWriterPooled observersWriter)
+        static ArraySegment<byte> CreateSpawnMessagePayload(bool isOwner, NetworkIdentity identity, NetworkWriterPooled ownerWriter, NetworkWriterPooled observersWriter)
         {
             // Only call SerializeAll if there are NetworkBehaviours
             if (identity.NetworkBehaviours.Length == 0)
@@ -1226,7 +1224,7 @@ namespace Mirror.Core
         //
         // fixes: https://github.com/MirrorNetworking/Mirror/issues/3330
         //        https://github.com/vis2k/Mirror/issues/2778
-        private static bool ValidParent(NetworkIdentity identity) =>
+        static bool ValidParent(NetworkIdentity identity) =>
             identity.transform.parent == null ||
             identity.transform.parent.gameObject.activeInHierarchy;
 
@@ -1300,7 +1298,7 @@ namespace Mirror.Core
             Spawn(obj, identity.connectionToClient);
         }
 
-        private static void Respawn(NetworkIdentity identity)
+        static void Respawn(NetworkIdentity identity)
         {
             if (identity.netId == 0)
             {
@@ -1333,7 +1331,7 @@ namespace Mirror.Core
             SpawnObject(obj, ownerConnection);
         }
 
-        private static void SpawnObject(GameObject obj, NetworkConnection ownerConnection)
+        static void SpawnObject(GameObject obj, NetworkConnection ownerConnection)
         {
             // verify if we can spawn this
             if (Utils.IsPrefab(obj))
@@ -1428,7 +1426,7 @@ namespace Mirror.Core
         // sometimes we want to GameObject.Destroy it.
         // sometimes we want to just unspawn on clients and .Reset() it on server.
         // => 'bool destroy' isn't obvious enough. it's really destroy OR reset!
-        private enum DestroyMode { Destroy, Reset }
+        enum DestroyMode { Destroy, Reset }
 
         /// <summary>Destroys this object and corresponding objects on all clients.</summary>
         // In some cases it is useful to remove an object but not delete it on
@@ -1436,7 +1434,7 @@ namespace Mirror.Core
         // NetworkServer.Destroy().
         public static void Destroy(GameObject obj) => DestroyObject(obj, DestroyMode.Destroy);
 
-        private static void DestroyObject(GameObject obj, DestroyMode mode)
+        static void DestroyObject(GameObject obj, DestroyMode mode)
         {
             if (obj == null)
             {
@@ -1450,7 +1448,7 @@ namespace Mirror.Core
             }
         }
 
-        private static void DestroyObject(NetworkIdentity identity, DestroyMode mode)
+        static void DestroyObject(NetworkIdentity identity, DestroyMode mode)
         {
             // Debug.Log($"DestroyObject instance:{identity.netId}");
 
@@ -1517,7 +1515,7 @@ namespace Mirror.Core
                 // Destroy can't be used in Editor during tests. use DestroyImmediate.
                 else
                 {
-                    Object.DestroyImmediate(identity.gameObject);
+                    GameObject.DestroyImmediate(identity.gameObject);
                 }
             }
             // otherwise simply .Reset() and set inactive again
@@ -1533,7 +1531,7 @@ namespace Mirror.Core
         // This is used if none of the components provides their own
         // OnRebuildObservers function.
         // rebuild observers default method (no AOI) - adds all connections
-        private static void RebuildObserversDefault(NetworkIdentity identity, bool initialize)
+        static void RebuildObserversDefault(NetworkIdentity identity, bool initialize)
         {
             // only add all connections when rebuilding the first time.
             // second time we just keep them without rebuilding anything.
@@ -1597,7 +1595,7 @@ namespace Mirror.Core
 
         // broadcasting ////////////////////////////////////////////////////////
         // helper function to get the right serialization for a connection
-        private static NetworkWriter SerializeForConnection(NetworkIdentity identity, NetworkConnectionToClient connection)
+        static NetworkWriter SerializeForConnection(NetworkIdentity identity, NetworkConnectionToClient connection)
         {
             // get serialization for this entity (cached)
             // IMPORTANT: int tick avoids floating point inaccuracy over days/weeks
@@ -1627,7 +1625,7 @@ namespace Mirror.Core
         }
 
         // helper function to broadcast the world to a connection
-        private static void BroadcastToConnection(NetworkConnectionToClient connection)
+        static void BroadcastToConnection(NetworkConnectionToClient connection)
         {
             // for each entity that this connection is seeing
             foreach (NetworkIdentity identity in connection.observing)
@@ -1665,7 +1663,7 @@ namespace Mirror.Core
         internal static readonly List<NetworkConnectionToClient> connectionsCopy =
             new List<NetworkConnectionToClient>();
 
-        private static void Broadcast()
+        static void Broadcast()
         {
             // copy all connections into a helper collection so that
             // OnTransportDisconnected can be called while iterating.

@@ -1,6 +1,6 @@
 using Gameplay.Components;
 using Gameplay.Components.Input;
-using Mirror.Core;
+using Mirror;
 using UnityEngine;
 
 

@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components.Experimental
+namespace Mirror.Experimental
 {
     [AddComponentMenu("Network/ Experimental/Network Lerp Rigidbody")]
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-lerp-rigidbody")]
@@ -11,37 +10,36 @@ namespace Mirror.Components.Experimental
         [SerializeField] internal Rigidbody target = null;
 
         [Tooltip("How quickly current velocity approaches target velocity")]
-        [SerializeField]
-        private float lerpVelocityAmount = 0.5f;
+        [SerializeField] float lerpVelocityAmount = 0.5f;
 
         [Tooltip("How quickly current position approaches target position")]
-        [SerializeField]
-        private float lerpPositionAmount = 0.5f;
+        [SerializeField] float lerpPositionAmount = 0.5f;
 
         [Tooltip("Set to true if moves come from owner client, set to false if moves always come from server")]
-        [SerializeField]
-        private bool clientAuthority = false;
+        [SerializeField] bool clientAuthority = false;
 
-        private double nextSyncTime;
+        double nextSyncTime;
 
-        [SyncVar()] private Vector3 targetVelocity;
+        [SyncVar()]
+        Vector3 targetVelocity;
 
-        [SyncVar()] private Vector3 targetPosition;
+        [SyncVar()]
+        Vector3 targetPosition;
 
         /// <summary>
         /// Ignore value if is host or client with Authority
         /// </summary>
-        private bool IgnoreSync => isServer || ClientWithAuthority;
+        bool IgnoreSync => isServer || ClientWithAuthority;
 
-        private bool ClientWithAuthority => clientAuthority && isOwned;
+        bool ClientWithAuthority => clientAuthority && isOwned;
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (target == null)
                 target = GetComponent<Rigidbody>();
         }
 
-        private void Update()
+        void Update()
         {
             if (isServer)
                 SyncToClients();
@@ -49,13 +47,13 @@ namespace Mirror.Components.Experimental
                 SendToServer();
         }
 
-        private void SyncToClients()
+        void SyncToClients()
         {
             targetVelocity = target.velocity;
             targetPosition = target.position;
         }
 
-        private void SendToServer()
+        void SendToServer()
         {
             double now = NetworkTime.localTime; // Unity 2019 doesn't have Time.timeAsDouble yet
             if (now > nextSyncTime)
@@ -66,7 +64,7 @@ namespace Mirror.Components.Experimental
         }
 
         [Command]
-        private void CmdSendState(Vector3 velocity, Vector3 position)
+        void CmdSendState(Vector3 velocity, Vector3 position)
         {
             target.velocity = velocity;
             target.position = position;
@@ -74,7 +72,7 @@ namespace Mirror.Components.Experimental
             targetPosition = position;
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             if (IgnoreSync) { return; }
 

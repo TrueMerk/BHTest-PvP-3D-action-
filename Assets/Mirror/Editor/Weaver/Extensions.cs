@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mirror.Core;
 using Mono.CecilX;
 
-namespace Mirror.Editor.Weaver
+namespace Mirror.Weaver
 {
     public static class Extensions
     {
@@ -322,7 +321,7 @@ namespace Mirror.Editor.Weaver
         // Finds the type reference for a generic parameter with the provided name in the child reference
         // Originally by James-Frowen under MIT
         // https://github.com/MirageNet/Mirage/commit/cf91e1d54796866d2cf87f8e919bb5c681977e45
-        private static TypeReference FindMatchingGenericArgument(TypeReference childReference, string paramName)
+        static TypeReference FindMatchingGenericArgument(TypeReference childReference, string paramName)
         {
             TypeDefinition def = childReference.Resolve();
             // child class must be generic if we are in this part of the code

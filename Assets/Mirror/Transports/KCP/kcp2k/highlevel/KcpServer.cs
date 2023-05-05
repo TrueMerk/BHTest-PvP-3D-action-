@@ -1,13 +1,12 @@
 // kcp server logic abstracted into a class.
 // for use in Mirror, DOTSNET, testing, etc.
-
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
-namespace Mirror.Transports.KCP.kcp2k.highlevel
+namespace kcp2k
 {
     public class KcpServer
     {
@@ -29,7 +28,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // state
         protected Socket socket;
-        private EndPoint newClientEP;
+        EndPoint newClientEP;
 
         // raw receive buffer always needs to be of 'MTU' size, even if
         // MaxMessageSize is larger. kcp always sends in MTU segments and having
@@ -65,7 +64,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         public virtual bool IsActive() => socket != null;
 
-        private static Socket CreateServerSocket(bool DualMode, ushort port)
+        static Socket CreateServerSocket(bool DualMode, ushort port)
         {
             if (DualMode)
             {
@@ -271,7 +270,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // receive + add + process once.
         // best to call this as long as there is more data to receive.
-        private void ProcessMessage(ArraySegment<byte> segment, int connectionId)
+        void ProcessMessage(ArraySegment<byte> segment, int connectionId)
         {
             //Log.Info($"KCP: server raw recv {msgLength} bytes = {BitConverter.ToString(buffer, 0, msgLength)}");
 
@@ -321,7 +320,7 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
 
         // process incoming messages. should be called before updating the world.
         // virtual because relay may need to inject their own ping or similar.
-        private readonly HashSet<int> connectionsToRemove = new HashSet<int>();
+        readonly HashSet<int> connectionsToRemove = new HashSet<int>();
         public virtual void TickIncoming()
         {
             // input all received messages into kcp

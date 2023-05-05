@@ -1,5 +1,5 @@
 using System.Collections;
-using Mirror.Core;
+using Mirror;
 using UnityEngine;
 
 namespace Multiplayer

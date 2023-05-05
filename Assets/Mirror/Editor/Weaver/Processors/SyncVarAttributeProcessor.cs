@@ -1,26 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mirror.Core;
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 using Mono.CecilX.Rocks;
 
-namespace Mirror.Editor.Weaver.Processors
+namespace Mirror.Weaver
 {
     // Processes [SyncVar] attribute fields in NetworkBehaviour
     // not static, because ILPostProcessor is multithreaded
     public class SyncVarAttributeProcessor
     {
         // ulong = 64 bytes
-        private const int SyncVarLimit = 64;
+        const int SyncVarLimit = 64;
 
-        private AssemblyDefinition assembly;
-        private WeaverTypes weaverTypes;
-        private SyncVarAccessLists syncVarAccessLists;
-        private Logger Log;
+        AssemblyDefinition assembly;
+        WeaverTypes weaverTypes;
+        SyncVarAccessLists syncVarAccessLists;
+        Logger Log;
 
-        private string HookParameterMessage(string hookName, TypeReference ValueType) =>
+        string HookParameterMessage(string hookName, TypeReference ValueType) =>
             $"void {hookName}({ValueType} oldValue, {ValueType} newValue)";
 
         public SyncVarAttributeProcessor(AssemblyDefinition assembly, WeaverTypes weaverTypes, SyncVarAccessLists syncVarAccessLists, Logger Log)
@@ -105,7 +104,7 @@ namespace Mirror.Editor.Weaver.Processors
             worker.Emit(OpCodes.Newobj, weaverTypes.ActionT_T.MakeHostInstanceGeneric(assembly.MainModule, genericInstance));
         }
 
-        private MethodDefinition FindHookMethod(TypeDefinition td, FieldDefinition syncVar, string hookFunctionName, ref bool WeavingFailed)
+        MethodDefinition FindHookMethod(TypeDefinition td, FieldDefinition syncVar, string hookFunctionName, ref bool WeavingFailed)
         {
             List<MethodDefinition> methods = td.GetMethods(hookFunctionName);
 
@@ -137,7 +136,7 @@ namespace Mirror.Editor.Weaver.Processors
             return null;
         }
 
-        private bool MatchesParameters(FieldDefinition syncVar, MethodDefinition method)
+        bool MatchesParameters(FieldDefinition syncVar, MethodDefinition method)
         {
             // matches void onValueChange(T oldValue, T newValue)
             return method.Parameters[0].ParameterType.FullName == syncVar.FieldType.FullName &&

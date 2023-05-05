@@ -1,9 +1,8 @@
 using System.Linq;
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Mirror.Components
+namespace Mirror
 {
     /// <summary>
     /// A component to synchronize Mecanim animation states for networked objects.
@@ -35,23 +34,22 @@ namespace Mirror.Components
         /// Syncs animator.speed
         /// </summary>
         [SyncVar(hook = nameof(OnAnimatorSpeedChanged))]
-        private float animatorSpeed;
-
-        private float previousSpeed;
+        float animatorSpeed;
+        float previousSpeed;
 
         // Note: not an object[] array because otherwise initialization is real annoying
-        private int[] lastIntParameters;
-        private float[] lastFloatParameters;
-        private bool[] lastBoolParameters;
-        private AnimatorControllerParameter[] parameters;
+        int[] lastIntParameters;
+        float[] lastFloatParameters;
+        bool[] lastBoolParameters;
+        AnimatorControllerParameter[] parameters;
 
         // multiple layers
-        private int[] animationHash;
-        private int[] transitionHash;
-        private float[] layerWeight;
-        private double nextSendTime;
+        int[] animationHash;
+        int[] transitionHash;
+        float[] layerWeight;
+        double nextSendTime;
 
-        private bool SendMessagesAllowed
+        bool SendMessagesAllowed
         {
             get
             {
@@ -73,7 +71,7 @@ namespace Mirror.Components
             }
         }
 
-        private void Awake()
+        void Awake()
         {
             // store the animator parameters in a variable - the "Animator.parameters" getter allocates
             // a new parameter array every time it is accessed so we should avoid doing it in a loop
@@ -89,7 +87,7 @@ namespace Mirror.Components
             layerWeight = new float[animator.layerCount];
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             if (!SendMessagesAllowed)
                 return;
@@ -118,7 +116,7 @@ namespace Mirror.Components
             CheckSpeed();
         }
 
-        private void CheckSpeed()
+        void CheckSpeed()
         {
             float newSpeed = animator.speed;
             if (Mathf.Abs(previousSpeed - newSpeed) > 0.001f)
@@ -135,7 +133,7 @@ namespace Mirror.Components
             }
         }
 
-        private void OnAnimatorSpeedChanged(float _, float value)
+        void OnAnimatorSpeedChanged(float _, float value)
         {
             // skip if host or client with authority
             // they will have already set the speed so don't set again
@@ -145,7 +143,7 @@ namespace Mirror.Components
             animator.speed = value;
         }
 
-        private bool CheckAnimStateChanged(out int stateHash, out float normalizedTime, int layerId)
+        bool CheckAnimStateChanged(out int stateHash, out float normalizedTime, int layerId)
         {
             bool change = false;
             stateHash = 0;
@@ -188,7 +186,7 @@ namespace Mirror.Components
             return change;
         }
 
-        private void CheckSendRate()
+        void CheckSendRate()
         {
             double now = NetworkTime.localTime;
             if (SendMessagesAllowed && syncInterval >= 0 && now > nextSendTime)
@@ -203,7 +201,7 @@ namespace Mirror.Components
             }
         }
 
-        private void SendAnimationMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
+        void SendAnimationMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
         {
             if (isServer)
             {
@@ -215,7 +213,7 @@ namespace Mirror.Components
             }
         }
 
-        private void SendAnimationParametersMessage(byte[] parameters)
+        void SendAnimationParametersMessage(byte[] parameters)
         {
             if (isServer)
             {
@@ -227,7 +225,7 @@ namespace Mirror.Components
             }
         }
 
-        private void HandleAnimMsg(int stateHash, float normalizedTime, int layerId, float weight, NetworkReader reader)
+        void HandleAnimMsg(int stateHash, float normalizedTime, int layerId, float weight, NetworkReader reader)
         {
             if (isOwned && clientAuthority)
                 return;
@@ -245,7 +243,7 @@ namespace Mirror.Components
             ReadParameters(reader);
         }
 
-        private void HandleAnimParamsMsg(NetworkReader reader)
+        void HandleAnimParamsMsg(NetworkReader reader)
         {
             if (isOwned && clientAuthority)
                 return;
@@ -253,19 +251,19 @@ namespace Mirror.Components
             ReadParameters(reader);
         }
 
-        private void HandleAnimTriggerMsg(int hash)
+        void HandleAnimTriggerMsg(int hash)
         {
             if (animator.enabled)
                 animator.SetTrigger(hash);
         }
 
-        private void HandleAnimResetTriggerMsg(int hash)
+        void HandleAnimResetTriggerMsg(int hash)
         {
             if (animator.enabled)
                 animator.ResetTrigger(hash);
         }
 
-        private ulong NextDirtyBits()
+        ulong NextDirtyBits()
         {
             ulong dirtyBits = 0;
             for (int i = 0; i < parameters.Length; i++)
@@ -302,7 +300,7 @@ namespace Mirror.Components
             return dirtyBits;
         }
 
-        private bool WriteParameters(NetworkWriter writer, bool forceAll = false)
+        bool WriteParameters(NetworkWriter writer, bool forceAll = false)
         {
             ulong dirtyBits = forceAll ? (~0ul) : NextDirtyBits();
             writer.WriteULong(dirtyBits);
@@ -331,7 +329,7 @@ namespace Mirror.Components
             return dirtyBits != 0;
         }
 
-        private void ReadParameters(NetworkReader reader)
+        void ReadParameters(NetworkReader reader)
         {
             bool animatorEnabled = animator.enabled;
             // need to read values from NetworkReader even if animator is disabled
@@ -505,7 +503,7 @@ namespace Mirror.Components
         #region server message handlers
 
         [Command]
-        private void CmdOnAnimationServerMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
+        void CmdOnAnimationServerMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -522,7 +520,7 @@ namespace Mirror.Components
         }
 
         [Command]
-        private void CmdOnAnimationParametersServerMessage(byte[] parameters)
+        void CmdOnAnimationParametersServerMessage(byte[] parameters)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -537,7 +535,7 @@ namespace Mirror.Components
         }
 
         [Command]
-        private void CmdOnAnimationTriggerServerMessage(int hash)
+        void CmdOnAnimationTriggerServerMessage(int hash)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -555,7 +553,7 @@ namespace Mirror.Components
         }
 
         [Command]
-        private void CmdOnAnimationResetTriggerServerMessage(int hash)
+        void CmdOnAnimationResetTriggerServerMessage(int hash)
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -573,7 +571,7 @@ namespace Mirror.Components
         }
 
         [Command]
-        private void CmdSetAnimatorSpeed(float newSpeed)
+        void CmdSetAnimatorSpeed(float newSpeed)
         {
             // set animator
             animator.speed = newSpeed;
@@ -585,21 +583,21 @@ namespace Mirror.Components
         #region client message handlers
 
         [ClientRpc]
-        private void RpcOnAnimationClientMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
+        void RpcOnAnimationClientMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
         {
             using (NetworkReaderPooled networkReader = NetworkReaderPool.Get(parameters))
                 HandleAnimMsg(stateHash, normalizedTime, layerId, weight, networkReader);
         }
 
         [ClientRpc]
-        private void RpcOnAnimationParametersClientMessage(byte[] parameters)
+        void RpcOnAnimationParametersClientMessage(byte[] parameters)
         {
             using (NetworkReaderPooled networkReader = NetworkReaderPool.Get(parameters))
                 HandleAnimParamsMsg(networkReader);
         }
 
         [ClientRpc]
-        private void RpcOnAnimationTriggerClientMessage(int hash)
+        void RpcOnAnimationTriggerClientMessage(int hash)
         {
             // host/owner handles this before it is sent
             if (isServer || (clientAuthority && isOwned)) return;
@@ -608,7 +606,7 @@ namespace Mirror.Components
         }
 
         [ClientRpc]
-        private void RpcOnAnimationResetTriggerClientMessage(int hash)
+        void RpcOnAnimationResetTriggerClientMessage(int hash)
         {
             // host/owner handles this before it is sent
             if (isServer || (clientAuthority && isOwned)) return;

@@ -4,9 +4,8 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Common;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
+namespace Mirror.SimpleWeb
 {
     public struct SslConfig
     {
@@ -25,8 +24,8 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
     }
     internal class ServerSslHelper
     {
-        private readonly SslConfig config;
-        private readonly X509Certificate2 certificate;
+        readonly SslConfig config;
+        readonly X509Certificate2 certificate;
 
         public ServerSslHelper(SslConfig sslConfig)
         {
@@ -69,7 +68,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             }
         }
 
-        private Stream CreateStream(NetworkStream stream)
+        Stream CreateStream(NetworkStream stream)
         {
             SslStream sslStream = new SslStream(stream, true, acceptClient);
             sslStream.AuthenticateAsServer(certificate, false, config.sslProtocols, false);
@@ -78,6 +77,6 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
         }
 
         // always accept client
-        private bool acceptClient(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => true;
+        bool acceptClient(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => true;
     }
 }

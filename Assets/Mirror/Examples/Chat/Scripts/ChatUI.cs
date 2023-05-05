@@ -1,19 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Mirror.Examples.Chat.Scripts
+namespace Mirror.Examples.Chat
 {
     public class ChatUI : NetworkBehaviour
     {
         [Header("UI Elements")]
-        [SerializeField]
-        private Text chatHistory;
-        [SerializeField] private Scrollbar scrollbar;
-        [SerializeField] private InputField chatMessage;
-        [SerializeField] private Button sendButton;
+        [SerializeField] Text chatHistory;
+        [SerializeField] Scrollbar scrollbar;
+        [SerializeField] InputField chatMessage;
+        [SerializeField] Button sendButton;
 
         // This is only set on client to the name of the local player
         internal static string localPlayerName;
@@ -32,7 +30,7 @@ namespace Mirror.Examples.Chat.Scripts
         }
 
         [Command(requiresAuthority = false)]
-        private void CmdSend(string message, NetworkConnectionToClient sender = null)
+        void CmdSend(string message, NetworkConnectionToClient sender = null)
         {
             if (!connNames.ContainsKey(sender))
                 connNames.Add(sender, sender.identity.GetComponent<Player>().playerName);
@@ -42,7 +40,7 @@ namespace Mirror.Examples.Chat.Scripts
         }
 
         [ClientRpc]
-        private void RpcReceive(string playerName, string message)
+        void RpcReceive(string playerName, string message)
         {
             string prettyMessage = playerName == localPlayerName ?
                 $"<color=red>{playerName}:</color> {message}" :
@@ -50,12 +48,12 @@ namespace Mirror.Examples.Chat.Scripts
             AppendMessage(prettyMessage);
         }
 
-        private void AppendMessage(string message)
+        void AppendMessage(string message)
         {
             StartCoroutine(AppendAndScroll(message));
         }
 
-        private IEnumerator AppendAndScroll(string message)
+        IEnumerator AppendAndScroll(string message)
         {
             chatHistory.text += message + "\n";
 

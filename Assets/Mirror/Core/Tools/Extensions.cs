@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Mirror.Core.Tools
+namespace Mirror
 {
     public static class Extensions
     {

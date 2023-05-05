@@ -1,16 +1,14 @@
 // helper class for NetworkBehaviourInspector to draw all enumerable SyncObjects
 // (SyncList/Set/Dictionary)
 // 'SyncObjectCollectionsDrawer' is a nicer name than 'IEnumerableSyncObjectsDrawer'
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Mirror.Core;
 using UnityEditor;
 
-namespace Mirror.Editor
+namespace Mirror
 {
-    internal class SyncObjectCollectionField
+    class SyncObjectCollectionField
     {
         public bool visible;
         public readonly FieldInfo field;
@@ -26,8 +24,8 @@ namespace Mirror.Editor
 
     public class SyncObjectCollectionsDrawer
     {
-        private readonly UnityEngine.Object targetObject;
-        private readonly List<SyncObjectCollectionField> syncObjectCollectionFields;
+        readonly UnityEngine.Object targetObject;
+        readonly List<SyncObjectCollectionField> syncObjectCollectionFields;
 
         public SyncObjectCollectionsDrawer(UnityEngine.Object targetObject)
         {
@@ -58,7 +56,7 @@ namespace Mirror.Editor
             }
         }
 
-        private void DrawSyncObjectCollection(SyncObjectCollectionField syncObjectCollectionField)
+        void DrawSyncObjectCollection(SyncObjectCollectionField syncObjectCollectionField)
         {
             syncObjectCollectionField.visible = EditorGUILayout.Foldout(syncObjectCollectionField.visible, syncObjectCollectionField.label);
             if (syncObjectCollectionField.visible)

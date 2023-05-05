@@ -1,5 +1,4 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Mirror.Examples.CCU
 {
@@ -9,13 +8,13 @@ namespace Mirror.Examples.CCU
         public float movementProbability = 0.5f;
         public float movementDistance = 20;
 
-        private bool moving;
-        private Vector3 start;
-        private Vector3 destination;
+        bool moving;
+        Vector3 start;
+        Vector3 destination;
 
         // cache .transform for benchmark demo.
         // Component.get_transform shows in profiler otherwise.
-        private Transform tf;
+        Transform tf;
 
         public override void OnStartServer()
         {
@@ -24,7 +23,7 @@ namespace Mirror.Examples.CCU
         }
 
         [ServerCallback]
-        private void Update()
+        void Update()
         {
             if (moving)
             {

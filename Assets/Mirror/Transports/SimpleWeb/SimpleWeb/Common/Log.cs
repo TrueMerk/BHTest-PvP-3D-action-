@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using Conditional = System.Diagnostics.ConditionalAttribute;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
+namespace Mirror.SimpleWeb
 {
     public static class Log
     {
         // used for Conditional
-        private const string SIMPLEWEB_LOG_ENABLED = nameof(SIMPLEWEB_LOG_ENABLED);
-        private const string DEBUG = nameof(DEBUG);
+        const string SIMPLEWEB_LOG_ENABLED = nameof(SIMPLEWEB_LOG_ENABLED);
+        const string DEBUG = nameof(DEBUG);
 
         public enum Levels
         {

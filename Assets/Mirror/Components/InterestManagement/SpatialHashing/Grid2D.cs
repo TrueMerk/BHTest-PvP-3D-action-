@@ -1,11 +1,10 @@
 // Grid2D from uMMORPG: get/set values of type T at any point
 // -> not named 'Grid' because Unity already has a Grid type. causes warnings.
 // -> struct to avoid memory indirection. it's accessed a lot.
-
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror.Components.InterestManagement.SpatialHashing
+namespace Mirror
 {
     // struct to avoid memory indirection. it's accessed a lot.
     public struct Grid2D<T>
@@ -19,10 +18,10 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
         // => makes the code a lot easier too
         // => this is FINE because in the worst case, every grid position in the
         //    game world is filled with a player anyway!
-        private readonly Dictionary<Vector2Int, HashSet<T>> grid;
+        readonly Dictionary<Vector2Int, HashSet<T>> grid;
 
         // cache a 9 neighbor grid of vector2 offsets so we can use them more easily
-        private readonly Vector2Int[] neighbourOffsets;
+        readonly Vector2Int[] neighbourOffsets;
 
         public Grid2D(int initialCapacity)
         {
@@ -67,7 +66,7 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
         // -> result is passed as parameter to avoid allocations
         // -> result is not cleared before. this allows us to pass the HashSet from
         //    GetWithNeighbours and avoid .UnionWith which is very expensive.
-        private void GetAt(Vector2Int position, HashSet<T> result)
+        void GetAt(Vector2Int position, HashSet<T> result)
         {
             // return the set at position
             if (grid.TryGetValue(position, out HashSet<T> hashSet))

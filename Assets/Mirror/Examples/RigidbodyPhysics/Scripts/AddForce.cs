@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.RigidbodyPhysics.Scripts
+namespace Mirror.Examples.RigidbodyPhysics
 {
     [RequireComponent(typeof(Rigidbody))]
     public class AddForce : NetworkBehaviour
@@ -9,7 +8,7 @@ namespace Mirror.Examples.RigidbodyPhysics.Scripts
         public Rigidbody rigidbody3d;
         public float force = 500f;
 
-        private void OnValidate()
+        void OnValidate()
         {
             rigidbody3d = GetComponent<Rigidbody>();
             rigidbody3d.isKinematic = true;
@@ -21,7 +20,7 @@ namespace Mirror.Examples.RigidbodyPhysics.Scripts
         }
 
         [ServerCallback]
-        private void Update()
+        void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
                 rigidbody3d.AddForce(Vector3.up * force);

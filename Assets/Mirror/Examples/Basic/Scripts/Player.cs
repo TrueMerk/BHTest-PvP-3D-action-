@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.Basic.Scripts
+namespace Mirror.Examples.Basic
 {
     public class Player : NetworkBehaviour
     {
@@ -12,13 +11,13 @@ namespace Mirror.Examples.Basic.Scripts
         public event System.Action<ushort> OnPlayerDataChanged;
 
         // Players List to manage playerNumber
-        private static readonly List<Player> playersList = new List<Player>();
+        static readonly List<Player> playersList = new List<Player>();
 
         [Header("Player UI")]
         public GameObject playerUIPrefab;
 
-        private GameObject playerUIObject;
-        private PlayerUI playerUI = null;
+        GameObject playerUIObject;
+        PlayerUI playerUI = null;
 
         #region SyncVars
 
@@ -43,19 +42,19 @@ namespace Mirror.Examples.Basic.Scripts
         public ushort playerData = 0;
 
         // This is called by the hook of playerNumber SyncVar above
-        private void PlayerNumberChanged(byte _, byte newPlayerNumber)
+        void PlayerNumberChanged(byte _, byte newPlayerNumber)
         {
             OnPlayerNumberChanged?.Invoke(newPlayerNumber);
         }
 
         // This is called by the hook of playerColor SyncVar above
-        private void PlayerColorChanged(Color32 _, Color32 newPlayerColor)
+        void PlayerColorChanged(Color32 _, Color32 newPlayerColor)
         {
             OnPlayerColorChanged?.Invoke(newPlayerColor);
         }
 
         // This is called by the hook of playerData SyncVar above
-        private void PlayerDataChanged(ushort _, ushort newPlayerData)
+        void PlayerDataChanged(ushort _, ushort newPlayerData)
         {
             OnPlayerDataChanged?.Invoke(newPlayerData);
         }
@@ -98,7 +97,7 @@ namespace Mirror.Examples.Basic.Scripts
 
         // This only runs on the server, called from OnStartServer via InvokeRepeating
         [ServerCallback]
-        private void UpdateData()
+        void UpdateData()
         {
             playerData = (ushort)Random.Range(100, 1000);
         }

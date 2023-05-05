@@ -1,10 +1,9 @@
 // Kcp based on https://github.com/skywind3000/kcp
 // Kept as close to original as possible.
-
 using System;
 using System.Collections.Generic;
 
-namespace Mirror.Transports.KCP.kcp2k.kcp
+namespace kcp2k
 {
     public class Kcp
     {
@@ -43,7 +42,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
 
         // kcp members.
         internal int state;
-        private readonly uint conv;          // conversation
+        readonly uint conv;          // conversation
         internal uint mtu;
         internal uint mss;           // maximum segment size := MTU - OVERHEAD
         internal uint snd_una;       // unacknowledged. e.g. snd_una is 9 it means 8 has been confirmed, 9 and 10 have been sent
@@ -84,14 +83,14 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         internal readonly List<AckItem> acklist = new List<AckItem>(16);
 
         internal byte[] buffer;
-        private readonly Action<byte[], int> output; // buffer, size
+        readonly Action<byte[], int> output; // buffer, size
 
         // get how many packet is waiting to be sent
         public int WaitSnd => snd_buf.Count + snd_queue.Count;
 
         // segment pool to avoid allocations in C#.
         // this is not part of the original C code.
-        private readonly Pool<Segment> SegmentPool = new Pool<Segment>(
+        readonly Pool<Segment> SegmentPool = new Pool<Segment>(
             // create new segment
             () => new Segment(),
             // reset segment before reuse
@@ -125,12 +124,12 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         // ikcp_segment_new
         // we keep the original function and add our pooling to it.
         // this way we'll never miss it anywhere.
-        private Segment SegmentNew() => SegmentPool.Take();
+        Segment SegmentNew() => SegmentPool.Take();
 
         // ikcp_segment_delete
         // we keep the original function and add our pooling to it.
         // this way we'll never miss it anywhere.
-        private void SegmentDelete(Segment seg) => SegmentPool.Return(seg);
+        void SegmentDelete(Segment seg) => SegmentPool.Return(seg);
 
         // ikcp_recv
         // receive data from kcp state machine
@@ -301,7 +300,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_update_ack
-        private void UpdateAck(int rtt) // round trip time
+        void UpdateAck(int rtt) // round trip time
         {
             // https://tools.ietf.org/html/rfc6298
             if (rx_srtt == 0)
@@ -360,7 +359,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_parse_una
-        private void ParseUna(uint una)
+        void ParseUna(uint una)
         {
             int removed = 0;
             foreach (Segment seg in snd_buf)
@@ -381,7 +380,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_parse_fastack
-        private void ParseFastack(uint sn, uint ts)
+        void ParseFastack(uint sn, uint ts)
         {
             if (Utils.TimeDiff(sn, snd_una) < 0 || Utils.TimeDiff(sn, snd_nxt) >= 0)
                 return;
@@ -406,13 +405,13 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
 
         // ikcp_ack_push
         // appends an ack.
-        private void AckPush(uint sn, uint ts)
+        void AckPush(uint sn, uint ts)
         {
             acklist.Add(new AckItem{ serialNumber = sn, timestamp = ts });
         }
 
         // ikcp_parse_data
-        private void ParseData(Segment newseg)
+        void ParseData(Segment newseg)
         {
             uint sn = newseg.sn;
 
@@ -469,7 +468,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // move available data from rcv_buf -> rcv_queue
-        private void MoveReceiveBufferDataToReceiveQueue()
+        void MoveReceiveBufferDataToReceiveQueue()
         {
             int removed = 0;
             foreach (Segment seg in rcv_buf)
@@ -656,7 +655,7 @@ namespace Mirror.Transports.KCP.kcp2k.kcp
         }
 
         // ikcp_wnd_unused
-        private uint WndUnused()
+        uint WndUnused()
         {
             if (rcv_queue.Count < rcv_wnd)
                 return rcv_wnd - (uint)rcv_queue.Count;

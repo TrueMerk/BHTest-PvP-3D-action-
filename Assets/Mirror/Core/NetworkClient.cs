@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mirror.Core.Batching;
-using Mirror.Core.Tools;
+using Mirror.RemoteCalls;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Mirror.Core
+namespace Mirror
 {
     public enum ConnectState
     {
@@ -33,7 +31,7 @@ namespace Mirror.Core
         // server.interval, etc.
         public static int sendRate => NetworkServer.sendRate;
         public static float sendInterval => sendRate < int.MaxValue ? 1f / sendRate : 0; // for 30 Hz, that's 33ms
-        private static double lastSendTime;
+        static double lastSendTime;
 
         // message handlers by messageId
         internal static readonly Dictionary<ushort, NetworkMessageDelegate> handlers =
@@ -109,7 +107,7 @@ namespace Mirror.Core
         internal static readonly Dictionary<ulong, NetworkIdentity> spawnableObjects =
             new Dictionary<ulong, NetworkIdentity>();
 
-        private static Unbatcher unbatcher = new Unbatcher();
+        static Unbatcher unbatcher = new Unbatcher();
 
         // interest management component (optional)
         // only needed for SetHostVisibility
@@ -119,7 +117,7 @@ namespace Mirror.Core
         public static bool isLoadingScene;
 
         // initialization //////////////////////////////////////////////////////
-        private static void AddTransportHandlers()
+        static void AddTransportHandlers()
         {
             // community Transports may forget to call OnDisconnected.
             // which could cause handlers to be added twice with +=.
@@ -134,7 +132,7 @@ namespace Mirror.Core
             Transport.active.OnClientError += OnTransportError;
         }
 
-        private static void RemoveTransportHandlers()
+        static void RemoveTransportHandlers()
         {
             // -= so that other systems can also hook into it (i.e. statistics)
             Transport.active.OnClientConnected -= OnTransportConnected;
@@ -145,7 +143,7 @@ namespace Mirror.Core
 
         // connect /////////////////////////////////////////////////////////////
         // initialize is called before every connect
-        private static void Initialize(bool hostMode)
+        static void Initialize(bool hostMode)
         {
             // Debug.Log($"Client Connect: {address}");
             Debug.Assert(Transport.active != null, "There was no active transport when calling NetworkClient.Connect, If you are calling Connect manually then make sure to set 'Transport.active' first");
@@ -222,7 +220,7 @@ namespace Mirror.Core
 
         // transport events ////////////////////////////////////////////////////
         // called by Transport
-        private static void OnTransportConnected()
+        static void OnTransportConnected()
         {
             if (connection != null)
             {
@@ -242,7 +240,7 @@ namespace Mirror.Core
         }
 
         // helper function
-        private static bool UnpackAndInvoke(NetworkReader reader, int channelId)
+        static bool UnpackAndInvoke(NetworkReader reader, int channelId)
         {
             if (NetworkMessages.UnpackId(reader, out ushort msgType))
             {
@@ -405,7 +403,7 @@ namespace Mirror.Core
         }
 
         // transport errors are forwarded to high level
-        private static void OnTransportError(TransportError error, string reason)
+        static void OnTransportError(TransportError error, string reason)
         {
             // transport errors will happen. logging a warning is enough.
             // make sure the user does not panic.
@@ -522,7 +520,7 @@ namespace Mirror.Core
         }
 
         /// <summary>Validates Prefab then adds it to prefabs dictionary.</summary>
-        private static void RegisterPrefabIdentity(NetworkIdentity prefab)
+        static void RegisterPrefabIdentity(NetworkIdentity prefab)
         {
             if (prefab.assetId == 0)
             {
@@ -1088,13 +1086,13 @@ namespace Mirror.Core
             return true;
         }
 
-        private static NetworkIdentity GetExistingObject(uint netid)
+        static NetworkIdentity GetExistingObject(uint netid)
         {
             spawned.TryGetValue(netid, out NetworkIdentity identity);
             return identity;
         }
 
-        private static NetworkIdentity SpawnPrefab(SpawnMessage message)
+        static NetworkIdentity SpawnPrefab(SpawnMessage message)
         {
             // custom spawn handler for this prefab? (for prefab pools etc.)
             //
@@ -1124,7 +1122,7 @@ namespace Mirror.Core
             // otherwise look in NetworkManager registered prefabs
             if (GetPrefab(message.assetId, out GameObject prefab))
             {
-                GameObject obj = Object.Instantiate(prefab, message.position, message.rotation);
+                GameObject obj = GameObject.Instantiate(prefab, message.position, message.rotation);
                 //Debug.Log($"Client spawn handler instantiating [netId{message.netId} asset ID:{message.assetId} pos:{message.position} rotation:{message.rotation}]");
                 return obj.GetComponent<NetworkIdentity>();
             }
@@ -1133,7 +1131,7 @@ namespace Mirror.Core
             return null;
         }
 
-        private static NetworkIdentity SpawnSceneObject(ulong sceneId)
+        static NetworkIdentity SpawnSceneObject(ulong sceneId)
         {
             NetworkIdentity identity = GetAndRemoveSceneObject(sceneId);
             if (identity == null)
@@ -1148,7 +1146,7 @@ namespace Mirror.Core
             return identity;
         }
 
-        private static NetworkIdentity GetAndRemoveSceneObject(ulong sceneId)
+        static NetworkIdentity GetAndRemoveSceneObject(ulong sceneId)
         {
             if (spawnableObjects.TryGetValue(sceneId, out NetworkIdentity identity))
             {
@@ -1216,7 +1214,7 @@ namespace Mirror.Core
         }
 
         // host mode callbacks /////////////////////////////////////////////////
-        private static void OnHostClientObjectDestroy(ObjectDestroyMessage message)
+        static void OnHostClientObjectDestroy(ObjectDestroyMessage message)
         {
             //Debug.Log($"NetworkClient.OnLocalObjectObjDestroy netId:{message.netId}");
 
@@ -1227,7 +1225,7 @@ namespace Mirror.Core
             spawned.Remove(message.netId);
         }
 
-        private static void OnHostClientObjectHide(ObjectHideMessage message)
+        static void OnHostClientObjectHide(ObjectHideMessage message)
         {
             //Debug.Log($"ClientScene::OnLocalObjectObjHide netId:{message.netId}");
             if (spawned.TryGetValue(message.netId, out NetworkIdentity identity) &&
@@ -1261,7 +1259,7 @@ namespace Mirror.Core
         }
 
         // client-only mode callbacks //////////////////////////////////////////
-        private static void OnEntityStateMessage(EntityStateMessage message)
+        static void OnEntityStateMessage(EntityStateMessage message)
         {
             // Debug.Log($"NetworkClient.OnUpdateVarsMessage {msg.netId}");
             if (spawned.TryGetValue(message.netId, out NetworkIdentity identity) && identity != null)
@@ -1272,7 +1270,7 @@ namespace Mirror.Core
             else Debug.LogWarning($"Did not find target for sync message for {message.netId} . Note: this can be completely normal because UDP messages may arrive out of order, so this message might have arrived after a Destroy message.");
         }
 
-        private static void OnRPCMessage(RpcMessage message)
+        static void OnRPCMessage(RpcMessage message)
         {
             // Debug.Log($"NetworkClient.OnRPCMessage hash:{message.functionHash} netId:{message.netId}");
             if (spawned.TryGetValue(message.netId, out NetworkIdentity identity))
@@ -1283,7 +1281,7 @@ namespace Mirror.Core
             // Rpcs often can't be applied if interest management unspawned them
         }
 
-        private static void OnRPCBufferMessage(RpcBufferMessage message)
+        static void OnRPCBufferMessage(RpcBufferMessage message)
         {
             // Debug.Log($"NetworkClient.OnRPCBufferMessage of {message.payload.Count} bytes");
             // parse all rpc messages from the buffer
@@ -1298,7 +1296,7 @@ namespace Mirror.Core
             }
         }
 
-        private static void OnObjectHide(ObjectHideMessage message) => DestroyObject(message.netId);
+        static void OnObjectHide(ObjectHideMessage message) => DestroyObject(message.netId);
 
         internal static void OnObjectDestroy(ObjectDestroyMessage message) => DestroyObject(message.netId);
 
@@ -1367,7 +1365,7 @@ namespace Mirror.Core
         // set up NetworkIdentity flags on the client.
         // needs to be separate from invoking callbacks.
         // cleaner, and some places need to set flags first.
-        private static void InitializeIdentityFlags(NetworkIdentity identity)
+        static void InitializeIdentityFlags(NetworkIdentity identity)
         {
             // initialize flags before invoking callbacks.
             // this way isClient/isLocalPlayer is correct during callbacks.
@@ -1385,7 +1383,7 @@ namespace Mirror.Core
         // invoke NetworkIdentity callbacks on the client.
         // needs to be separate from configuring flags.
         // cleaner, and some places need to set flags first.
-        private static void InvokeIdentityCallbacks(NetworkIdentity identity)
+        static void InvokeIdentityCallbacks(NetworkIdentity identity)
         {
             // invoke OnStartAuthority
             identity.NotifyAuthority();
@@ -1399,21 +1397,21 @@ namespace Mirror.Core
         }
 
         // configure flags & invoke callbacks
-        private static void BootstrapIdentity(NetworkIdentity identity)
+        static void BootstrapIdentity(NetworkIdentity identity)
         {
             InitializeIdentityFlags(identity);
             InvokeIdentityCallbacks(identity);
         }
 
         // broadcast ///////////////////////////////////////////////////////////
-        private static void BroadcastTimeSnapshot()
+        static void BroadcastTimeSnapshot()
         {
             Send(new TimeSnapshotMessage(), Channels.Unreliable);
         }
 
         // make sure Broadcast() is only called every sendInterval.
         // calling it every update() would require too much bandwidth.
-        private static void Broadcast()
+        static void Broadcast()
         {
             // joined the world yet?
             if (!connection.isReady) return;
@@ -1577,7 +1575,7 @@ namespace Mirror.Core
                                 // spawned objects are destroyed
                                 else
                                 {
-                                    Object.Destroy(identity.gameObject);
+                                    GameObject.Destroy(identity.gameObject);
                                 }
                             }
                         }
@@ -1593,7 +1591,7 @@ namespace Mirror.Core
             }
         }
 
-        private static void DestroyObject(uint netId)
+        static void DestroyObject(uint netId)
         {
             // Debug.Log($"NetworkClient.OnObjDestroy netId: {netId}");
             if (spawned.TryGetValue(netId, out NetworkIdentity identity) && identity != null)
@@ -1613,7 +1611,7 @@ namespace Mirror.Core
                 else if (identity.sceneId == 0)
                 {
                     // don't call reset before destroy so that values are still set in OnDestroy
-                    Object.Destroy(identity.gameObject);
+                    GameObject.Destroy(identity.gameObject);
                 }
                 // scene object.. disable it in scene instead of destroying
                 else
@@ -1704,8 +1702,8 @@ namespace Mirror.Core
             else GUI.color = Color.white;
             GUILayout.Box($"timeline: {localTimeline:F2}");
             GUILayout.Box($"buffer: {snapshots.Count}");
-            GUILayout.Box($"DriftEMA: {driftEma.Value:F2}");
-            GUILayout.Box($"DelTimeEMA: {deliveryTimeEma.Value:F2}");
+            GUILayout.Box($"DriftEMA: {NetworkClient.driftEma.Value:F2}");
+            GUILayout.Box($"DelTimeEMA: {NetworkClient.deliveryTimeEma.Value:F2}");
             GUILayout.Box($"timescale: {localTimescale:F2}");
             GUILayout.Box($"BTM: {snapshotSettings.bufferTimeMultiplier:F2}");
             GUILayout.Box($"RTT: {NetworkTime.rtt * 1000:000}");

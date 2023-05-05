@@ -16,16 +16,11 @@
 //      -> client gets Cmd() and X at the same time, but buffers X for bufferTime
 //      -> for unreliable, it would get X before the reliable Cmd(), still
 //         buffer for bufferTime but end up closer to the original time
-
 using System;
 using System.Collections.Generic;
-using Mirror.Components.NetworkTransformUnreliable;
-using Mirror.Core;
-using Mirror.Core.SnapshotInterpolation;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Components
+namespace Mirror
 {
     public abstract class NetworkTransformBase : NetworkBehaviour
     {
@@ -244,7 +239,7 @@ namespace Mirror.Components
         }
 
         [ClientRpc]
-        private void RpcReset()
+        void RpcReset()
         {
             Reset();
         }
@@ -307,7 +302,7 @@ namespace Mirror.Components
         }
 
         [ServerCallback]
-        private void OnClientAuthorityChanged(NetworkConnectionToClient conn, NetworkIdentity identity, bool authorityState)
+        void OnClientAuthorityChanged(NetworkConnectionToClient conn, NetworkIdentity identity, bool authorityState)
         {
             if (identity != netIdentity) return;
 

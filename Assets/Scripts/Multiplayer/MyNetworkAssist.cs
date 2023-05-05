@@ -1,4 +1,4 @@
-﻿using Mirror.Core;
+﻿using Mirror;
 using UnityEngine;
 
 namespace Multiplayer

@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine.Profiling;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
+namespace Mirror.SimpleWeb
 {
     public static class SendLoopConfig
     {
@@ -130,7 +130,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <returns>new offset in buffer</returns>
-        private static int SendMessage(byte[] buffer, int startOffset, ArrayBuffer msg, bool setMask, MaskHelper maskHelper)
+        static int SendMessage(byte[] buffer, int startOffset, ArrayBuffer msg, bool setMask, MaskHelper maskHelper)
         {
             int msgLength = msg.count;
             int offset = WriteHeader(buffer, startOffset, msgLength, setMask);
@@ -199,11 +199,10 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
     }
-
-    internal sealed class MaskHelper : IDisposable
+    sealed class MaskHelper : IDisposable
     {
-        private readonly byte[] maskBuffer;
-        private readonly RNGCryptoServiceProvider random;
+        readonly byte[] maskBuffer;
+        readonly RNGCryptoServiceProvider random;
 
         public MaskHelper()
         {

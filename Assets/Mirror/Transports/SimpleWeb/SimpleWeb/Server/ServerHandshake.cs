@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Common;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
+namespace Mirror.SimpleWeb
 {
     /// <summary>
     /// Handles Handshakes from new clients on the server
@@ -12,21 +11,20 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
     /// </summary>
     internal class ServerHandshake
     {
-        private const int GetSize = 3;
-        private const int ResponseLength = 129;
-        private const int KeyLength = 24;
-        private const int MergedKeyLength = 60;
-
-        private const string KeyHeaderString = "\r\nSec-WebSocket-Key: ";
+        const int GetSize = 3;
+        const int ResponseLength = 129;
+        const int KeyLength = 24;
+        const int MergedKeyLength = 60;
+        const string KeyHeaderString = "\r\nSec-WebSocket-Key: ";
         // this isn't an official max, just a reasonable size for a websocket handshake
-        private readonly int maxHttpHeaderSize = 3000;
+        readonly int maxHttpHeaderSize = 3000;
 
         // SHA-1 is the websocket standard:
         // https://www.rfc-editor.org/rfc/rfc6455
         // we should follow the standard, even though SHA1 is considered weak:
         // https://stackoverflow.com/questions/38038841/why-is-sha-1-considered-insecure
-        private readonly SHA1 sha1 = SHA1.Create();
-        private readonly BufferPool bufferPool;
+        readonly SHA1 sha1 = SHA1.Create();
+        readonly BufferPool bufferPool;
 
         public ServerHandshake(BufferPool bufferPool, int handshakeMaxSize)
         {
@@ -74,7 +72,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             }
         }
 
-        private string ReadToEndForHandshake(Stream stream)
+        string ReadToEndForHandshake(Stream stream)
         {
             using (ArrayBuffer readBuffer = bufferPool.Take(maxHttpHeaderSize))
             {
@@ -91,7 +89,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             }
         }
 
-        private static bool IsGet(byte[] getHeader)
+        static bool IsGet(byte[] getHeader)
         {
             // just check bytes here instead of using Encoding.ASCII
             return getHeader[0] == 71 && // G
@@ -99,7 +97,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
                    getHeader[2] == 84;   // T
         }
 
-        private void AcceptHandshake(Stream stream, string msg)
+        void AcceptHandshake(Stream stream, string msg)
         {
             using (
                 ArrayBuffer keyBuffer = bufferPool.Take(KeyLength + Constants.HandshakeGUIDLength),
@@ -114,7 +112,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             }
         }
 
-        private static void GetKey(string msg, byte[] keyBuffer)
+        static void GetKey(string msg, byte[] keyBuffer)
         {
             int start = msg.IndexOf(KeyHeaderString, StringComparison.InvariantCultureIgnoreCase) + KeyHeaderString.Length;
 
@@ -122,18 +120,18 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             Encoding.ASCII.GetBytes(msg, start, KeyLength, keyBuffer, 0);
         }
 
-        private static void AppendGuid(byte[] keyBuffer)
+        static void AppendGuid(byte[] keyBuffer)
         {
             Buffer.BlockCopy(Constants.HandshakeGUIDBytes, 0, keyBuffer, KeyLength, Constants.HandshakeGUIDLength);
         }
 
-        private byte[] CreateHash(byte[] keyBuffer)
+        byte[] CreateHash(byte[] keyBuffer)
         {
             Log.Verbose($"[SimpleWebTransport] Handshake Hashing {Encoding.ASCII.GetString(keyBuffer, 0, MergedKeyLength)}", false);
             return sha1.ComputeHash(keyBuffer, 0, MergedKeyLength);
         }
 
-        private static void CreateResponse(byte[] keyHash, byte[] responseBuffer)
+        static void CreateResponse(byte[] keyHash, byte[] responseBuffer)
         {
             string keyHashString = Convert.ToBase64String(keyHash);
 

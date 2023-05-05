@@ -1,11 +1,11 @@
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 
-namespace Mirror.Editor.Weaver.Processors
+namespace Mirror.Weaver
 {
     public static class MethodProcessor
     {
-        private const string RpcPrefix = "UserCode_";
+        const string RpcPrefix = "UserCode_";
 
         // For a function like
         //   [ClientRpc] void RpcTest(int value),
@@ -121,7 +121,7 @@ namespace Mirror.Editor.Weaver.Processors
             }
         }
 
-        private static bool IsCallToMethod(Instruction instruction, out MethodDefinition calledMethod)
+        static bool IsCallToMethod(Instruction instruction, out MethodDefinition calledMethod)
         {
             if (instruction.OpCode == OpCodes.Call &&
                 instruction.Operand is MethodDefinition method)

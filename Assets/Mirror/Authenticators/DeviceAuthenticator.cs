@@ -1,5 +1,4 @@
 using System;
-using Mirror.Core;
 using UnityEngine;
 
 namespace Mirror.Authenticators
@@ -56,7 +55,7 @@ namespace Mirror.Authenticators
             // do nothing, wait for client to send his id
         }
 
-        private void OnAuthRequestMessage(NetworkConnectionToClient conn, AuthRequestMessage msg)
+        void OnAuthRequestMessage(NetworkConnectionToClient conn, AuthRequestMessage msg)
         {
             Debug.Log($"connection {conn.connectionId} authenticated with id {msg.clientDeviceID}");
 

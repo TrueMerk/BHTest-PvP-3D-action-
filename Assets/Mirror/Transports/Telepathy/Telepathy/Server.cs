@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Mirror.Transports.Telepathy.Telepathy
+namespace Telepathy
 {
     public class Server : Common
     {
@@ -17,7 +17,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
 
         // listener
         public TcpListener listener;
-        private Thread listenerThread;
+        Thread listenerThread;
 
         // disconnect if send queue gets too big.
         // -> avoids ever growing queue memory if network is slower than input
@@ -41,10 +41,10 @@ namespace Mirror.Transports.Telepathy.Telepathy
         public int ReceivePipeTotalCount => receivePipe.TotalCount;
 
         // clients with <connectionId, ConnectionState>
-        private readonly ConcurrentDictionary<int, ConnectionState> clients = new ConcurrentDictionary<int, ConnectionState>();
+        readonly ConcurrentDictionary<int, ConnectionState> clients = new ConcurrentDictionary<int, ConnectionState>();
 
         // connectionId counter
-        private int counter;
+        int counter;
 
         // public next id function in case someone needs to reserve an id
         // (e.g. if hostMode should always have 0 connection and external
@@ -76,7 +76,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
         // the listener thread's listen function
         // note: no maxConnections parameter. high level API should handle that.
         //       (Transport can't send a 'too full' message anyway)
-        private void Listen(int port)
+        void Listen(int port)
         {
             // absolutely must wrap with try/catch, otherwise thread
             // exceptions are silent

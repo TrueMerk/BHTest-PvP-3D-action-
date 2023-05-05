@@ -1,8 +1,7 @@
-using Mirror.Core.Tools;
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 
-namespace Mirror.Editor.Weaver.Processors
+namespace Mirror.Weaver
 {
     // Processes [Command] methods in NetworkBehaviour
     public static class CommandProcessor
@@ -114,7 +113,7 @@ namespace Mirror.Editor.Weaver.Processors
             return cmd;
         }
 
-        private static void AddSenderConnection(MethodDefinition method, ILProcessor worker)
+        static void AddSenderConnection(MethodDefinition method, ILProcessor worker)
         {
             foreach (ParameterDefinition param in method.Parameters)
             {

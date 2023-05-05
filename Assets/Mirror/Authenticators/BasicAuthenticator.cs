@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
 namespace Mirror.Authenticators
@@ -17,7 +16,7 @@ namespace Mirror.Authenticators
         public string username;
         public string password;
 
-        private readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
+        readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
 
         #region Messages
 
@@ -115,7 +114,7 @@ namespace Mirror.Authenticators
             }
         }
 
-        private IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
+        IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
 

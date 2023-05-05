@@ -1,21 +1,20 @@
 ﻿// Pool to avoid allocations (from libuv2k & Mirror)
-
 using System;
 using System.Collections.Generic;
 
-namespace Mirror.Transports.KCP.kcp2k.kcp
+namespace kcp2k
 {
     public class Pool<T>
     {
         // Mirror is single threaded, no need for concurrent collections
-        private readonly Stack<T> objects = new Stack<T>();
+        readonly Stack<T> objects = new Stack<T>();
 
         // some types might need additional parameters in their constructor, so
         // we use a Func<T> generator
-        private readonly Func<T> objectGenerator;
+        readonly Func<T> objectGenerator;
 
         // some types might need additional cleanup for returned objects
-        private readonly Action<T> objectResetter;
+        readonly Action<T> objectResetter;
 
         public Pool(Func<T> objectGenerator, Action<T> objectResetter, int initialCapacity)
         {

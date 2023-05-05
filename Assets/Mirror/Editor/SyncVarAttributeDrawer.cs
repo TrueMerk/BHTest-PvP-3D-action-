@@ -1,13 +1,12 @@
-﻿using Mirror.Core;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-namespace Mirror.Editor
+namespace Mirror
 {
     [CustomPropertyDrawer(typeof(SyncVarAttribute))]
     public class SyncVarAttributeDrawer : PropertyDrawer
     {
-        private static readonly GUIContent syncVarIndicatorContent = new GUIContent("SyncVar", "This variable has been marked with the [SyncVar] attribute.");
+        static readonly GUIContent syncVarIndicatorContent = new GUIContent("SyncVar", "This variable has been marked with the [SyncVar] attribute.");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

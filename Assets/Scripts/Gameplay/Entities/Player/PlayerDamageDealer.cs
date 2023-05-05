@@ -1,5 +1,5 @@
 using System;
-using Mirror.Core;
+using Mirror;
 using Multiplayer;
 using TMPro;
 using UnityEngine;

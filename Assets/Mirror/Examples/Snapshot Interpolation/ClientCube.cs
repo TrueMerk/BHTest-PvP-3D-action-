@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Mirror.Core;
-using Mirror.Core.SnapshotInterpolation;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Examples.Snapshot_Interpolation
+namespace Mirror.Examples.SnapshotInterpolationDemo
 {
     public class ClientCube : MonoBehaviour
     {
@@ -30,29 +27,30 @@ namespace Mirror.Examples.Snapshot_Interpolation
         // for smooth interpolation, we need to interpolate along server time.
         // any other time (arrival on client, client local time, etc.) is not
         // going to give smooth results.
-        private double localTimeline;
+        double localTimeline;
 
         // catchup / slowdown adjustments are applied to timescale,
         // to be adjusted in every update instead of when receiving messages.
-        private double localTimescale = 1;
+        double localTimescale = 1;
 
         // we use EMA to average the last second worth of snapshot time diffs.
         // manually averaging the last second worth of values with a for loop
         // would be the same, but a moving average is faster because we only
         // ever add one value.
-        private ExponentialMovingAverage driftEma;
-        private ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
+        ExponentialMovingAverage driftEma;
+        ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
 
         // debugging ///////////////////////////////////////////////////////////
         [Header("Debug")]
         public Color catchupColor = Color.green; // green traffic light = go fast
         public Color slowdownColor = Color.red;  // red traffic light = go slow
-        private Color defaultColor;
+        Color defaultColor;
 
-        [Header("Simulation")] private bool lowFpsMode;
-        private double accumulatedDeltaTime;
+        [Header("Simulation")]
+        bool lowFpsMode;
+        double accumulatedDeltaTime;
 
-        private void Awake()
+        void Awake()
         {
             // show vsync reminder. too easy to forget.
             Debug.Log("Reminder: Snapshot interpolation is smoothest & easiest to debug with Vsync off.");
@@ -102,7 +100,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
                 ref deliveryTimeEma);
         }
 
-        private void Update()
+        void Update()
         {
             // accumulated delta allows us to simulate correct low fps + deltaTime
             // if necessary in client low fps mode.
@@ -157,7 +155,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
                 render.material.color = defaultColor;
         }
 
-        private void OnGUI()
+        void OnGUI()
         {
             // display buffer size as number for easier debugging.
             // catchup is displayed as color state in Update() already.
@@ -212,7 +210,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
             GUILayout.EndArea();
         }
 
-        private void OnValidate()
+        void OnValidate()
         {
             // thresholds need to be <0 and >0
             snapshotSettings.catchupNegativeThreshold = Math.Min(snapshotSettings.catchupNegativeThreshold, 0);

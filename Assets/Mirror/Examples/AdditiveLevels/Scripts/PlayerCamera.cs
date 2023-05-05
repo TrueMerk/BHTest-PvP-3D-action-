@@ -1,16 +1,15 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // This sets up the scene camera for the local player
 
-namespace Mirror.Examples.AdditiveLevels.Scripts
+namespace Mirror.Examples.AdditiveLevels
 {
     public class PlayerCamera : NetworkBehaviour
     {
-        private Camera mainCam;
+        Camera mainCam;
 
-        private void Awake()
+        void Awake()
         {
             mainCam = Camera.main;
         }

@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.Room.Scripts
+namespace Mirror.Examples.NetworkRoom
 {
     public class PlayerScore : NetworkBehaviour
     {
@@ -11,7 +10,7 @@ namespace Mirror.Examples.Room.Scripts
         [SyncVar]
         public uint score;
 
-        private void OnGUI()
+        void OnGUI()
         {
             GUI.Box(new Rect(10f + (index * 110), 10f, 100f, 25f), $"P{index}: {score:0000000}");
         }

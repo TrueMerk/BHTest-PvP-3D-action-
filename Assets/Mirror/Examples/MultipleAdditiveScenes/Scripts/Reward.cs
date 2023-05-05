@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
+namespace Mirror.Examples.MultipleAdditiveScenes
 {
     [RequireComponent(typeof(RandomColor))]
     public class Reward : NetworkBehaviour
@@ -9,14 +8,14 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
         public bool available = true;
         public RandomColor randomColor;
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (randomColor == null)
                 randomColor = GetComponent<RandomColor>();
         }
 
         [ServerCallback]
-        private void OnTriggerEnter(Collider other)
+        void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.CompareTag("Player"))
                 ClaimPrize(other.gameObject);

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Common;
 using UnityEngine;
-using EventType = Mirror.Transports.SimpleWeb.SimpleWeb.Common.EventType;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
+namespace Mirror.SimpleWeb
 {
     public class SimpleWebServer
     {
@@ -13,9 +11,9 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
         public event Action<int, ArraySegment<byte>> onData;
         public event Action<int, Exception> onError;
 
-        private readonly int maxMessagesPerTick;
-        private readonly WebSocketServer server;
-        private readonly BufferPool bufferPool;
+        readonly int maxMessagesPerTick;
+        readonly WebSocketServer server;
+        readonly BufferPool bufferPool;
 
         public bool Active { get; private set; }
 

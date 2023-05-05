@@ -3,9 +3,9 @@ using System.Linq;
 using System.Reflection;
 using Mono.CecilX;
 
-namespace Mirror.Editor.Weaver
+namespace Mirror.Weaver
 {
-    internal static class Helpers
+    static class Helpers
     {
         // This code is taken from SerializationWeaver
         public static string UnityEngineDllDirectoryName()

@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     // SyncMode decides if a component is synced to all observers, or only owner
     public enum SyncMode { Observers, Owner }
@@ -139,7 +138,7 @@ namespace Mirror.Core
         // if we then modify the [SyncVar] from inside the setter,
         // the setter would call the hook and we deadlock.
         // hook guard prevents that.
-        private ulong syncVarHookGuard;
+        ulong syncVarHookGuard;
 
         // USED BY WEAVER to set syncvars in host mode without deadlocking
         protected bool GetSyncVarHookGuard(ulong dirtyBit) =>
@@ -157,7 +156,7 @@ namespace Mirror.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetSyncObjectDirtyBit(ulong dirtyBit)
+        void SetSyncObjectDirtyBit(ulong dirtyBit)
         {
             syncObjectDirtyBits |= dirtyBit;
         }
@@ -1073,7 +1072,7 @@ namespace Mirror.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SerializeSyncObjects(NetworkWriter writer, bool initialState)
+        void SerializeSyncObjects(NetworkWriter writer, bool initialState)
         {
             // if initialState: write all SyncVars.
             // otherwise write dirtyBits+dirty SyncVars
@@ -1084,7 +1083,7 @@ namespace Mirror.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void DeserializeSyncObjects(NetworkReader reader, bool initialState)
+        void DeserializeSyncObjects(NetworkReader reader, bool initialState)
         {
             if (initialState)
             {

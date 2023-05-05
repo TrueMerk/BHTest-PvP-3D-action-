@@ -1,21 +1,21 @@
-#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Mirror.Core.Tools;
-using UnityEditor;
-using UnityEditor.SceneManagement;
+using Mirror.RemoteCalls;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-#if UNITY_2021_2_OR_NEWER
+#if UNITY_EDITOR
+using UnityEditor;
 
+#if UNITY_2021_2_OR_NEWER
+using UnityEditor.SceneManagement;
 #else
 using UnityEditor.Experimental.SceneManagement;
 #endif
 #endif
 
-namespace Mirror.Core
+namespace Mirror
 {
     // Default = use interest management
     // ForceHidden = useful to hide monsters while they respawn etc.
@@ -115,7 +115,7 @@ namespace Mirror.Core
         //
         // it's also easier to work with for serialization etc.
         // serialized and visible in inspector for easier debugging
-        [SerializeField] private uint _assetId;
+        [SerializeField] uint _assetId;
 
         // The AssetId trick:
         //   Ideally we would have a serialized 'Guid m_AssetId' but Unity can't
@@ -182,8 +182,7 @@ namespace Mirror.Core
                 _connectionToClient?.AddOwnedObject(this);
             }
         }
-
-        private NetworkConnectionToClient _connectionToClient;
+        NetworkConnectionToClient _connectionToClient;
 
         // get all NetworkBehaviour components
         public NetworkBehaviour[] NetworkBehaviours { get; private set; }
@@ -191,7 +190,7 @@ namespace Mirror.Core
         // to save bandwidth, we send one 64 bit dirty mask
         // instead of 1 byte index per dirty component.
         // which means we can't allow > 64 components (it's enough).
-        private const int MaxNetworkBehaviours = 64;
+        const int MaxNetworkBehaviours = 64;
 
         // current visibility
         //
@@ -211,14 +210,14 @@ namespace Mirror.Core
         // (timestamp is the same while inside Update)
         // => this way we don't need to pool thousands of writers either.
         // => way easier to store them per object
-        private NetworkIdentitySerialization lastSerialization = new NetworkIdentitySerialization
+        NetworkIdentitySerialization lastSerialization = new NetworkIdentitySerialization
         {
             ownerWriter = new NetworkWriter(),
             observersWriter = new NetworkWriter()
         };
 
         // Keep track of all sceneIds to detect scene duplicates
-        private static readonly Dictionary<ulong, NetworkIdentity> sceneIds =
+        static readonly Dictionary<ulong, NetworkIdentity> sceneIds =
             new Dictionary<ulong, NetworkIdentity>();
 
         // Helper function to handle Command/Rpc
@@ -272,7 +271,7 @@ namespace Mirror.Core
         /// <summary>Gets the NetworkIdentity from the sceneIds dictionary with the corresponding id</summary>
         public static NetworkIdentity GetSceneIdentity(ulong id) => sceneIds[id];
 
-        private static uint nextNetworkId = 1;
+        static uint nextNetworkId = 1;
         internal static uint GetNextNetworkId() => nextNetworkId++;
 
         /// <summary>Resets nextNetworkId = 1</summary>
@@ -285,7 +284,7 @@ namespace Mirror.Core
         public static event ClientAuthorityCallback clientAuthorityCallback;
 
         // hasSpawned should always be false before runtime
-        [SerializeField, HideInInspector] private bool hasSpawned;
+        [SerializeField, HideInInspector] bool hasSpawned;
         public bool SpawnedFromInstantiate { get; private set; }
 
         // NetworkBehaviour components are initialized in Awake once.
@@ -307,7 +306,7 @@ namespace Mirror.Core
             }
         }
 
-        private void ValidateComponents()
+        void ValidateComponents()
         {
             if (NetworkBehaviours == null)
             {
@@ -341,7 +340,7 @@ namespace Mirror.Core
             hasSpawned = true;
         }
 
-        private void OnValidate()
+        void OnValidate()
         {
             // OnValidate is not called when using Instantiate, so we can use
             // it to make sure that hasSpawned is false
@@ -353,7 +352,7 @@ namespace Mirror.Core
         }
 
 #if UNITY_EDITOR
-        private void AssignAssetID(string path)
+        void AssignAssetID(string path)
         {
             // only set if not empty. fixes https://github.com/vis2k/Mirror/issues/2765
             if (!string.IsNullOrWhiteSpace(path))
@@ -363,7 +362,7 @@ namespace Mirror.Core
             }
         }
 
-        private void AssignAssetID(GameObject prefab) => AssignAssetID(AssetDatabase.GetAssetPath(prefab));
+        void AssignAssetID(GameObject prefab) => AssignAssetID(AssetDatabase.GetAssetPath(prefab));
 
         // persistent sceneId assignment
         // (because scene objects have no persistent unique ID in Unity)
@@ -408,7 +407,7 @@ namespace Mirror.Core
         // * sceneIds should never be generated temporarily for unopened scenes
         //   when building, otherwise editor and build get out of sync
         //   => BuildPipeline.isBuildingPlayer check solves that
-        private void AssignSceneID()
+        void AssignSceneID()
         {
             // we only ever assign sceneIds at edit time, never at runtime.
             // by definition, only the original scene objects should get one.
@@ -495,7 +494,7 @@ namespace Mirror.Core
             //Debug.Log($"{name} in scene {gameObject.scene.name} scene index hash {pathHash:X} copied into sceneId {sceneId:X}");
         }
 
-        private void SetupIDs()
+        void SetupIDs()
         {
             // is this a prefab?
             if (Utils.IsPrefab(gameObject))
@@ -573,7 +572,7 @@ namespace Mirror.Core
         // Note: Unity will Destroy all networked objects on Scene Change, so we
         // have to handle that here silently. That means we cannot have any
         // warning or logging in this method.
-        private void OnDestroy()
+        void OnDestroy()
         {
             // Objects spawned from Instantiate are not allowed so are destroyed right away
             // we don't want to call NetworkServer.Destroy if this is the case
@@ -671,7 +670,7 @@ namespace Mirror.Core
             }
         }
 
-        private bool clientStarted;
+        bool clientStarted;
         internal void OnStartClient()
         {
             if (clientStarted) return;
@@ -789,7 +788,7 @@ namespace Mirror.Core
 
         // build dirty mask for server owner & observers (= all dirty components).
         // faster to do it in one iteration instead of iterating separately.
-        private (ulong, ulong) ServerDirtyMasks(bool initialState)
+        (ulong, ulong) ServerDirtyMasks(bool initialState)
         {
             ulong ownerMask = 0;
             ulong observerMask = 0;
@@ -826,7 +825,7 @@ namespace Mirror.Core
 
         // build dirty mask for client.
         // server always knows initialState, so we don't need it here.
-        private ulong ClientDirtyMask()
+        ulong ClientDirtyMask()
         {
             ulong mask = 0;
 
@@ -1298,7 +1297,7 @@ namespace Mirror.Core
             isLocalPlayer = false;
         }
 
-        private bool hadAuthority;
+        bool hadAuthority;
         internal void NotifyAuthority()
         {
             if (!hadAuthority && isOwned)

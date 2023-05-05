@@ -1,8 +1,6 @@
-using Mirror.Core;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Components
+namespace Mirror
 {
     /// <summary>
     /// This component works in conjunction with the NetworkRoomManager to make up the multiplayer room system.
@@ -149,7 +147,7 @@ namespace Mirror.Components
             }
         }
 
-        private void DrawPlayerReadyState()
+        void DrawPlayerReadyState()
         {
             GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
 
@@ -171,7 +169,7 @@ namespace Mirror.Components
             GUILayout.EndArea();
         }
 
-        private void DrawPlayerReadyButton()
+        void DrawPlayerReadyButton()
         {
             if (NetworkClient.active && isLocalPlayer)
             {

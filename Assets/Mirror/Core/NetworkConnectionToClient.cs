@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Mirror.Core.Batching;
-using Mirror.Core.SnapshotInterpolation;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     public class NetworkConnectionToClient : NetworkConnection
     {
@@ -14,8 +11,8 @@ namespace Mirror.Core
         // this way we don't need one NetworkMessage per rpc.
         // => prepares for LocalWorldState as well.
         // ensure max size when adding!
-        private readonly NetworkWriter reliableRpcs = new NetworkWriter();
-        private readonly NetworkWriter unreliableRpcs = new NetworkWriter();
+        readonly NetworkWriter reliableRpcs = new NetworkWriter();
+        readonly NetworkWriter unreliableRpcs = new NetworkWriter();
 
         public virtual string address => Transport.active.ServerGetClientAddress(connectionId);
 
@@ -36,15 +33,15 @@ namespace Mirror.Core
         // TODO move them along server's timeline in the future.
         //      perhaps with an offset.
         //      for now, keep compatibility by manually constructing a timeline.
-        private ExponentialMovingAverage driftEma;
-        private ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
+        ExponentialMovingAverage driftEma;
+        ExponentialMovingAverage deliveryTimeEma; // average delivery time (standard deviation gives average jitter)
         public double remoteTimeline;
         public double remoteTimescale;
-        private double bufferTimeMultiplier = 2;
-        private double bufferTime => NetworkServer.sendInterval * bufferTimeMultiplier;
+        double bufferTimeMultiplier = 2;
+        double bufferTime => NetworkServer.sendInterval * bufferTimeMultiplier;
 
         // <clienttime, snaps>
-        private readonly SortedList<double, TimeSnapshot> snapshots = new SortedList<double, TimeSnapshot>();
+        readonly SortedList<double, TimeSnapshot> snapshots = new SortedList<double, TimeSnapshot>();
 
         // Snapshot Buffer size limit to avoid ever growing list memory consumption attacks from clients.
         public int snapshotBufferSizeLimit = 64;
@@ -72,7 +69,7 @@ namespace Mirror.Core
             {
                 // set bufferTime on the fly.
                 // shows in inspector for easier debugging :)
-                bufferTimeMultiplier = SnapshotInterpolation.SnapshotInterpolation.DynamicAdjustment(
+                bufferTimeMultiplier = SnapshotInterpolation.DynamicAdjustment(
                     NetworkServer.sendInterval,
                     deliveryTimeEma.StandardDeviation,
                     NetworkClient.snapshotSettings.dynamicAdjustmentTolerance
@@ -81,7 +78,7 @@ namespace Mirror.Core
             }
 
             // insert into the server buffer & initialize / adjust / catchup
-            SnapshotInterpolation.SnapshotInterpolation.InsertAndAdjust(
+            SnapshotInterpolation.InsertAndAdjust(
                 snapshots,
                 snapshot,
                 ref remoteTimeline,
@@ -103,12 +100,12 @@ namespace Mirror.Core
             if (snapshots.Count > 0)
             {
                 // progress local timeline.
-                SnapshotInterpolation.SnapshotInterpolation.StepTime(Time.unscaledDeltaTime, ref remoteTimeline, remoteTimescale);
+                SnapshotInterpolation.StepTime(Time.unscaledDeltaTime, ref remoteTimeline, remoteTimescale);
 
                 // progress local interpolation.
                 // TimeSnapshot doesn't interpolate anything.
                 // this is merely to keep removing older snapshots.
-                SnapshotInterpolation.SnapshotInterpolation.StepInterpolation(snapshots, remoteTimeline, out _, out _, out _);
+                SnapshotInterpolation.StepInterpolation(snapshots, remoteTimeline, out _, out _, out _);
                 // Debug.Log($"NetworkClient SnapshotInterpolation @ {localTimeline:F2} t={t:F2}");
             }
         }
@@ -118,7 +115,7 @@ namespace Mirror.Core
         protected override void SendToTransport(ArraySegment<byte> segment, int channelId = Channels.Reliable) =>
             Transport.active.ServerSend(connectionId, segment, channelId);
 
-        private void FlushRpcs(NetworkWriter buffer, int channelId)
+        void FlushRpcs(NetworkWriter buffer, int channelId)
         {
             if (buffer.Position > 0)
             {
@@ -128,7 +125,7 @@ namespace Mirror.Core
         }
 
         // helper for both channels
-        private void BufferRpc(RpcMessage message, NetworkWriter buffer, int channelId, int maxMessageSize)
+        void BufferRpc(RpcMessage message, NetworkWriter buffer, int channelId, int maxMessageSize)
         {
             // calculate buffer limit. we can only fit so much into a message.
             // max - message header - WriteArraySegment size header - batch header

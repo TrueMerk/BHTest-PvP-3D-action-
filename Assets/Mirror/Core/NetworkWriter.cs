@@ -1,11 +1,10 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Mirror.Core.Tools;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     /// <summary>Network Writer for most simple types like floats, ints, buffers, structs, etc. Use NetworkWriterPool.GetReader() to avoid allocations.</summary>
     public class NetworkWriter
@@ -197,7 +196,7 @@ namespace Mirror.Core
         public void WriteBytes(byte[] array, int offset, int count)
         {
             EnsureCapacity(Position + count);
-            Array.ConstrainedCopy(array, offset, buffer, Position, count);
+            Array.ConstrainedCopy(array, offset, this.buffer, Position, count);
             Position += count;
         }
         // write an unsafe byte* array.

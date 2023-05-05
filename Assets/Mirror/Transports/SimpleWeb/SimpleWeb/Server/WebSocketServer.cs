@@ -3,26 +3,25 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Common;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
+namespace Mirror.SimpleWeb
 {
     public class WebSocketServer
     {
         public readonly ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
 
-        private readonly TcpConfig tcpConfig;
-        private readonly int maxMessageSize;
+        readonly TcpConfig tcpConfig;
+        readonly int maxMessageSize;
 
-        private TcpListener listener;
-        private Thread acceptThread;
-        private bool serverStopped;
-        private readonly ServerHandshake handShake;
-        private readonly ServerSslHelper sslHelper;
-        private readonly BufferPool bufferPool;
-        private readonly ConcurrentDictionary<int, Connection> connections = new ConcurrentDictionary<int, Connection>();
+        TcpListener listener;
+        Thread acceptThread;
+        bool serverStopped;
+        readonly ServerHandshake handShake;
+        readonly ServerSslHelper sslHelper;
+        readonly BufferPool bufferPool;
+        readonly ConcurrentDictionary<int, Connection> connections = new ConcurrentDictionary<int, Connection>();
 
-        private int _idCounter = 0;
+        int _idCounter = 0;
 
         public WebSocketServer(TcpConfig tcpConfig, int maxMessageSize, int handshakeMaxSize, SslConfig sslConfig, BufferPool bufferPool)
         {
@@ -66,7 +65,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             connections.Clear();
         }
 
-        private void acceptLoop()
+        void acceptLoop()
         {
             try
             {
@@ -104,7 +103,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             catch (Exception e) { Log.Exception(e); }
         }
 
-        private void HandshakeAndReceiveLoop(Connection conn)
+        void HandshakeAndReceiveLoop(Connection conn)
         {
             try
             {
@@ -192,7 +191,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Server
             }
         }
 
-        private void AfterConnectionDisposed(Connection conn)
+        void AfterConnectionDisposed(Connection conn)
         {
             if (conn.connId != Connection.IdNotSet)
             {

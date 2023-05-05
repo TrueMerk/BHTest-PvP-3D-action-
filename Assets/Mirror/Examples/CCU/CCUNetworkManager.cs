@@ -1,5 +1,4 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Mirror.Examples.CCU
 {
@@ -17,9 +16,9 @@ namespace Mirror.Examples.CCU
         // => deterministic random is ideal
         [Range(0, 1)] public float spawnPositionRatio = 0.01f;
 
-        private System.Random random = new System.Random(42);
+        System.Random random = new System.Random(42);
 
-        private void SpawnAll()
+        void SpawnAll()
         {
             // clear previous player spawn positions in case we start twice
             foreach (Transform position in startPositions)

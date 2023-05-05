@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Mirror.Examples.AdditiveLevels.Scripts
+namespace Mirror.Examples.AdditiveLevels
 {
     public class FadeInOut : MonoBehaviour
     {
@@ -16,15 +16,15 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         [Range(1, 100), Tooltip("Rate of fade in / out: higher is faster")]
         public byte stepRate = 2;
 
-        private float step;
+        float step;
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (fadeImage == null)
                 fadeImage = GetComponentInChildren<Image>();
         }
 
-        private void Start()
+        void Start()
         {
             // Convert user-friendly setting value to working value
             step = stepRate * 0.001f;

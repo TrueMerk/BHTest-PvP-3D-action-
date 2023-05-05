@@ -1,8 +1,7 @@
-using Mirror.Components.NetworkTransformUnreliable;
-using Mirror.Core;
 using UnityEngine;
+using UnityEngine.Networking;
 
-namespace Mirror.Examples.AdditiveScenes.Scripts
+namespace Mirror.Examples.AdditiveScenes
 {
     [RequireComponent(typeof(CapsuleCollider))]
     [RequireComponent(typeof(CharacterController))]
@@ -56,7 +55,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         public Vector3Int velocity;
         public Vector3 direction;
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (characterController == null)
                 characterController = GetComponent<CharacterController>();
@@ -68,22 +67,22 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
 
             GetComponent<Rigidbody>().isKinematic = true;
 
-            enabled = false;
+            this.enabled = false;
         }
 
         public override void OnStartAuthority()
         {
             characterController.enabled = true;
-            enabled = true;
+            this.enabled = true;
         }
 
         public override void OnStopAuthority()
         {
-            enabled = false;
+            this.enabled = false;
             characterController.enabled = false;
         }
 
-        private void Update()
+        void Update()
         {
             if (!characterController.enabled)
                 return;
@@ -103,7 +102,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         }
 
         // TODO: Turning works while airborne...feature?
-        private void HandleTurning()
+        void HandleTurning()
         {
             // Q and E cancel each other out, reducing the turn to zero.
             if (Input.GetKey(KeyCode.Q))
@@ -122,7 +121,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
             transform.Rotate(0f, turnSpeed * Time.deltaTime, 0f);
         }
 
-        private void HandleJumping()
+        void HandleJumping()
         {
             // Handle variable force jumping.
             // Jump starts with initial power on takeoff, and jumps higher / longer
@@ -158,7 +157,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         }
 
         // TODO: Directional input works while airborne...feature?
-        private void HandleMove()
+        void HandleMove()
         {
             // Capture inputs
             horizontal = Input.GetAxis("Horizontal");

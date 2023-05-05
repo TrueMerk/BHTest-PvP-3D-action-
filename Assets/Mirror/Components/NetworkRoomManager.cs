@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Mirror.Core;
-using Mirror.Core.Tools;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
-namespace Mirror.Components
+namespace Mirror
 {
     /// <summary>
     /// This is a specialized NetworkManager that includes a networked room.
@@ -66,8 +64,7 @@ namespace Mirror.Components
         /// </summary>
         [Tooltip("Diagnostic flag indicating all players are ready to play")]
         [FormerlySerializedAs("allPlayersReady")]
-        [SerializeField]
-        private bool _allPlayersReady;
+        [SerializeField] bool _allPlayersReady;
 
         /// <summary>
         /// These slots track players that enter the room.
@@ -121,7 +118,7 @@ namespace Mirror.Components
             }
         }
 
-        private void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             Debug.Log($"NetworkRoom SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
 

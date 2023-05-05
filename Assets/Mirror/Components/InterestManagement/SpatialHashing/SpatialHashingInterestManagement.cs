@@ -1,15 +1,13 @@
 // extremely fast spatial hashing interest management based on uMMORPG GridChecker.
 // => 30x faster in initial tests
 // => scales way higher
-
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components.InterestManagement.SpatialHashing
+namespace Mirror
 {
     [AddComponentMenu("Network/ Interest Management/ Spatial Hash/Spatial Hashing Interest Management")]
-    public class SpatialHashingInterestManagement : Core.InterestManagement
+    public class SpatialHashingInterestManagement : InterestManagement
     {
         [Tooltip("The maximum range that objects will be visible at.")]
         public int visRange = 30;
@@ -28,8 +26,7 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
 
         [Tooltip("Rebuild all every 'rebuildInterval' seconds.")]
         public float rebuildInterval = 1;
-
-        private double lastRebuildTime;
+        double lastRebuildTime;
 
         public enum CheckMethod
         {
@@ -44,10 +41,10 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
 
         // the grid
         // begin with a large capacity to avoid resizing & allocations.
-        private Grid2D<NetworkConnectionToClient> grid = new Grid2D<NetworkConnectionToClient>(1024);
+        Grid2D<NetworkConnectionToClient> grid = new Grid2D<NetworkConnectionToClient>(1024);
 
         // project 3d world position to grid position
-        private Vector2Int ProjectToGrid(Vector3 position) =>
+        Vector2Int ProjectToGrid(Vector3 position) =>
             checkMethod == CheckMethod.XZ_FOR_3D
             ? Vector2Int.RoundToInt(new Vector2(position.x, position.z) / resolution)
             : Vector2Int.RoundToInt(new Vector2(position.x, position.y) / resolution);
@@ -135,7 +132,7 @@ namespace Mirror.Components.InterestManagement.SpatialHashing
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // slider from dotsnet. it's nice to play around with in the benchmark
         // demo.
-        private void OnGUI()
+        void OnGUI()
         {
             if (!showSlider) return;
 

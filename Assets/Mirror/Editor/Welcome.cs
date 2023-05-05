@@ -3,12 +3,12 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Mirror.Editor
+namespace Mirror
 {
-    internal static class Welcome
+    static class Welcome
     {
         [InitializeOnLoadMethod]
-        private static void OnInitializeOnLoad()
+        static void OnInitializeOnLoad()
         {
             // InitializeOnLoad is called on start and after each rebuild,
             // but we only want to show this once per editor session.

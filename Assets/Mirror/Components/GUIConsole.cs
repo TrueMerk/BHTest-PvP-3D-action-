@@ -12,13 +12,12 @@
 //
 // Note: normal Debug.Log messages can be shown by building in Debug/Development
 //       mode.
-
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
-namespace Mirror.Components
+namespace Mirror
 {
-    internal struct LogEntry
+    struct LogEntry
     {
         public string message;
         public LogType type;
@@ -39,7 +38,7 @@ namespace Mirror.Components
         public int maxLogCount = 50;
 
         // log as queue so we can remove the first entry easily
-        private Queue<LogEntry> log = new Queue<LogEntry>();
+        Queue<LogEntry> log = new Queue<LogEntry>();
 
         // hotkey to show/hide at runtime for easier debugging
         // (sometimes we need to temporarily hide/show it)
@@ -47,10 +46,10 @@ namespace Mirror.Components
         public KeyCode hotKey = KeyCode.F12;
 
         // GUI
-        private bool visible;
-        private Vector2 scroll = Vector2.zero;
+        bool visible;
+        Vector2 scroll = Vector2.zero;
 
-        private void Awake()
+        void Awake()
         {
             Application.logMessageReceived += OnLog;
         }
@@ -58,7 +57,7 @@ namespace Mirror.Components
         // OnLog logs everything, even Debug.Log messages in release builds
         // => this makes a lot of things easier. e.g. addon initialization logs.
         // => it's really better to have than not to have those
-        private void OnLog(string message, string stackTrace, LogType type)
+        void OnLog(string message, string stackTrace, LogType type)
         {
             // is this important?
             // => always show exceptions & errors
@@ -89,13 +88,13 @@ namespace Mirror.Components
             scroll.y = float.MaxValue;
         }
 
-        private void Update()
+        void Update()
         {
             if (Input.GetKeyDown(hotKey))
                 visible = !visible;
         }
 
-        private void OnGUI()
+        void OnGUI()
         {
             if (!visible) return;
 

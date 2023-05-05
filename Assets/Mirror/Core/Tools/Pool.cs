@@ -1,21 +1,20 @@
 ﻿// Pool to avoid allocations (from libuv2k)
 // API consistent with Microsoft's ObjectPool<T>.
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Mirror.Core.Tools
+namespace Mirror
 {
     public class Pool<T>
     {
         // Mirror is single threaded, no need for concurrent collections.
         // stack increases the chance that a reused writer remains in cache.
-        private readonly Stack<T> objects = new Stack<T>();
+        readonly Stack<T> objects = new Stack<T>();
 
         // some types might need additional parameters in their constructor, so
         // we use a Func<T> generator
-        private readonly Func<T> objectGenerator;
+        readonly Func<T> objectGenerator;
 
         public Pool(Func<T> objectGenerator, int initialCapacity)
         {

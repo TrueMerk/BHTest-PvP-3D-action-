@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Mirror.Core.Batching;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     // a localClient's connection TO a server.
     // send messages on this connection causes the server's handler function to be invoked directly.
@@ -20,8 +18,8 @@ namespace Mirror.Core
         public string address => "localhost";
 
         // see caller for comments on why we need this
-        private bool connectedEventPending;
-        private bool disconnectedEventPending;
+        bool connectedEventPending;
+        bool disconnectedEventPending;
         internal void QueueConnectedEvent() => connectedEventPending = true;
         internal void QueueDisconnectedEvent() => disconnectedEventPending = true;
 

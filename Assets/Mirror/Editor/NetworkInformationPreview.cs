@@ -1,27 +1,26 @@
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace Mirror.Editor
+namespace Mirror
 {
     [CustomPreview(typeof(GameObject))]
-    internal class NetworkInformationPreview : ObjectPreview
+    class NetworkInformationPreview : ObjectPreview
     {
-        private struct NetworkIdentityInfo
+        struct NetworkIdentityInfo
         {
             public GUIContent name;
             public GUIContent value;
         }
 
-        private struct NetworkBehaviourInfo
+        struct NetworkBehaviourInfo
         {
             // This is here just so we can check if it's enabled/disabled
             public NetworkBehaviour behaviour;
             public GUIContent name;
         }
 
-        private class Styles
+        class Styles
         {
             public GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
             public GUIStyle componentName = new GUIStyle(EditorStyles.boldLabel);
@@ -60,8 +59,8 @@ namespace Mirror.Editor
             }
         }
 
-        private GUIContent title;
-        private Styles styles = new Styles();
+        GUIContent title;
+        Styles styles = new Styles();
 
         public override GUIContent GetPreviewTitle()
         {
@@ -118,7 +117,7 @@ namespace Mirror.Editor
 
         }
 
-        private float DrawNetworkIdentityInfo(NetworkIdentity identity, float initialX, float Y)
+        float DrawNetworkIdentityInfo(NetworkIdentity identity, float initialX, float Y)
         {
             IEnumerable<NetworkIdentityInfo> infos = GetNetworkIdentityInfo(identity);
             // Get required label size for the names of the information values we're going to show
@@ -141,7 +140,7 @@ namespace Mirror.Editor
             return labelRect.y;
         }
 
-        private float DrawNetworkBehaviors(NetworkIdentity identity, float initialX, float Y)
+        float DrawNetworkBehaviors(NetworkIdentity identity, float initialX, float Y)
         {
             IEnumerable<NetworkBehaviourInfo> behavioursInfo = GetNetworkBehaviorInfo(identity);
 
@@ -170,7 +169,7 @@ namespace Mirror.Editor
             return Y;
         }
 
-        private float DrawObservers(NetworkIdentity identity, float initialX, float Y)
+        float DrawObservers(NetworkIdentity identity, float initialX, float Y)
         {
             if (identity.observers.Count > 0)
             {
@@ -192,7 +191,7 @@ namespace Mirror.Editor
             return Y;
         }
 
-        private float DrawOwner(NetworkIdentity identity, float initialX, float Y)
+        float DrawOwner(NetworkIdentity identity, float initialX, float Y)
         {
             if (identity.connectionToClient != null)
             {
@@ -204,7 +203,7 @@ namespace Mirror.Editor
         }
 
         // Get the maximum size used by the value of information items
-        private Vector2 GetMaxNameLabelSize(IEnumerable<NetworkIdentityInfo> infos)
+        Vector2 GetMaxNameLabelSize(IEnumerable<NetworkIdentityInfo> infos)
         {
             Vector2 maxLabelSize = Vector2.zero;
             foreach (NetworkIdentityInfo info in infos)
@@ -222,7 +221,7 @@ namespace Mirror.Editor
             return maxLabelSize;
         }
 
-        private Vector2 GetMaxBehaviourLabelSize(IEnumerable<NetworkBehaviourInfo> behavioursInfo)
+        Vector2 GetMaxBehaviourLabelSize(IEnumerable<NetworkBehaviourInfo> behavioursInfo)
         {
             Vector2 maxLabelSize = Vector2.zero;
             foreach (NetworkBehaviourInfo behaviour in behavioursInfo)
@@ -240,7 +239,7 @@ namespace Mirror.Editor
             return maxLabelSize;
         }
 
-        private IEnumerable<NetworkIdentityInfo> GetNetworkIdentityInfo(NetworkIdentity identity)
+        IEnumerable<NetworkIdentityInfo> GetNetworkIdentityInfo(NetworkIdentity identity)
         {
             List<NetworkIdentityInfo> infos = new List<NetworkIdentityInfo>
             {
@@ -259,7 +258,7 @@ namespace Mirror.Editor
             return infos;
         }
 
-        private IEnumerable<NetworkBehaviourInfo> GetNetworkBehaviorInfo(NetworkIdentity identity)
+        IEnumerable<NetworkBehaviourInfo> GetNetworkBehaviorInfo(NetworkIdentity identity)
         {
             List<NetworkBehaviourInfo> behaviourInfos = new List<NetworkBehaviourInfo>();
 
@@ -275,7 +274,7 @@ namespace Mirror.Editor
             return behaviourInfos;
         }
 
-        private NetworkIdentityInfo GetAssetId(NetworkIdentity identity)
+        NetworkIdentityInfo GetAssetId(NetworkIdentity identity)
         {
             string assetId = identity.assetId.ToString();
             if (string.IsNullOrWhiteSpace(assetId))
@@ -285,7 +284,7 @@ namespace Mirror.Editor
             return GetString("Asset ID", assetId);
         }
 
-        private static NetworkIdentityInfo GetString(string name, string value)
+        static NetworkIdentityInfo GetString(string name, string value)
         {
             return new NetworkIdentityInfo
             {
@@ -294,7 +293,7 @@ namespace Mirror.Editor
             };
         }
 
-        private static NetworkIdentityInfo GetBoolean(string name, bool value)
+        static NetworkIdentityInfo GetBoolean(string name, bool value)
         {
             return new NetworkIdentityInfo
             {

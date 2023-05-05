@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Mirror.Core;
 using Mono.CecilX;
 using Mono.CecilX.Cil;
-using Mono.CecilX.Rocks;
 // to use Mono.CecilX.Rocks here, we need to 'override references' in the
 // Unity.Mirror.CodeGen assembly definition file in the Editor, and add CecilX.Rocks.
 // otherwise we get an unknown import exception.
+using Mono.CecilX.Rocks;
 
-namespace Mirror.Editor.Weaver
+namespace Mirror.Weaver
 {
     // not static, because ILPostProcessor is multithreaded
     public class Readers
@@ -16,12 +15,12 @@ namespace Mirror.Editor.Weaver
         // Readers are only for this assembly.
         // can't be used from another assembly, otherwise we will get:
         // "System.ArgumentException: Member ... is declared in another module and needs to be imported"
-        private AssemblyDefinition assembly;
-        private WeaverTypes weaverTypes;
-        private TypeDefinition GeneratedCodeClass;
-        private Logger Log;
+        AssemblyDefinition assembly;
+        WeaverTypes weaverTypes;
+        TypeDefinition GeneratedCodeClass;
+        Logger Log;
 
-        private Dictionary<TypeReference, MethodReference> readFuncs =
+        Dictionary<TypeReference, MethodReference> readFuncs =
             new Dictionary<TypeReference, MethodReference>(new TypeReferenceComparer());
 
         public Readers(AssemblyDefinition assembly, WeaverTypes weaverTypes, TypeDefinition GeneratedCodeClass, Logger Log)
@@ -47,7 +46,7 @@ namespace Mirror.Editor.Weaver
             readFuncs[imported] = methodReference;
         }
 
-        private void RegisterReadFunc(TypeReference typeReference, MethodDefinition newReaderFunc)
+        void RegisterReadFunc(TypeReference typeReference, MethodDefinition newReaderFunc)
         {
             Register(typeReference, newReaderFunc);
             GeneratedCodeClass.Methods.Add(newReaderFunc);
@@ -63,7 +62,7 @@ namespace Mirror.Editor.Weaver
             return GenerateReader(importedVariable, ref WeavingFailed);
         }
 
-        private MethodReference GenerateReader(TypeReference variableReference, ref bool WeavingFailed)
+        MethodReference GenerateReader(TypeReference variableReference, ref bool WeavingFailed)
         {
             // Arrays are special,  if we resolve them, we get the element type,
             // so the following ifs might choke on it for scriptable objects
@@ -162,7 +161,7 @@ namespace Mirror.Editor.Weaver
             return GenerateClassOrStructReadFunction(variableReference, ref WeavingFailed);
         }
 
-        private MethodReference GetNetworkBehaviourReader(TypeReference variableReference)
+        MethodReference GetNetworkBehaviourReader(TypeReference variableReference)
         {
             // uses generic ReadNetworkBehaviour rather than having weaver create one for each NB
             MethodReference generic = weaverTypes.readNetworkBehaviourGeneric;
@@ -176,7 +175,7 @@ namespace Mirror.Editor.Weaver
             return readFunc;
         }
 
-        private MethodDefinition GenerateEnumReadFunc(TypeReference variable, ref bool WeavingFailed)
+        MethodDefinition GenerateEnumReadFunc(TypeReference variable, ref bool WeavingFailed)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
 
@@ -192,7 +191,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        private MethodDefinition GenerateArraySegmentReadFunc(TypeReference variable, ref bool WeavingFailed)
+        MethodDefinition GenerateArraySegmentReadFunc(TypeReference variable, ref bool WeavingFailed)
         {
             GenericInstanceType genericInstance = (GenericInstanceType)variable;
             TypeReference elementType = genericInstance.GenericArguments[0];
@@ -212,7 +211,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        private MethodDefinition GenerateReaderFunction(TypeReference variable)
+        MethodDefinition GenerateReaderFunction(TypeReference variable)
         {
             string functionName = $"_Read_{variable.FullName}";
 
@@ -230,7 +229,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        private MethodDefinition GenerateReadCollection(TypeReference variable, TypeReference elementType, string readerFunction, ref bool WeavingFailed)
+        MethodDefinition GenerateReadCollection(TypeReference variable, TypeReference elementType, string readerFunction, ref bool WeavingFailed)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
             // generate readers for the element
@@ -255,7 +254,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        private MethodDefinition GenerateClassOrStructReadFunction(TypeReference variable, ref bool WeavingFailed)
+        MethodDefinition GenerateClassOrStructReadFunction(TypeReference variable, ref bool WeavingFailed)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
 
@@ -277,7 +276,7 @@ namespace Mirror.Editor.Weaver
             return readerFunc;
         }
 
-        private void GenerateNullCheck(ILProcessor worker, ref bool WeavingFailed)
+        void GenerateNullCheck(ILProcessor worker, ref bool WeavingFailed)
         {
             // if (!reader.ReadBoolean()) {
             //   return null;
@@ -294,7 +293,7 @@ namespace Mirror.Editor.Weaver
         }
 
         // Initialize the local variable with a new instance
-        private void CreateNew(TypeReference variable, ILProcessor worker, TypeDefinition td, ref bool WeavingFailed)
+        void CreateNew(TypeReference variable, ILProcessor worker, TypeDefinition td, ref bool WeavingFailed)
         {
             if (variable.IsValueType)
             {
@@ -327,7 +326,7 @@ namespace Mirror.Editor.Weaver
             }
         }
 
-        private void ReadAllFields(TypeReference variable, ILProcessor worker, ref bool WeavingFailed)
+        void ReadAllFields(TypeReference variable, ILProcessor worker, ref bool WeavingFailed)
         {
             foreach (FieldDefinition field in variable.FindAllPublicFields())
             {

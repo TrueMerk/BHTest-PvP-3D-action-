@@ -6,23 +6,22 @@
 // https://forum.unity.com/threads/how-does-unity-do-codegen-and-why-cant-i-do-it-myself.853867/#post-5646937
 using System.IO;
 using System.Linq;
-using Mono.CecilX;
-using Mono.CecilX.Cil;
-using Unity.CompilationPipeline.Common.ILPostProcessing;
 // to use Mono.CecilX here, we need to 'override references' in the
 // Unity.Mirror.CodeGen assembly definition file in the Editor, and add CecilX.
 // otherwise we get a reflection exception with 'file not found: CecilX'.
-
+using Mono.CecilX;
+using Mono.CecilX.Cil;
+using Unity.CompilationPipeline.Common.ILPostProcessing;
 // IMPORTANT: 'using UnityEngine' does not work in here.
 // Unity gives "(0,0): error System.Security.SecurityException: ECall methods must be packaged into a system module."
 //using UnityEngine;
 
-namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
+namespace Mirror.Weaver
 {
     public class ILPostProcessorHook : ILPostProcessor
     {
         // from CompilationFinishedHook
-        private const string MirrorRuntimeAssemblyName = "Mirror";
+        const string MirrorRuntimeAssemblyName = "Mirror";
 
         // ILPostProcessor is invoked by Unity.
         // we can not tell it to ignore certain assemblies before processing.
@@ -31,13 +30,13 @@ namespace Mirror.Editor.Weaver.EntryPointILPostProcessor
         public const string IgnoreDefine = "ILPP_IGNORE";
 
         // we can't use Debug.Log in ILPP, so we need a custom logger
-        private ILPostProcessorLogger Log = new ILPostProcessorLogger();
+        ILPostProcessorLogger Log = new ILPostProcessorLogger();
 
         // ???
         public override ILPostProcessor GetInstance() => this;
 
         // check if assembly has the 'ignore' define
-        private static bool HasDefine(ICompiledAssembly assembly, string define) =>
+        static bool HasDefine(ICompiledAssembly assembly, string define) =>
             assembly.Defines != null &&
             assembly.Defines.Contains(define);
 

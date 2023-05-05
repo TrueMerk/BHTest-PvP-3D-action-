@@ -2,14 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Mirror.Core
+namespace Mirror
 {
     public class SyncList<T> : SyncObject, IList<T>, IReadOnlyList<T>
     {
         public delegate void SyncListChanged(Operation op, int itemIndex, T oldItem, T newItem);
 
-        private readonly IList<T> objects;
-        private readonly IEqualityComparer<T> comparer;
+        readonly IList<T> objects;
+        readonly IEqualityComparer<T> comparer;
 
         public int Count => objects.Count;
         public bool IsReadOnly => !IsWritable();
@@ -24,7 +24,7 @@ namespace Mirror.Core
             OP_SET
         }
 
-        private struct Change
+        struct Change
         {
             internal Operation operation;
             internal int index;
@@ -35,13 +35,13 @@ namespace Mirror.Core
         // -> insert/delete/clear is only ONE change
         // -> changing the same slot 10x caues 10 changes.
         // -> note that this grows until next sync(!)
-        private readonly List<Change> changes = new List<Change>();
+        readonly List<Change> changes = new List<Change>();
 
         // how many changes we need to ignore
         // this is needed because when we initialize the list,
         // we might later receive changes that have already been applied
         // so we need to skip them
-        private int changesAhead;
+        int changesAhead;
 
         public SyncList() : this(EqualityComparer<T>.Default) {}
 
@@ -68,7 +68,7 @@ namespace Mirror.Core
             objects.Clear();
         }
 
-        private void AddOperation(Operation op, int itemIndex, T oldItem, T newItem, bool checkAccess)
+        void AddOperation(Operation op, int itemIndex, T oldItem, T newItem, bool checkAccess)
         {
             if (checkAccess && IsReadOnly)
             {
@@ -391,8 +391,8 @@ namespace Mirror.Core
         // => this is extremely important for MMO scale networking
         public struct Enumerator : IEnumerator<T>
         {
-            private readonly SyncList<T> list;
-            private int index;
+            readonly SyncList<T> list;
+            int index;
             public T Current { get; private set; }
 
             public Enumerator(SyncList<T> list)

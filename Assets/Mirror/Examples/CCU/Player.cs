@@ -1,5 +1,4 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Mirror.Examples.CCU
 {
@@ -14,16 +13,16 @@ namespace Mirror.Examples.CCU
         public float autoSpeed           = 2;
         public float movementProbability = 0.5f;
         public float movementDistance    = 20;
-        private bool         moving;
-        private Vector3      start;
-        private Vector3      destination;
+        bool         moving;
+        Vector3      start;
+        Vector3      destination;
 
         [Header("Manual Movement")]
         public float manualSpeed = 10;
 
         // cache .transform for benchmark demo.
         // Component.get_transform shows in profiler otherwise.
-        private Transform tf;
+        Transform tf;
 
         public override void OnStartLocalPlayer()
         {
@@ -41,7 +40,7 @@ namespace Mirror.Examples.CCU
             Camera.main.transform.SetParent(null, true);
         }
 
-        private void AutoMove()
+        void AutoMove()
         {
             if (moving)
             {
@@ -73,7 +72,7 @@ namespace Mirror.Examples.CCU
             }
         }
 
-        private void ManualMove()
+        void ManualMove()
         {
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
@@ -82,10 +81,10 @@ namespace Mirror.Examples.CCU
             transform.position += direction.normalized * (Time.deltaTime * manualSpeed);
         }
 
-        private static bool Interrupted() =>
+        static bool Interrupted() =>
             Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
 
-        private void Update()
+        void Update()
         {
             if (!isLocalPlayer) return;
 

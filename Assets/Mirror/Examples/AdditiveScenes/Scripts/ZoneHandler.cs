@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.AdditiveScenes.Scripts
+namespace Mirror.Examples.AdditiveScenes
 {
     // AdditiveNetworkManager, in OnStartServer, instantiates the prefab only on the server.
     // It never exists for clients (other than host client if there is one).
@@ -15,7 +14,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         public string subScene;
 
         [ServerCallback]
-        private void OnTriggerEnter(Collider other)
+        void OnTriggerEnter(Collider other)
         {
             // ignore collisions with non-Player objects
             if (!other.CompareTag("Player")) return;
@@ -28,7 +27,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         }
 
         [ServerCallback]
-        private void OnTriggerExit(Collider other)
+        void OnTriggerExit(Collider other)
         {
             // ignore collisions with non-Player objects
             if (!other.CompareTag("Player")) return;

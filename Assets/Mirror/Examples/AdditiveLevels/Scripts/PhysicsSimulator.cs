@@ -1,17 +1,16 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Mirror.Examples.AdditiveLevels.Scripts
+namespace Mirror.Examples.AdditiveLevels
 {
     public class PhysicsSimulator : MonoBehaviour
     {
-        private PhysicsScene physicsScene;
-        private PhysicsScene2D physicsScene2D;
+        PhysicsScene physicsScene;
+        PhysicsScene2D physicsScene2D;
 
-        private bool simulatePhysicsScene;
-        private bool simulatePhysicsScene2D;
+        bool simulatePhysicsScene;
+        bool simulatePhysicsScene2D;
 
-        private void Awake()
+        void Awake()
         {
             if (NetworkServer.active)
             {
@@ -27,7 +26,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
             }
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             if (!NetworkServer.active) return;
 

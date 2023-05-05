@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Mirror.Core;
-using Mirror.Editor.Weaver.Processors;
 using Mono.CecilX;
 
-namespace Mirror.Editor.Weaver
+namespace Mirror.Weaver
 {
     // not static, because ILPostProcessor is multithreaded
     internal class Weaver
@@ -15,24 +13,24 @@ namespace Mirror.Editor.Weaver
         // generated code class
         public const string GeneratedCodeNamespace = "Mirror";
         public const string GeneratedCodeClassName = "GeneratedNetworkCode";
-        private TypeDefinition GeneratedCodeClass;
+        TypeDefinition GeneratedCodeClass;
 
         // for resolving Mirror.dll in ReaderWriterProcessor, we need to know
         // Mirror.dll name
         public const string MirrorAssemblyName = "Mirror";
 
-        private WeaverTypes weaverTypes;
-        private SyncVarAccessLists syncVarAccessLists;
-        private AssemblyDefinition CurrentAssembly;
-        private Writers writers;
-        private Readers readers;
+        WeaverTypes weaverTypes;
+        SyncVarAccessLists syncVarAccessLists;
+        AssemblyDefinition CurrentAssembly;
+        Writers writers;
+        Readers readers;
 
         // in case of weaver errors, we don't stop immediately.
         // we log all errors and then eventually return false if
         // weaving has failed.
         // this way the user can fix multiple errors at once, instead of having
         // to fix -> recompile -> fix -> recompile for one error at a time.
-        private bool WeavingFailed;
+        bool WeavingFailed;
 
         // logger functions can be set from the outside.
         // for example, Debug.Log or ILPostProcessor Diagnostics log for
@@ -68,7 +66,7 @@ namespace Mirror.Editor.Weaver
         }
 
         // returns 'true' if modified (=if we did anything)
-        private bool WeaveNetworkBehavior(TypeDefinition td)
+        bool WeaveNetworkBehavior(TypeDefinition td)
         {
             if (!td.IsClass)
                 return false;
@@ -113,7 +111,7 @@ namespace Mirror.Editor.Weaver
             return modified;
         }
 
-        private bool WeaveModule(ModuleDefinition moduleDefinition)
+        bool WeaveModule(ModuleDefinition moduleDefinition)
         {
             bool modified = false;
 
@@ -135,7 +133,7 @@ namespace Mirror.Editor.Weaver
             return modified;
         }
 
-        private void CreateGeneratedCodeClass()
+        void CreateGeneratedCodeClass()
         {
             // create "Mirror.GeneratedNetworkCode" class which holds all
             // Readers<T> and Writers<T>

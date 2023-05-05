@@ -1,12 +1,9 @@
 // NetworkTransform V2 by mischa (2021-07)
 // comment out the below line to quickly revert the onlySyncOnChange feature
 #define onlySyncOnChange_BANDWIDTH_SAVING
-using Mirror.Core;
-using Mirror.Core.SnapshotInterpolation;
-using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror.Components.NetworkTransformUnreliable
+namespace Mirror
 {
     [AddComponentMenu("Network/Network Transform (Unreliable)")]
     public class NetworkTransform : NetworkTransformBase
@@ -36,13 +33,13 @@ namespace Mirror.Components.NetworkTransformUnreliable
         protected bool hasSentUnchangedPosition;
 #endif
 
-        private double lastClientSendTime;
-        private double lastServerSendTime;
+        double lastClientSendTime;
+        double lastServerSendTime;
 
         [Header("Send Interval Multiplier")]
         [Tooltip("Check/Sync every multiple of Network Manager send interval (= 1 / NM Send Rate), instead of every send interval.")]
         [Range(1, 120)]
-        private const uint sendIntervalMultiplier = 1; // not implemented yet
+        const uint sendIntervalMultiplier = 1; // not implemented yet
 
         [Header("Snapshot Interpolation")]
         [Tooltip("Add a small timeline offset to account for decoupled arrival of NetworkTime and NetworkTransform snapshots.\nfixes: https://github.com/MirrorNetworking/Mirror/issues/3427")]
@@ -61,12 +58,12 @@ namespace Mirror.Components.NetworkTransformUnreliable
         // When everything works, we are receiving NT snapshots every 10 frames, but start interpolating after 2. 
         // Even if I assume we had 2 snapshots to begin with to start interpolating (which we don't), by the time we reach 13th frame, we are out of snapshots, and have to wait 7 frames for next snapshot to come. This is the reason why we absolutely need the timestamp adjustment. We are starting way too early to interpolate. 
         //
-        private double timeStampAdjustment => NetworkServer.sendInterval * (sendIntervalMultiplier - 1);
-        private double offset => timelineOffset ? NetworkServer.sendInterval * sendIntervalMultiplier : 0;
+        double timeStampAdjustment => NetworkServer.sendInterval * (sendIntervalMultiplier - 1);
+        double offset => timelineOffset ? NetworkServer.sendInterval * sendIntervalMultiplier : 0;
 
         // update //////////////////////////////////////////////////////////////
         // Update applies interpolation
-        private void Update()
+        void Update()
         {
             if (isServer) UpdateServerInterpolation();
             // for all other clients (and for local player if !authority),
@@ -80,7 +77,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
         // use LateUpdate to ensure changes are detected in the same frame.
         // otherwise this may run before user update, delaying detection until next frame.
         // this could cause visible jitter.
-        private void LateUpdate()
+        void LateUpdate()
         {
             // if server then always sync to others.
             if (isServer) UpdateServerBroadcast();
@@ -90,7 +87,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
             else if (isClient && IsClientWithAuthority) UpdateClientBroadcast();
         }
 
-        private void UpdateServerBroadcast()
+        void UpdateServerBroadcast()
         {
             // broadcast to all clients each 'sendInterval'
             // (client with authority will drop the rpc)
@@ -164,7 +161,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
             }
         }
 
-        private void UpdateServerInterpolation()
+        void UpdateServerInterpolation()
         {
             // apply buffered snapshots IF client authority
             // -> in server authority, server moves the object
@@ -195,7 +192,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
             }
         }
 
-        private void UpdateClientBroadcast()
+        void UpdateClientBroadcast()
         {
             // https://github.com/vis2k/Mirror/pull/2992/
             if (!NetworkClient.ready) return;
@@ -261,7 +258,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
             }
         }
 
-        private void UpdateClientInterpolation()
+        void UpdateClientInterpolation()
         {
             // only while we have snapshots
             if (clientSnapshots.Count == 0) return;
@@ -320,7 +317,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
         // cmd /////////////////////////////////////////////////////////////////
         // only unreliable. see comment above of this file.
         [Command(channel = Channels.Unreliable)]
-        private void CmdClientToServerSync(Vector3? position, Quaternion? rotation, Vector3? scale)
+        void CmdClientToServerSync(Vector3? position, Quaternion? rotation, Vector3? scale)
         {
             OnClientToServerSync(position, rotation, scale);
             //For client authority, immediately pass on the client snapshot to all other
@@ -360,7 +357,7 @@ namespace Mirror.Components.NetworkTransformUnreliable
         // rpc /////////////////////////////////////////////////////////////////
         // only unreliable. see comment above of this file.
         [ClientRpc(channel = Channels.Unreliable)]
-        private void RpcServerToClientSync(Vector3? position, Quaternion? rotation, Vector3? scale) =>
+        void RpcServerToClientSync(Vector3? position, Quaternion? rotation, Vector3? scale) =>
             OnServerToClientSync(position, rotation, scale);
 
         // server broadcasts sync message to all clients

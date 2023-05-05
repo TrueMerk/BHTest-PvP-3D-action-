@@ -1,9 +1,8 @@
 // vis2k: GUILayout instead of spacey += ...; removed Update hotkeys to avoid
 // confusion if someone accidentally presses one.
-
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     /// <summary>Shows NetworkManager controls in a GUI at runtime.</summary>
     [DisallowMultipleComponent]
@@ -12,17 +11,17 @@ namespace Mirror.Core
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-manager-hud")]
     public class NetworkManagerHUD : MonoBehaviour
     {
-        private NetworkManager manager;
+        NetworkManager manager;
 
         public int offsetX;
         public int offsetY;
 
-        private void Awake()
+        void Awake()
         {
             manager = GetComponent<NetworkManager>();
         }
 
-        private void OnGUI()
+        void OnGUI()
         {
             GUILayout.BeginArea(new Rect(10 + offsetX, 40 + offsetY, 250, 9999));
             if (!NetworkClient.isConnected && !NetworkServer.active)
@@ -52,7 +51,7 @@ namespace Mirror.Core
             GUILayout.EndArea();
         }
 
-        private void StartButtons()
+        void StartButtons()
         {
             if (!NetworkClient.active)
             {
@@ -97,7 +96,7 @@ namespace Mirror.Core
             }
         }
 
-        private void StatusLabels()
+        void StatusLabels()
         {
             // host mode
             // display separately because this always confused people:
@@ -119,7 +118,7 @@ namespace Mirror.Core
             }
         }
 
-        private void StopButtons()
+        void StopButtons()
         {
             // stop host if host mode
             if (NetworkServer.active && NetworkClient.isConnected)

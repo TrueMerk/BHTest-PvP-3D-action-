@@ -4,23 +4,22 @@
 //
 // .average may safely be called from main thread while Begin/End is in another.
 // i.e. worker threads, transport, etc.
-
 using System.Diagnostics;
 using System.Threading;
 
-namespace Mirror.Core.Tools
+namespace Mirror
 {
     public struct TimeSample
     {
         // UnityEngine.Time isn't thread safe. use stopwatch instead.
-        private readonly Stopwatch watch;
+        readonly Stopwatch watch;
 
         // remember when Begin was called
-        private double beginTime;
+        double beginTime;
 
         // keep accumulating times over the given interval.
         // (not readonly. we modify its contents.)
-        private ExponentialMovingAverage ema;
+        ExponentialMovingAverage ema;
 
         // average in seconds.
         // code often runs in sub-millisecond time. float is more precise.

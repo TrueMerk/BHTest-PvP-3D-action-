@@ -1,8 +1,6 @@
-using Mirror.Components;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.AdditiveScenes.Scripts
+namespace Mirror.Examples.AdditiveScenes
 {
     // This script demonstrates the NetworkAnimator and how to leverage
     // the built-in observers system to track players.
@@ -12,10 +10,10 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         [SyncVar]
         public Quaternion rotation;
 
-        private NetworkAnimator networkAnimator;
+        NetworkAnimator networkAnimator;
 
         [ServerCallback]
-        private void Start()
+        void Start()
         {
             networkAnimator = GetComponent<NetworkAnimator>();
         }
@@ -23,7 +21,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         [Range(0, 1)]
         public float turnSpeed = 0.1f;
 
-        private void Update()
+        void Update()
         {
             if (isServer && netIdentity.observers.Count > 0)
                 ShootNearestPlayer();
@@ -33,7 +31,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
         }
 
         [Server]
-        private void ShootNearestPlayer()
+        void ShootNearestPlayer()
         {
             GameObject target = null;
             float distance = 100f;

@@ -4,14 +4,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror.Core
+namespace Mirror
 {
     [DisallowMultipleComponent]
     [HelpURL("https://mirror-networking.gitbook.io/docs/guides/interest-management")]
     public abstract class InterestManagement : InterestManagementBase
     {
         // allocate newObservers helper HashSet
-        private readonly HashSet<NetworkConnectionToClient> newObservers =
+        readonly HashSet<NetworkConnectionToClient> newObservers =
             new HashSet<NetworkConnectionToClient>();
 
         // rebuild observers for the given NetworkIdentity.

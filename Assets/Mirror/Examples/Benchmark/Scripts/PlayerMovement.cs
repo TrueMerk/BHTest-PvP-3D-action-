@@ -1,13 +1,12 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Mirror.Examples.Benchmark.Scripts
+namespace Mirror.Examples.Benchmark
 {
     public class PlayerMovement : NetworkBehaviour
     {
         public float speed = 5;
 
-        private void Update()
+        void Update()
         {
             if (!isLocalPlayer) return;
 

@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components.InterestManagement.Match
+namespace Mirror
 {
     [AddComponentMenu("Network/ Interest Management/ Match/Match Interest Management")]
-    public class MatchInterestManagement : Core.InterestManagement
+    public class MatchInterestManagement : InterestManagement
     {
-        private readonly Dictionary<Guid, HashSet<NetworkIdentity>> matchObjects =
+        readonly Dictionary<Guid, HashSet<NetworkIdentity>> matchObjects =
             new Dictionary<Guid, HashSet<NetworkIdentity>>();
 
-        private readonly Dictionary<NetworkIdentity, Guid> lastObjectMatch =
+        readonly Dictionary<NetworkIdentity, Guid> lastObjectMatch =
             new Dictionary<NetworkIdentity, Guid>();
 
-        private readonly HashSet<Guid> dirtyMatches = new HashSet<Guid>();
+        readonly HashSet<Guid> dirtyMatches = new HashSet<Guid>();
 
         [ServerCallback]
         public override void OnSpawned(NetworkIdentity identity)
@@ -97,7 +96,7 @@ namespace Mirror.Components.InterestManagement.Match
             dirtyMatches.Clear();
         }
 
-        private void UpdateDirtyMatches(Guid newMatch, Guid currentMatch)
+        void UpdateDirtyMatches(Guid newMatch, Guid currentMatch)
         {
             // Guid.Empty is never a valid matchId
             if (currentMatch != Guid.Empty)
@@ -106,7 +105,7 @@ namespace Mirror.Components.InterestManagement.Match
             dirtyMatches.Add(newMatch);
         }
 
-        private void UpdateMatchObjects(NetworkIdentity netIdentity, Guid newMatch, Guid currentMatch)
+        void UpdateMatchObjects(NetworkIdentity netIdentity, Guid newMatch, Guid currentMatch)
         {
             // Remove this object from the hashset of the match it just left
             // Guid.Empty is never a valid matchId
@@ -124,7 +123,7 @@ namespace Mirror.Components.InterestManagement.Match
             matchObjects[newMatch].Add(netIdentity);
         }
 
-        private void RebuildMatchObservers(Guid matchId)
+        void RebuildMatchObservers(Guid matchId)
         {
             foreach (NetworkIdentity netIdentity in matchObjects[matchId])
                 if (netIdentity != null)

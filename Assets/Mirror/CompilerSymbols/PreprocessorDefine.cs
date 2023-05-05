@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace Mirror.CompilerSymbols
+namespace Mirror
 {
-    internal static class PreprocessorDefine
+    static class PreprocessorDefine
     {
         /// <summary>
         /// Add define symbols as soon as Unity gets done compiling.

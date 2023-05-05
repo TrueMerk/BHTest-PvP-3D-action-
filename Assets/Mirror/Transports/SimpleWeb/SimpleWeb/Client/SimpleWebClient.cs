@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Concurrent;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Client.StandAlone;
-using Mirror.Transports.SimpleWeb.SimpleWeb.Common;
 using UnityEngine;
-using EventType = Mirror.Transports.SimpleWeb.SimpleWeb.Common.EventType;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client
+namespace Mirror.SimpleWeb
 {
     public enum ClientState
     {
@@ -30,7 +27,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Client
 #endif
         }
 
-        private readonly int maxMessagesPerTick;
+        readonly int maxMessagesPerTick;
         protected readonly int maxMessageSize;
         public readonly ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
         protected readonly BufferPool bufferPool;

@@ -1,8 +1,7 @@
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Mirror.Examples.Tanks.Scripts
+namespace Mirror.Examples.Tanks
 {
     public class Tank : NetworkBehaviour
     {
@@ -23,7 +22,7 @@ namespace Mirror.Examples.Tanks.Scripts
         [Header("Stats")]
         [SyncVar] public int health = 4;
 
-        private void Update()
+        void Update()
         {
             // always update health bar.
             // (SyncVar hook would only update on clients, not on server)
@@ -57,7 +56,7 @@ namespace Mirror.Examples.Tanks.Scripts
 
         // this is called on the server
         [Command]
-        private void CmdFire()
+        void CmdFire()
         {
             GameObject projectile = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation);
             NetworkServer.Spawn(projectile);
@@ -66,13 +65,13 @@ namespace Mirror.Examples.Tanks.Scripts
 
         // this is called on the tank that fired for all observers
         [ClientRpc]
-        private void RpcOnFire()
+        void RpcOnFire()
         {
             animator.SetTrigger("Shoot");
         }
 
         [ServerCallback]
-        private void OnTriggerEnter(Collider other)
+        void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<Projectile>() != null)
             {
@@ -82,7 +81,7 @@ namespace Mirror.Examples.Tanks.Scripts
             }
         }
 
-        private void RotateTurret()
+        void RotateTurret()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100))

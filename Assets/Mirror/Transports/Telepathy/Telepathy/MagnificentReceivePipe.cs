@@ -6,18 +6,17 @@
 // => hides all the complexity from telepathy
 // => easy to switch between stack/queue/concurrentqueue/etc.
 // => easy to test
-
 using System;
 using System.Collections.Generic;
 
-namespace Mirror.Transports.Telepathy.Telepathy
+namespace Telepathy
 {
     public class MagnificentReceivePipe
     {
         // queue entry message. only used in here.
         // -> byte arrays are always of 4 + MaxMessageSize
         // -> ArraySegment indicates the actual message content
-        private struct Entry
+        struct Entry
         {
             public int connectionId;
             public EventType eventType;
@@ -34,7 +33,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
         // ConcurrentQueue allocates. lock{} instead.
         //
         // IMPORTANT: lock{} all usages!
-        private readonly Queue<Entry> queue = new Queue<Entry>();
+        readonly Queue<Entry> queue = new Queue<Entry>();
 
         // byte[] pool to avoid allocations
         // Take & Return is beautifully encapsulated in the pipe.
@@ -42,7 +41,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
         // and it can be tested easily.
         //
         // IMPORTANT: lock{} all usages!
-        private Pool<byte[]> pool;
+        Pool<byte[]> pool;
 
         // unfortunately having one receive pipe per connetionId is way slower
         // in CCU tests. right now we have one pipe for all connections.
@@ -50,7 +49,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
         //    spamming connection being able to slow down everyone else since
         //    the queue would be full of just this connection's messages forever
         // => let's use a simpler per-connectionId counter for now
-        private Dictionary<int, int> queueCounter = new Dictionary<int, int>();
+        Dictionary<int, int> queueCounter = new Dictionary<int, int>();
 
         // constructor
         public MagnificentReceivePipe(int MaxMessageSize)

@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Mirror.Core;
-using Mirror.Core.Tools;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace Mirror.Editor
+namespace Mirror
 {
     public class NetworkScenePostProcess : MonoBehaviour
     {
@@ -75,7 +73,7 @@ namespace Mirror.Editor
             }
         }
 
-        private static void PrepareSceneObject(NetworkIdentity identity)
+        static void PrepareSceneObject(NetworkIdentity identity)
         {
             // set scene hash
             identity.SetSceneIdSceneHashPartInternal();

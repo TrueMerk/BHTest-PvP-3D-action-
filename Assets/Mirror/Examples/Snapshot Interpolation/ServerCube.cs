@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.Snapshot_Interpolation
+namespace Mirror.Examples.SnapshotInterpolationDemo
 {
     public class ServerCube : MonoBehaviour
     {
@@ -12,13 +11,13 @@ namespace Mirror.Examples.Snapshot_Interpolation
         [Header("Movement")]
         public float distance = 10;
         public float speed = 3;
-        private Vector3 start;
+        Vector3 start;
 
         [Header("Snapshot Interpolation")]
         [Tooltip("Send N snapshots per second. Multiples of frame rate make sense.")]
         public int sendRate = 30; // in Hz. easier to work with as int for EMA. easier to display '30' than '0.333333333'
         public float sendInterval => 1f / sendRate;
-        private float lastSendTime;
+        float lastSendTime;
 
         [Header("Latency Simulation")]
         [Tooltip("Latency in seconds")]
@@ -35,22 +34,22 @@ namespace Mirror.Examples.Snapshot_Interpolation
         // but we need the upper bound to be exclusive, so using System.Random instead.
         // => NextDouble() is NEVER < 0 so loss=0 never drops!
         // => NextDouble() is ALWAYS < 1 so loss=1 always drops!
-        private System.Random random = new System.Random();
+        System.Random random = new System.Random();
 
         // hold on to snapshots for a little while before delivering
         // <deliveryTime, snapshot>
-        private List<(double, Snapshot3D)> queue = new List<(double, Snapshot3D)>();
+        List<(double, Snapshot3D)> queue = new List<(double, Snapshot3D)>();
 
         // latency simulation:
         // always a fixed value + some jitter.
-        private float SimulateLatency() => latency + Random.value * jitter;
+        float SimulateLatency() => latency + Random.value * jitter;
 
-        private void Start()
+        void Start()
         {
             start = transform.position;
         }
 
-        private void Update()
+        void Update()
         {
             // move on XY plane
             float x = Mathf.PingPong(Time.time * speed, distance);
@@ -66,7 +65,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
             Flush();
         }
 
-        private void Send(Vector3 position)
+        void Send(Vector3 position)
         {
             // create snapshot
             // Unity 2019 doesn't have Time.timeAsDouble yet
@@ -89,7 +88,7 @@ namespace Mirror.Examples.Snapshot_Interpolation
             }
         }
 
-        private void Flush()
+        void Flush()
         {
             // flush ready snapshots to client
             for (int i = 0; i < queue.Count; ++i)

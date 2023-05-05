@@ -1,8 +1,7 @@
 ﻿using System.Collections;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.MultipleMatches.Scripts
+namespace Mirror.Examples.MultipleMatch
 {
     [AddComponentMenu("")]
     public class MatchNetworkManager : NetworkManager
@@ -47,7 +46,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
             StartCoroutine(DoServerDisconnect(conn));
         }
 
-        private IEnumerator DoServerDisconnect(NetworkConnectionToClient conn)
+        IEnumerator DoServerDisconnect(NetworkConnectionToClient conn)
         {
             yield return canvasController.OnServerDisconnect(conn);
             base.OnServerDisconnect(conn);

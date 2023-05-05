@@ -1,16 +1,15 @@
-using Mirror.Core;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Mirror.Editor
+namespace Mirror
 {
     [CustomEditor(typeof(NetworkManager), true)]
     [CanEditMultipleObjects]
-    public class NetworkManagerEditor : UnityEditor.Editor
+    public class NetworkManagerEditor : Editor
     {
-        private SerializedProperty spawnListProperty;
-        private ReorderableList spawnList;
+        SerializedProperty spawnListProperty;
+        ReorderableList spawnList;
         protected NetworkManager networkManager;
 
         protected void Init()
@@ -45,7 +44,7 @@ namespace Mirror.Editor
             }
         }
 
-        private static void DrawHeader(Rect headerRect)
+        static void DrawHeader(Rect headerRect)
         {
             GUI.Label(headerRect, "Registered Spawnable Prefabs:");
         }

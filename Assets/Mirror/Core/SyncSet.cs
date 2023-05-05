@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Mirror.Core
+namespace Mirror
 {
     public class SyncSet<T> : SyncObject, ISet<T>
     {
@@ -21,7 +21,7 @@ namespace Mirror.Core
             OP_REMOVE
         }
 
-        private struct Change
+        struct Change
         {
             internal Operation operation;
             internal T item;
@@ -32,13 +32,13 @@ namespace Mirror.Core
         // -> changing the same slot 10x caues 10 changes.
         // -> note that this grows until next sync(!)
         // TODO Dictionary<key, change> to avoid ever growing changes / redundant changes!
-        private readonly List<Change> changes = new List<Change>();
+        readonly List<Change> changes = new List<Change>();
 
         // how many changes we need to ignore
         // this is needed because when we initialize the list,
         // we might later receive changes that have already been applied
         // so we need to skip them
-        private int changesAhead;
+        int changesAhead;
 
         public SyncSet(ISet<T> objects)
         {
@@ -56,7 +56,7 @@ namespace Mirror.Core
         // this should be called after a successful sync
         public override void ClearChanges() => changes.Clear();
 
-        private void AddOperation(Operation op, T item, bool checkAccess)
+        void AddOperation(Operation op, T item, bool checkAccess)
         {
             if (checkAccess && IsReadOnly)
             {
@@ -78,7 +78,7 @@ namespace Mirror.Core
             Callback?.Invoke(op, item);
         }
 
-        private void AddOperation(Operation op, bool checkAccess) => AddOperation(op, default, checkAccess);
+        void AddOperation(Operation op, bool checkAccess) => AddOperation(op, default, checkAccess);
 
         public override void OnSerializeAll(NetworkWriter writer)
         {
@@ -275,7 +275,7 @@ namespace Mirror.Core
             }
         }
 
-        private void IntersectWithSet(ISet<T> otherSet)
+        void IntersectWithSet(ISet<T> otherSet)
         {
             List<T> elements = new List<T>(objects);
 

@@ -1,7 +1,6 @@
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
+namespace Mirror.Examples.MultipleAdditiveScenes
 {
     public class PlayerScore : NetworkBehaviour
     {
@@ -19,7 +18,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes.Scripts
 
         public int clientMatchIndex = -1;
 
-        private void OnGUI()
+        void OnGUI()
         {
             if (!isServerOnly && !isLocalPlayer && clientMatchIndex < 0)
                 clientMatchIndex = NetworkClient.connection.identity.GetComponent<PlayerScore>().matchIndex;

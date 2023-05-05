@@ -1,20 +1,19 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Mirror.Examples.AdditiveLevels.Scripts
+namespace Mirror.Examples.AdditiveLevels
 {
     // This script is attached to portal labels to keep them facing the camera
     public class LookAtMainCamera : MonoBehaviour
     {
         // This will be enabled by Portal script in OnStartClient
-        private void OnValidate()
+        void OnValidate()
         {
-            enabled = false;
+            this.enabled = false;
         }
 
         // LateUpdate so that all camera updates are finished.
         [ClientCallback]
-        private void LateUpdate()
+        void LateUpdate()
         {
             transform.forward = Camera.main.transform.forward;
         }

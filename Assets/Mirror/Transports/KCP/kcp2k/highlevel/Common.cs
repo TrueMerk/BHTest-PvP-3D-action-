@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 
-namespace Mirror.Transports.KCP.kcp2k.highlevel
+namespace kcp2k
 {
     public static class Common
     {
@@ -64,8 +64,8 @@ namespace Mirror.Transports.KCP.kcp2k.highlevel
         // cookies need to be generated with a secure random generator.
         // we don't want them to be deterministic / predictable.
         // RNG is cached to avoid runtime allocations.
-        private static readonly RNGCryptoServiceProvider cryptoRandom = new RNGCryptoServiceProvider();
-        private static readonly byte[] cryptoRandomBuffer = new byte[4];
+        static readonly RNGCryptoServiceProvider cryptoRandom = new RNGCryptoServiceProvider();
+        static readonly byte[] cryptoRandomBuffer = new byte[4];
         public static uint GenerateCookie()
         {
             cryptoRandom.GetBytes(cryptoRandomBuffer);

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Mirror.Examples.Basic.Scripts
+namespace Mirror.Examples.Basic
 {
     public class CanvasUI : MonoBehaviour
     {
@@ -11,9 +11,9 @@ namespace Mirror.Examples.Basic.Scripts
         public RectTransform playersPanel;
 
         // static instance that can be referenced from static methods below.
-        private static CanvasUI instance;
+        static CanvasUI instance;
 
-        private void Awake()
+        void Awake()
         {
             instance = this;
         }

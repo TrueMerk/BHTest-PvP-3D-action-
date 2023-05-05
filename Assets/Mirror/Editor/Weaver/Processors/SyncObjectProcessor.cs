@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using Mirror.Core;
 using Mono.CecilX;
 
-namespace Mirror.Editor.Weaver.Processors
+namespace Mirror.Weaver
 {
     public static class SyncObjectProcessor
     {
         // ulong = 64 bytes
-        private const int SyncObjectsLimit = 64;
+        const int SyncObjectsLimit = 64;
 
         // Finds SyncObjects fields in a type
         // Type should be a NetworkBehaviour
@@ -68,7 +67,7 @@ namespace Mirror.Editor.Weaver.Processors
         }
 
         // Generates serialization methods for synclists
-        private static void GenerateReadersAndWriters(Writers writers, Readers readers, TypeReference tr, ref bool WeavingFailed)
+        static void GenerateReadersAndWriters(Writers writers, Readers readers, TypeReference tr, ref bool WeavingFailed)
         {
             if (tr is GenericInstanceType genericInstance)
             {

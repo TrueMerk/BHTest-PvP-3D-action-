@@ -1,9 +1,8 @@
 ﻿using System.Collections;
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Mirror.Examples.AdditiveLevels.Scripts
+namespace Mirror.Examples.AdditiveLevels
 {
     [AddComponentMenu("")]
     public class AdditiveLevelsNetworkManager : NetworkManager
@@ -31,10 +30,10 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
         public FadeInOut fadeInOut;
 
         // This is set true after server loads all subscene instances
-        private bool subscenesLoaded;
+        bool subscenesLoaded;
 
         // This is managed in LoadAdditive, UnloadAdditive, and checked in OnClientSceneChanged
-        private bool isInTransition;
+        bool isInTransition;
 
         #region Scene Management
 
@@ -50,7 +49,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
                 StartCoroutine(ServerLoadSubScenes());
         }
 
-        private IEnumerator ServerLoadSubScenes()
+        IEnumerator ServerLoadSubScenes()
         {
             foreach (string additiveScene in additiveScenes)
                 yield return SceneManager.LoadSceneAsync(additiveScene, new LoadSceneParameters
@@ -80,7 +79,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
                 StartCoroutine(LoadAdditive(sceneName));
         }
 
-        private IEnumerator LoadAdditive(string sceneName)
+        IEnumerator LoadAdditive(string sceneName)
         {
             isInTransition = true;
 
@@ -108,7 +107,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
             yield return fadeInOut.FadeOut();
         }
 
-        private IEnumerator UnloadAdditive(string sceneName)
+        IEnumerator UnloadAdditive(string sceneName)
         {
             isInTransition = true;
 
@@ -168,7 +167,7 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
 
         // This delay is mostly for the host player that loads too fast for the
         // server to have subscenes async loaded from OnServerSceneChanged ahead of it.
-        private IEnumerator AddPlayerDelayed(NetworkConnectionToClient conn)
+        IEnumerator AddPlayerDelayed(NetworkConnectionToClient conn)
         {
             // Wait for server to async load all subscenes for game instances
             while (!subscenesLoaded)

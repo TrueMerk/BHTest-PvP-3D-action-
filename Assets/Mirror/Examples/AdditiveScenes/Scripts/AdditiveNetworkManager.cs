@@ -1,9 +1,8 @@
 using System.Collections;
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Mirror.Examples.AdditiveScenes.Scripts
+namespace Mirror.Examples.AdditiveScenes
 {
     [AddComponentMenu("")]
     public class AdditiveNetworkManager : NetworkManager
@@ -49,7 +48,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
                 StartCoroutine(UnloadScenes());
         }
 
-        private IEnumerator LoadSubScenes()
+        IEnumerator LoadSubScenes()
         {
             Debug.Log("Loading Scenes");
 
@@ -57,7 +56,7 @@ namespace Mirror.Examples.AdditiveScenes.Scripts
                 yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         }
 
-        private IEnumerator UnloadScenes()
+        IEnumerator UnloadScenes()
         {
             Debug.Log("Unloading Subscenes");
 

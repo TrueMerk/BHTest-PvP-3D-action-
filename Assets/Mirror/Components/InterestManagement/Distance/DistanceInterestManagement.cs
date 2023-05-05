@@ -1,28 +1,25 @@
 // straight forward Vector3.Distance based interest management.
-
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Components.InterestManagement.Distance
+namespace Mirror
 {
     [AddComponentMenu("Network/ Interest Management/ Distance/Distance Interest Management")]
-    public class DistanceInterestManagement : Core.InterestManagement
+    public class DistanceInterestManagement : InterestManagement
     {
         [Tooltip("The maximum range that objects will be visible at. Add DistanceInterestManagementCustomRange onto NetworkIdentities for custom ranges.")]
         public int visRange = 500;
 
         [Tooltip("Rebuild all every 'rebuildInterval' seconds.")]
         public float rebuildInterval = 1;
-
-        private double lastRebuildTime;
+        double lastRebuildTime;
 
         // cache custom ranges to avoid runtime TryGetComponent lookups
-        private readonly Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange> CustomRanges = new Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange>();
+        readonly Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange> CustomRanges = new Dictionary<NetworkIdentity, DistanceInterestManagementCustomRange>();
 
         // helper function to get vis range for a given object, or default.
         [ServerCallback]
-        private int GetVisRange(NetworkIdentity identity)
+        int GetVisRange(NetworkIdentity identity)
         {
             return CustomRanges.TryGetValue(identity, out DistanceInterestManagementCustomRange custom) ? custom.visRange : visRange;
         }

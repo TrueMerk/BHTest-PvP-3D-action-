@@ -8,11 +8,10 @@
 // includes timestamp for tick batching.
 // -> allows NetworkTransform etc. to use timestamp without including it in
 //    every single message
-
 using System;
 using System.Collections.Generic;
 
-namespace Mirror.Core.Batching
+namespace Mirror
 {
     public class Batcher
     {
@@ -28,7 +27,7 @@ namespace Mirror.Core.Batching
         // 2) timestamp batching: if each batch is expected to contain a
         //    timestamp, then large messages have to be a batch too. otherwise
         //    they would not contain a timestamp
-        private readonly int threshold;
+        readonly int threshold;
 
         // TimeStamp header size for those who need it
         public const int HeaderSize = sizeof(double);
@@ -39,10 +38,10 @@ namespace Mirror.Core.Batching
         //        it would allocate too many writers.
         //        https://github.com/vis2k/Mirror/pull/3127
         // => best to build batches on the fly.
-        private readonly Queue<NetworkWriterPooled> batches = new Queue<NetworkWriterPooled>();
+        readonly Queue<NetworkWriterPooled> batches = new Queue<NetworkWriterPooled>();
 
         // current batch in progress
-        private NetworkWriterPooled batch;
+        NetworkWriterPooled batch;
 
         public Batcher(int threshold)
         {
@@ -87,7 +86,7 @@ namespace Mirror.Core.Batching
         }
 
         // helper function to copy a batch to writer and return it to pool
-        private static void CopyAndReturn(NetworkWriterPooled batch, NetworkWriter writer)
+        static void CopyAndReturn(NetworkWriterPooled batch, NetworkWriter writer)
         {
             // make sure the writer is fresh to avoid uncertain situations
             if (writer.Position != 0)

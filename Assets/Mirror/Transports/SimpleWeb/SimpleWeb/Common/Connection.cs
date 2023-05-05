@@ -4,13 +4,13 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
+namespace Mirror.SimpleWeb
 {
     internal sealed class Connection : IDisposable
     {
         public const int IdNotSet = -1;
 
-        private readonly object disposedLock = new object();
+        readonly object disposedLock = new object();
 
         public TcpClient client;
 
@@ -24,7 +24,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
 
         public Action<Connection> onDispose;
 
-        private volatile bool hasDisposed;
+        volatile bool hasDisposed;
 
         public Connection(TcpClient client, Action<Connection> onDispose)
         {

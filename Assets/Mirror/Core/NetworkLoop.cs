@@ -24,13 +24,12 @@
 //    * we add to the end of EarlyUpdate so it runs after any Unity initializations
 //    * we add to the end of PreLateUpdate so it runs after LateUpdate(). adding
 //      to the beginning of PostLateUpdate doesn't actually work.
-
 using System;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 
-namespace Mirror.Core
+namespace Mirror
 {
     public static class NetworkLoop
     {
@@ -43,7 +42,7 @@ namespace Mirror.Core
 
         // RuntimeInitializeOnLoadMethod -> fast playmode without domain reload
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void ResetStatics()
+        static void ResetStatics()
         {
             OnEarlyUpdate = null;
             OnLateUpdate = null;
@@ -159,7 +158,7 @@ namespace Mirror.Core
 
         // hook into Unity runtime to actually add our custom functions
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void RuntimeInitializeOnLoad()
+        static void RuntimeInitializeOnLoad()
         {
             //Debug.Log("Mirror: adding Network[Early/Late]Update to Unity...");
 
@@ -182,7 +181,7 @@ namespace Mirror.Core
             PlayerLoop.SetPlayerLoop(playerLoop);
         }
 
-        private static void NetworkEarlyUpdate()
+        static void NetworkEarlyUpdate()
         {
             // loop functions run in edit mode and in play mode.
             // however, we only want to call NetworkServer/Client in play mode.
@@ -195,7 +194,7 @@ namespace Mirror.Core
             OnEarlyUpdate?.Invoke();
         }
 
-        private static void NetworkLateUpdate()
+        static void NetworkLateUpdate()
         {
             // loop functions run in edit mode and in play mode.
             // however, we only want to call NetworkServer/Client in play mode.

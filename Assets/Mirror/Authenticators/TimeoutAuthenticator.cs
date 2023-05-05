@@ -1,5 +1,4 @@
 using System.Collections;
-using Mirror.Core;
 using UnityEngine;
 
 namespace Mirror.Authenticators
@@ -56,7 +55,7 @@ namespace Mirror.Authenticators
                 StartCoroutine(BeginAuthentication(NetworkClient.connection));
         }
 
-        private IEnumerator BeginAuthentication(NetworkConnection conn)
+        IEnumerator BeginAuthentication(NetworkConnection conn)
         {
             //Debug.Log($"Authentication countdown started {conn} {timeout}");
             yield return new WaitForSecondsRealtime(timeout);

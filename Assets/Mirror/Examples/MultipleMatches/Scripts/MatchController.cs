@@ -1,11 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using Mirror.Components.InterestManagement.Match;
-using Mirror.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Mirror.Examples.MultipleMatches.Scripts
+namespace Mirror.Examples.MultipleMatch
 {
     [RequireComponent(typeof(NetworkMatch))]
     public class MatchController : NetworkBehaviour
@@ -13,8 +12,8 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         internal readonly SyncDictionary<NetworkIdentity, MatchPlayerData> matchPlayerData = new SyncDictionary<NetworkIdentity, MatchPlayerData>();
         internal readonly Dictionary<CellValue, CellGUI> MatchCells = new Dictionary<CellValue, CellGUI>();
 
-        private CellValue boardScore = CellValue.None;
-        private bool playAgain = false;
+        CellValue boardScore = CellValue.None;
+        bool playAgain = false;
 
         [Header("GUI References")]
         public CanvasGroup canvasGroup;
@@ -33,7 +32,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         [SyncVar(hook = nameof(UpdateGameUI))]
         public NetworkIdentity currentPlayer;
 
-        private void Awake()
+        void Awake()
         {
             canvasController = FindObjectOfType<CanvasController>();
         }
@@ -45,7 +44,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
 
         // For the SyncDictionary to properly fire the update callback, we must
         // wait a frame before adding the players to the already spawned MatchController
-        private IEnumerator AddPlayersToMatchController()
+        IEnumerator AddPlayersToMatchController()
         {
             yield return null;
 
@@ -128,7 +127,7 @@ namespace Mirror.Examples.MultipleMatches.Scripts
         }
 
         [ServerCallback]
-        private bool CheckWinner(CellValue currentScore)
+        bool CheckWinner(CellValue currentScore)
         {
             if ((currentScore & CellValue.TopRow) == CellValue.TopRow)
                 return true;

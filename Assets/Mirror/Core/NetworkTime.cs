@@ -4,15 +4,13 @@
 //
 // however, some of the old NetworkTime code remains for ping time (rtt).
 // some users may still be using that.
-
 using System.Runtime.CompilerServices;
-using Mirror.Core.Tools;
 using UnityEngine;
 #if !UNITY_2020_3_OR_NEWER
 using Stopwatch = System.Diagnostics.Stopwatch;
 #endif
 
-namespace Mirror.Core
+namespace Mirror
 {
     /// <summary>Synchronizes server time to clients.</summary>
     public static class NetworkTime
@@ -23,9 +21,9 @@ namespace Mirror.Core
         /// <summary>Average out the last few results from Ping</summary>
         public static int PingWindowSize = 6;
 
-        private static double lastPingTime;
+        static double lastPingTime;
 
-        private static ExponentialMovingAverage _rtt = new ExponentialMovingAverage(PingWindowSize);
+        static ExponentialMovingAverage _rtt = new ExponentialMovingAverage(PingWindowSize);
 
         /// <summary>Returns double precision clock time _in this system_, unaffected by the network.</summary>
 #if UNITY_2020_3_OR_NEWER

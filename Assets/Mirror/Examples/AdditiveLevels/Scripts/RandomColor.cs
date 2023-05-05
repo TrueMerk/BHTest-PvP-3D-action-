@@ -1,7 +1,6 @@
-﻿using Mirror.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Mirror.Examples.AdditiveLevels.Scripts
+namespace Mirror.Examples.AdditiveLevels
 {
     public class RandomColor : NetworkBehaviour
     {
@@ -11,15 +10,15 @@ namespace Mirror.Examples.AdditiveLevels.Scripts
 
         // Unity clones the material when GetComponent<Renderer>().material is called
         // Cache it here and destroy it in OnDestroy to prevent a memory leak
-        private Material cachedMaterial;
+        Material cachedMaterial;
 
-        private void SetColor(Color32 _, Color32 newColor)
+        void SetColor(Color32 _, Color32 newColor)
         {
             if (cachedMaterial == null) cachedMaterial = GetComponentInChildren<Renderer>().material;
             cachedMaterial.color = newColor;
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             Destroy(cachedMaterial);
         }

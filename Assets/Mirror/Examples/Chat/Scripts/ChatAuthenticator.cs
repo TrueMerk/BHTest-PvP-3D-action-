@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Mirror.Core;
 using UnityEngine;
 
 /*
@@ -8,12 +7,12 @@ using UnityEngine;
     API Reference: https://mirror-networking.com/docs/api/Mirror.NetworkAuthenticator.html
 */
 
-namespace Mirror.Examples.Chat.Scripts
+namespace Mirror.Examples.Chat
 {
     [AddComponentMenu("")]
     public class ChatAuthenticator : NetworkAuthenticator
     {
-        private readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
+        readonly HashSet<NetworkConnection> connectionsPendingDisconnect = new HashSet<NetworkConnection>();
         internal static readonly HashSet<string> playerNames = new HashSet<string>();
 
         [Header("Client Username")]
@@ -39,8 +38,8 @@ namespace Mirror.Examples.Chat.Scripts
         #region Server
 
         // RuntimeInitializeOnLoadMethod -> fast playmode without domain reload
-        [RuntimeInitializeOnLoadMethod]
-        private static void ResetStatics()
+        [UnityEngine.RuntimeInitializeOnLoadMethod]
+        static void ResetStatics()
         {
             playerNames.Clear();
         }
@@ -129,7 +128,7 @@ namespace Mirror.Examples.Chat.Scripts
             }
         }
 
-        private IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
+        IEnumerator DelayedDisconnect(NetworkConnectionToClient conn, float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
 

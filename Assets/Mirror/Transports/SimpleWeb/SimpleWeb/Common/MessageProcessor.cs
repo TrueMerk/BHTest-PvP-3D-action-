@@ -2,12 +2,12 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
+namespace Mirror.SimpleWeb
 {
     public static class MessageProcessor
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte FirstLengthByte(byte[] buffer) => (byte)(buffer[1] & 0b0111_1111);
+        static byte FirstLengthByte(byte[] buffer) => (byte)(buffer[1] & 0b0111_1111);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool NeedToReadShortLength(byte[] buffer)
@@ -78,7 +78,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        private static int GetMessageLength(byte[] buffer, int offset, byte lenByte)
+        static int GetMessageLength(byte[] buffer, int offset, byte lenByte)
         {
             if (lenByte == Constants.UshortPayloadLength)
             {
@@ -115,14 +115,14 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        private static void ThrowIfMaskNotExpected(bool hasMask, bool expectMask)
+        static void ThrowIfMaskNotExpected(bool hasMask, bool expectMask)
         {
             if (hasMask != expectMask)
                 throw new InvalidDataException($"Message expected mask to be {expectMask} but was {hasMask}");
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        private static void ThrowIfBadOpCode(int opcode, bool finished, bool opCodeContinuation)
+        static void ThrowIfBadOpCode(int opcode, bool finished, bool opCodeContinuation)
         {
             // 0 = continuation
             // 2 = binary
@@ -157,7 +157,7 @@ namespace Mirror.Transports.SimpleWeb.SimpleWeb.Common
         }
 
         /// <exception cref="InvalidDataException"></exception>
-        private static void ThrowIfLengthZero(int msglen)
+        static void ThrowIfLengthZero(int msglen)
         {
             if (msglen == 0)
                 throw new InvalidDataException("Message length was zero");

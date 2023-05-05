@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mirror.Transports.Telepathy.Telepathy
+namespace Telepathy
 {
     public class MagnificentSendPipe
     {
@@ -20,7 +20,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
         // -> ArraySegment indicates the actual message content
         //
         // IMPORTANT: lock{} all usages!
-        private readonly Queue<ArraySegment<byte>> queue = new Queue<ArraySegment<byte>>();
+        readonly Queue<ArraySegment<byte>> queue = new Queue<ArraySegment<byte>>();
 
         // byte[] pool to avoid allocations
         // Take & Return is beautifully encapsulated in the pipe.
@@ -28,7 +28,7 @@ namespace Mirror.Transports.Telepathy.Telepathy
         // and it can be tested easily.
         //
         // IMPORTANT: lock{} all usages!
-        private Pool<byte[]> pool;
+        Pool<byte[]> pool;
 
         // constructor
         public MagnificentSendPipe(int MaxMessageSize)

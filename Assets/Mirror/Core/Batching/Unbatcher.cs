@@ -5,30 +5,29 @@
 // includes timestamp for tick batching.
 // -> allows NetworkTransform etc. to use timestamp without including it in
 //    every single message
-
 using System;
 using System.Collections.Generic;
 
-namespace Mirror.Core.Batching
+namespace Mirror
 {
     public class Unbatcher
     {
         // supporting adding multiple batches before GetNextMessage is called.
         // just in case.
-        private Queue<NetworkWriterPooled> batches = new Queue<NetworkWriterPooled>();
+        Queue<NetworkWriterPooled> batches = new Queue<NetworkWriterPooled>();
 
         public int BatchesCount => batches.Count;
 
         // NetworkReader is only created once,
         // then pointed to the first batch.
-        private NetworkReader reader = new NetworkReader(new byte[0]);
+        NetworkReader reader = new NetworkReader(new byte[0]);
 
         // timestamp that was written into the batch remotely.
         // for the batch that our reader is currently pointed at.
-        private double readerRemoteTimeStamp;
+        double readerRemoteTimeStamp;
 
         // helper function to start reading a batch.
-        private void StartReadingBatch(NetworkWriterPooled batch)
+        void StartReadingBatch(NetworkWriterPooled batch)
         {
             // point reader to it
             reader.SetBuffer(batch.ToArraySegment());

@@ -1,6 +1,6 @@
 using System;
 
-namespace Mirror.Core
+namespace Mirror
 {
     /// <summary>Profiling statistics for tool to subscribe to (profiler etc.)</summary>
     public static class NetworkDiagnostics
@@ -34,7 +34,7 @@ namespace Mirror.Core
 
         // RuntimeInitializeOnLoadMethod -> fast playmode without domain reload
         [UnityEngine.RuntimeInitializeOnLoadMethod]
-        private static void ResetStatics()
+        static void ResetStatics()
         {
             InMessageEvent = null;
             OutMessageEvent = null;

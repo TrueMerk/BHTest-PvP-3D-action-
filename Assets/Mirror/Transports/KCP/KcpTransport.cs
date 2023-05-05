@@ -1,17 +1,13 @@
 //#if MIRROR <- commented out because MIRROR isn't defined on first import yet
-
 using System;
 using System.Linq;
 using System.Net;
-using Mirror.Core;
-using Mirror.Core.Tools;
-using Mirror.Transports.KCP.kcp2k.highlevel;
-using Mirror.Transports.KCP.kcp2k.kcp;
-using Unity.Collections;
 using UnityEngine;
+using Mirror;
+using Unity.Collections;
 using UnityEngine.Serialization;
 
-namespace Mirror.Transports.KCP
+namespace kcp2k
 {
     [HelpURL("https://mirror-networking.gitbook.io/docs/transports/kcp-transport")]
     [DisallowMultipleComponent]
@@ -42,8 +38,7 @@ namespace Mirror.Transports.KCP
         [Tooltip("KCP fastresend parameter. Faster resend for the cost of higher bandwidth. 0 in normal mode, 2 in turbo mode.")]
         public int FastResend = 2;
         [Tooltip("KCP congestion window. Restricts window size to reduce congestion. Results in only 2-3 MTU messages per Flush even on loopback. Best to keept his disabled.")]
-        /*public*/
-        private bool CongestionWindow = false; // KCP 'NoCongestionWindow' is false by default. here we negate it for ease of use.
+        /*public*/ bool CongestionWindow = false; // KCP 'NoCongestionWindow' is false by default. here we negate it for ease of use.
         [Tooltip("KCP window size can be modified to support higher loads. This also increases max message size.")]
         public uint ReceiveWindowSize = 4096; //Kcp.WND_RCV; 128 by default. Mirror sends a lot, so we need a lot more.
         [Tooltip("KCP window size can be modified to support higher loads.")]
@@ -66,7 +61,7 @@ namespace Mirror.Transports.KCP
         protected KcpConfig config;
 
         // use default MTU for this transport.
-        private const int MTU = Kcp.MTU_DEF;
+        const int MTU = Kcp.MTU_DEF;
 
         // server & client
         protected KcpServer server;
@@ -261,17 +256,13 @@ namespace Mirror.Transports.KCP
             server.connections.Count > 0
                 ? server.connections.Values.Sum(conn => conn.peer.MaxReceiveRate) / server.connections.Count
                 : 0;
-
-        private long GetTotalSendQueue() =>
+        long GetTotalSendQueue() =>
             server.connections.Values.Sum(conn => conn.peer.SendQueueCount);
-
-        private long GetTotalReceiveQueue() =>
+        long GetTotalReceiveQueue() =>
             server.connections.Values.Sum(conn => conn.peer.ReceiveQueueCount);
-
-        private long GetTotalSendBuffer() =>
+        long GetTotalSendBuffer() =>
             server.connections.Values.Sum(conn => conn.peer.SendBufferCount);
-
-        private long GetTotalReceiveBuffer() =>
+        long GetTotalReceiveBuffer() =>
             server.connections.Values.Sum(conn => conn.peer.ReceiveBufferCount);
 
         // PrettyBytes function from DOTSNET
