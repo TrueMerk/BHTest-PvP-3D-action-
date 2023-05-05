@@ -1,6 +1,6 @@
 using Core.ObservableProperty;
 
-namespace SarrrGames.GoldenRush.Gameplay.Entities.Player
+namespace Gameplay.Entities.Player
 {
     public class PlayerProgressModel
     {

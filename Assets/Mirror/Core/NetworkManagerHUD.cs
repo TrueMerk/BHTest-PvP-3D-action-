@@ -1,8 +1,9 @@
 // vis2k: GUILayout instead of spacey += ...; removed Update hotkeys to avoid
 // confusion if someone accidentally presses one.
+
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Core
 {
     /// <summary>Shows NetworkManager controls in a GUI at runtime.</summary>
     [DisallowMultipleComponent]

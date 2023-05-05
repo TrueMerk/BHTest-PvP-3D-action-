@@ -1,6 +1,7 @@
 using System;
+using Mirror.Core.Tools;
 
-namespace Mirror
+namespace Mirror.Core
 {
     // a server's connection TO a LocalClient.
     // sending messages on this connection causes the client's handler function to be invoked directly

@@ -1,6 +1,7 @@
+using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Experimental
+namespace Mirror.Components.Experimental
 {
     [AddComponentMenu("Network/ Experimental/Network Rigidbody")]
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-rigidbody")]

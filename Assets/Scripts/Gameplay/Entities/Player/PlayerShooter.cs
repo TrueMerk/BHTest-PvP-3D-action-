@@ -6,7 +6,6 @@ namespace Gameplay.Entities.Player
 {
     public class PlayerShooter : AttackComponent
     {
-        
         [SerializeField] private float _shootRate;
         [SerializeField] private PlayerDamageDealer _playerDamageDealer;
         [SerializeField] private BoxCollider _collider;

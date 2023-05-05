@@ -1,6 +1,8 @@
+using Mirror.Components.NetworkTransformUnreliable;
+using Mirror.Core;
 using UnityEngine;
 
-namespace Mirror.Examples.NetworkRoom
+namespace Mirror.Examples.Room.Scripts
 {
     [RequireComponent(typeof(CapsuleCollider))]
     [RequireComponent(typeof(CharacterController))]

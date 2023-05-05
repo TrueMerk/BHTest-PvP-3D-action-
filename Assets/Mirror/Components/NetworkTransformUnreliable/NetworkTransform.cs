@@ -1,9 +1,12 @@
 // NetworkTransform V2 by mischa (2021-07)
 // comment out the below line to quickly revert the onlySyncOnChange feature
 #define onlySyncOnChange_BANDWIDTH_SAVING
+using Mirror.Core;
+using Mirror.Core.SnapshotInterpolation;
+using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Components.NetworkTransformUnreliable
 {
     [AddComponentMenu("Network/Network Transform (Unreliable)")]
     public class NetworkTransform : NetworkTransformBase

@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Core.StateMachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SarrrGames.GoldenRush.Core.StateMachine.States
+namespace Core.StateMachine.States
 {
     public class LoadState : BaseState
     {

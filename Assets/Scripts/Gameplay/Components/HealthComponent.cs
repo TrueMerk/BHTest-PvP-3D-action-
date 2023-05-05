@@ -1,9 +1,7 @@
 using System;
 using Gameplay.Entities.Player;
 using Multiplayer;
-using UI;
 using UnityEngine;
-using Zenject;
 using WinPopup = Multiplayer.WinPopup;
 
 namespace Gameplay.Components
@@ -18,13 +16,6 @@ namespace Gameplay.Components
           private UnitController _unitController;
           
           public event Action Dead;
-
-          [Inject]
-          public void Construct(UnitController unitController, WinPopup winPopup)
-          {
-              _unitController = unitController;
-              _winPopup = winPopup;
-          }
           
           private void Awake()
           {
@@ -39,28 +30,6 @@ namespace Gameplay.Components
           public int GetHealth()
           {
               return _health;
-          }
-          
-          
-          public void SetPopup(WinPopup popup)
-          {
-              _winPopup=popup;
-          }
-      
-          
-          public void TakeDamage()
-          {
-              if (_health >1)
-                  _health--;
-              
-              else
-              {
-                  _health--;
-                  var playerIndex = gameObject.GetComponent<PlayerName>().nickName;
-                  //var score = gameObject.GetComponent<PlayerCoinManager>().GetCoins();
-
-                  gameObject.SetActive(false);
-              }
           }
    }
 }

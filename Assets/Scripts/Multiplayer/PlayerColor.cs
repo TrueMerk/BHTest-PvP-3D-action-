@@ -1,20 +1,22 @@
 using System.Collections;
-using Mirror;
+using Mirror.Core;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Multiplayer
 {
     public class PlayerColor : NetworkBehaviour
     {
-        [SerializeField] private MeshRenderer _mesh;
-        [SyncVar(hook = nameof(OnColorChanged))] public Color color;
-        public Color startColor;
         [SerializeField] private int _colorChangeTime;
-
+        
         private bool _isReload;
         
-        
+        [SyncVar(hook = nameof(OnColorChanged))] public Color color;
+
+        private void OnEnable()
+        {
+            ChangeColor(Color.white);
+        }
+
         private void OnColorChanged(Color newColor, Color oldColor)
         {
             GetComponent<MeshRenderer>().material.color = newColor;
@@ -35,12 +37,12 @@ namespace Multiplayer
                 RpcChangeColor(color);
             }
             
-            CMDChangeColor(newColor);
+            CmdChangeColor(newColor);
 
         }
 
         [Command]
-        private void CMDChangeColor(Color newColor)
+        private void CmdChangeColor(Color newColor)
         {
             color = newColor;
         }
@@ -50,7 +52,6 @@ namespace Multiplayer
         {
             GetComponent<MeshRenderer>().material.color = newColor;
         }
-
         
         private IEnumerator Reload()
         {

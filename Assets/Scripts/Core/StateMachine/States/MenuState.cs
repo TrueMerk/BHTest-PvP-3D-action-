@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Core.StateMachine;
 
-namespace SarrrGames.GoldenRush.Core.StateMachine.States
+namespace Core.StateMachine.States
 {
     public class MenuState : BaseState
     {

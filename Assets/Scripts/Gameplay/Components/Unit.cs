@@ -1,5 +1,3 @@
-using Gameplay.Entities.Player;
-
 using UnityEngine;
 
 namespace Gameplay.Components
@@ -9,7 +7,6 @@ namespace Gameplay.Components
         [SerializeField] private AttackComponent _attackComponent;
         [SerializeField] private HealthComponent _health;
         
-
         public AttackComponent AttackComponent => _attackComponent;
         public HealthComponent HealthComponent => _health;
     }

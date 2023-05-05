@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Mirror
+namespace Mirror.Core.Tools
 {
     // Handles network messages on client and server
     public delegate void NetworkMessageDelegate(NetworkConnection conn, NetworkReader reader, int channelId);

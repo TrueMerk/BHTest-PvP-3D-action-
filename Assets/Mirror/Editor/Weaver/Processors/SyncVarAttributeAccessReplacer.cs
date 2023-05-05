@@ -2,11 +2,12 @@
 // is replaced with:
 // public int Networkhealth { get; set; } properties.
 // this class processes all access to 'health' and replaces it with 'Networkhealth'
+
 using System;
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 
-namespace Mirror.Weaver
+namespace Mirror.Editor.Weaver.Processors
 {
     public static class SyncVarAttributeAccessReplacer
     {

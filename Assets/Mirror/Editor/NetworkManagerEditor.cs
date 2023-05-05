@@ -1,12 +1,13 @@
+using Mirror.Core;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Editor
 {
     [CustomEditor(typeof(NetworkManager), true)]
     [CanEditMultipleObjects]
-    public class NetworkManagerEditor : Editor
+    public class NetworkManagerEditor : UnityEditor.Editor
     {
         SerializedProperty spawnListProperty;
         ReorderableList spawnList;

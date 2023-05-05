@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Mirror.Core.SnapshotInterpolation;
+using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Core
 {
     public static partial class NetworkClient
     {
@@ -126,7 +128,7 @@ namespace Mirror
             {
                 // set bufferTime on the fly.
                 // shows in inspector for easier debugging :)
-                snapshotSettings.bufferTimeMultiplier = SnapshotInterpolation.DynamicAdjustment(
+                snapshotSettings.bufferTimeMultiplier = SnapshotInterpolation.SnapshotInterpolation.DynamicAdjustment(
                     NetworkServer.sendInterval,
                     deliveryTimeEma.StandardDeviation,
                     snapshotSettings.dynamicAdjustmentTolerance
@@ -134,7 +136,7 @@ namespace Mirror
             }
 
             // insert into the buffer & initialize / adjust / catchup
-            SnapshotInterpolation.InsertAndAdjust(
+            SnapshotInterpolation.SnapshotInterpolation.InsertAndAdjust(
                 snapshots,
                 snap,
                 ref localTimeline,
@@ -159,12 +161,12 @@ namespace Mirror
             if (snapshots.Count > 0)
             {
                 // progress local timeline.
-                SnapshotInterpolation.StepTime(Time.unscaledDeltaTime, ref localTimeline, localTimescale);
+                SnapshotInterpolation.SnapshotInterpolation.StepTime(Time.unscaledDeltaTime, ref localTimeline, localTimescale);
 
                 // progress local interpolation.
                 // TimeSnapshot doesn't interpolate anything.
                 // this is merely to keep removing older snapshots.
-                SnapshotInterpolation.StepInterpolation(snapshots, localTimeline, out _, out _, out double t);
+                SnapshotInterpolation.SnapshotInterpolation.StepInterpolation(snapshots, localTimeline, out _, out _, out double t);
                 // Debug.Log($"NetworkClient SnapshotInterpolation @ {localTimeline:F2} t={t:F2}");
             }
         }

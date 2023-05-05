@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using Mirror.Components.NetworkTransformUnreliable;
+using Mirror.Core;
+using UnityEngine;
 
-namespace Mirror.Examples.AdditiveLevels
+namespace Mirror.Examples.AdditiveLevels.Scripts
 {
     [RequireComponent(typeof(CapsuleCollider))]
     [RequireComponent(typeof(CharacterController))]

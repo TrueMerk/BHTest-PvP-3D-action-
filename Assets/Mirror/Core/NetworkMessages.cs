@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.CompilerServices;
+using Mirror.Core.Batching;
+using Mirror.Core.Tools;
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Core
 {
 
     // for performance, we (ab)use c# generics to cache the message id in a static field

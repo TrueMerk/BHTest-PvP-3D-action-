@@ -1,7 +1,7 @@
-using Mirror;
+using Mirror.Core;
 using Multiplayer;
 using UnityEngine;
-using Zenject;
+
 
 namespace Gameplay.Entities.Player
 {

@@ -8,7 +8,6 @@ namespace Gameplay.Entities.Player
      
         public override void Attack()
         {
-            
         }
     }
 }

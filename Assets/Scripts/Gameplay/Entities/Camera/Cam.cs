@@ -11,13 +11,13 @@ namespace Gameplay.Entities.Camera
 
         private void Start()
         {
-            goCamera = this.gameObject.GetComponent<UnityEngine.Camera>();
+            goCamera = gameObject.GetComponent<UnityEngine.Camera>();
         
         }
 
         private void Update()
         {
-            _mousePos = UnityEngine.Input.mousePosition;
+            _mousePos = Input.mousePosition;
         }
 
         private void FixedUpdate()
@@ -25,7 +25,7 @@ namespace Gameplay.Entities.Camera
             var h = _speed * Input.GetAxis("Mouse X");
             var v = _speed * Input.GetAxis("Mouse Y");
         
-            transform.Translate(h,v,0);
+           transform.Translate(h*Time.deltaTime,v*Time.deltaTime,0);
         }
     }
 }

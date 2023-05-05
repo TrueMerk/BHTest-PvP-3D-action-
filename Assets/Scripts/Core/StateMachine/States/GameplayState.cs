@@ -1,9 +1,6 @@
 using System.Threading.Tasks;
-using Core;
-using Core.StateMachine;
-using UnityEngine;
 
-namespace SarrrGames.GoldenRush.Core.StateMachine.States
+namespace Core.StateMachine.States
 {
     public class GameplayState : BaseState
     {

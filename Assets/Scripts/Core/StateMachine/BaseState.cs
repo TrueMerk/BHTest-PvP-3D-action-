@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using SarrrGames.GoldenRush.Core.StateMachine;
 
 namespace Core.StateMachine
 {
