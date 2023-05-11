@@ -608,7 +608,6 @@ MonoBehaviour:
     dynamicAdjustmentTolerance: 1
     deliveryTimeEmaDuration: 2
   timeInterpolationGui: 0
-  _winPopup: {fileID: 8424391617751493064, guid: 80413690c825f0a4199fb93896e1a7b1, type: 3}
   players: []
   respawnTime: 5
 --- !u!1 &1202055608
@@ -837,12 +836,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249130590}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3056ecc9c6600448987d79fa12e3161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  go: {fileID: 0}
 --- !u!1 &1327881279
 GameObject:
   m_ObjectHideFlags: 0
