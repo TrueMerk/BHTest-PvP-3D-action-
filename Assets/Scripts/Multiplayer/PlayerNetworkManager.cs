@@ -15,12 +15,13 @@ namespace Multiplayer
         
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
-            var player = (GameObject)Instantiate(playerPrefab, GetStartPosition().position, Quaternion.identity);
+            var pos = Random.Range(0, startPositions.Count - 1);
+            var player = (GameObject)Instantiate(playerPrefab, startPositions[pos].position, Quaternion.identity);
             players.Add(player);
             player.GetComponent<PlayerDamageDealer>().OnHitsDone += RespawnPlayers;
             _player = player;
             NetworkServer.AddPlayerForConnection(conn, player);
-            conn.identity.transform.position = GetStartPosition().position;
+            conn.identity.transform.position = startPositions[pos].position;
         }
 
         private void RespawnPlayers()
@@ -30,7 +31,6 @@ namespace Multiplayer
         
         private IEnumerator RespawnPlayersCour()
         {
-            
             foreach (var conn in NetworkServer.connections.Values.Cast<NetworkConnection>().Where(conn => conn.identity != null))
             {
                 conn.identity.gameObject.GetComponent<PlayerWinPopup>().Show();
@@ -47,7 +47,8 @@ namespace Multiplayer
             {
                 conn.identity.gameObject.SetActive(true);
                 conn.identity.gameObject.GetComponent<PlayerWinPopup>().Hide();
-                conn.identity.transform.position = GetStartPosition().position;
+                var pos = Random.Range(0, startPositions.Count - 1);
+                conn.identity.transform.position = startPositions[pos].position;
             }
         }
     }

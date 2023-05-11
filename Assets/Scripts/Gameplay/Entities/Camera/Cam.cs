@@ -1,16 +1,23 @@
+using Mirror;
 using UnityEngine;
 
 namespace Gameplay.Entities.Camera
 {
-    public class Cam : MonoBehaviour
+    public class Cam : NetworkBehaviour
     {
+        [SerializeField]private float _speed = 5.0f;
+        [SerializeField] private GameObject _playerCam;
         private Vector3 _mousePos;
-        private UnityEngine.Camera goCamera;
-        private float _speed = 5.0f;
+        private UnityEngine.Camera _goCamera;
         
+
         private void Start()
         {
-            goCamera = gameObject.GetComponent<UnityEngine.Camera>();
+            _goCamera = gameObject.GetComponent<UnityEngine.Camera>();
+            if (!isLocalPlayer)
+            {
+                _playerCam.gameObject.SetActive(false);
+            }
         }
 
         private void Update()
@@ -23,7 +30,7 @@ namespace Gameplay.Entities.Camera
             var h = _speed * Input.GetAxis("Mouse X");
             var v = _speed * Input.GetAxis("Mouse Y");
         
-           transform.Translate(h*Time.deltaTime,v*Time.deltaTime,0);
+           _playerCam.transform.Translate(h*Time.deltaTime,v*Time.deltaTime,0);
         }
     }
 }

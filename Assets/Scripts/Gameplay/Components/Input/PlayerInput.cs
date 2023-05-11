@@ -6,19 +6,18 @@ namespace Gameplay.Components.Input
     {
         public override Vector3 GetMovementDirection()
         {
-            return UnityEngine.Input.GetAxis("Vertical") * Vector3.forward + UnityEngine.Input.GetAxis("Horizontal") * Vector3.right ;
+            return UnityEngine.Input.GetAxis("Vertical") * Vector3.forward;
         }
 
-        public override Quaternion GetRotation()
+        public override Vector3 GetRotation()
         {
-            var target = Vector3.forward *UnityEngine.Input.GetAxis("Vertical") + Vector3.right*UnityEngine.Input.GetAxis("Horizontal");
-            var rot = Quaternion.LookRotation(target, target);
-            return rot;
+            var target =  Vector3.right*UnityEngine.Input.GetAxis("Horizontal");
+            return target;
         }
 
         public override bool IsAttacking()
         {
-            return UnityEngine.Input.GetButtonDown("Jump");
+            return UnityEngine.Input.GetButtonDown("Fire1");
         }
     }
 }

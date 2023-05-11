@@ -12,9 +12,9 @@ namespace Gameplay.Components
             transform.Translate(direction *_movementSpeed);
         }
 
-        public void Rotate(Quaternion target)
+        public void Rotate(Vector3 angl)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * _rotationSpeed);
+            transform.Rotate(angl);
         }
     }
 }
