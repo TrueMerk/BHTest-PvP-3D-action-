@@ -33,6 +33,7 @@ namespace Multiplayer
              
             foreach (GameObject activePlayer in activePlayers)
             {
+                activePlayer.GetComponent<PlayerRespawn>().SetPos(GetRandomStartPos());
                 activePlayer.GetComponent<PlayerRespawn>().TRpcSetStartPositions(VectorPos);
                 activePlayer.GetComponent<PlayerRespawn>().TRpcSub();
             }
@@ -41,6 +42,22 @@ namespace Multiplayer
         public void RespawnPlayers()
         {
             StartCoroutine(RespawnPlayersCour());
+        }
+
+        private Vector3 GetRandomStartPos()
+        {
+            if (startPositions.Count == 0)
+            {
+                Debug.LogWarning("No start positions available.");
+                return Vector3.zero;
+            }
+
+            int randomIndex = Random.Range(0, VectorPos.Count);
+
+            var startPos = VectorPos[randomIndex];
+            VectorPos.Remove(VectorPos[randomIndex]);
+            return startPos;
+            
         }
 
         

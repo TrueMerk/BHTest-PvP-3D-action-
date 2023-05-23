@@ -16,8 +16,9 @@ namespace Gameplay.Entities.Player
         private PlayerWinPopup playerWinPopup;
         private PlayerDamageDealer playerDamageDealer;
         [SerializeField] private List<Vector3> startPositions;
+        [SerializeField] private List<Vector3> startPositionsCash;
 
-        
+
         private void Start()
         {
             playerWinPopup = GetComponent<PlayerWinPopup>();
@@ -30,6 +31,7 @@ namespace Gameplay.Entities.Player
         {
             
             _respawnPosition = respawnPosition;
+            transform.position = respawnPosition;
             if (isLocalPlayer)
             {
                 CmdSetRespawnPosition(respawnPosition);
@@ -61,6 +63,7 @@ namespace Gameplay.Entities.Player
         [TargetRpc]
         public void TRpcRespawn()
         {
+            startPositionsCash = startPositions;
             StartCoroutine(RespawnCoroutine());
             if (isLocalPlayer)
             {
@@ -82,9 +85,12 @@ namespace Gameplay.Entities.Player
                 Debug.LogWarning("No start positions available.");
                 return Vector3.zero;
             }
-
-            int randomIndex = Random.Range(0, startPositions.Count);
-            return startPositions[randomIndex];
+            
+            int randomIndex = Random.Range(0, startPositionsCash.Count);
+            var startPos = startPositionsCash[randomIndex];
+            startPositionsCash.Remove(startPositionsCash[randomIndex]);
+            return startPos;
+            
         }
 
         [TargetRpc]
@@ -136,7 +142,7 @@ namespace Gameplay.Entities.Player
         private void RpcSetRespawnPosition(Vector3 newPosition)
         {
             _respawnPosition = newPosition;
-           
+            transform.position = newPosition;
         }
         
     }
