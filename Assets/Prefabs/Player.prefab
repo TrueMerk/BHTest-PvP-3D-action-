@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2694329381096063725}
   m_LocalRotation: {x: 0.11030256, y: -0, z: -0, w: 0.9938981}
-  m_LocalPosition: {x: 0, y: 3.53, z: -6.39}
+  m_LocalPosition: {x: 0, y: 3.18, z: -8.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -347,6 +347,8 @@ GameObject:
   - component: {fileID: 8269448030976357583}
   - component: {fileID: 7109362111453577534}
   - component: {fileID: 2465753429838524124}
+  - component: {fileID: -2148786423422944183}
+  - component: {fileID: 4130555095782953791}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -561,6 +563,7 @@ MonoBehaviour:
   syncInterval: 0
   _text: {fileID: 2427360841862926952}
   _hitsToWinCount: 3
+  hitsDone: 0
 --- !u!114 &-2469333478829725440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -609,6 +612,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _color: {fileID: 4923819512779855123}
+  _cantTakeDamageTime: 3
   health: 3
 --- !u!114 &8269448030976357583
 MonoBehaviour:
@@ -658,8 +662,44 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _speed: 10
+  _target: {fileID: 8356561196530282170}
+  _sensitivity: {x: 2, y: 4}
+  _distance: 10
+  _height: 2
   _playerCam: {fileID: 2694329381096063725}
+--- !u!114 &-2148786423422944183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8356561196530282172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3693e67d58f242678fa39ea27d33ed26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!114 &4130555095782953791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8356561196530282172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66fd27d6a4144dd083b6d6799ab0e787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _respawnPosition: {x: 0, y: 0, z: 0}
+  respawnTime: 5
+  startPositions: []
 --- !u!1001 &6398149515564537112
 PrefabInstance:
   m_ObjectHideFlags: 0

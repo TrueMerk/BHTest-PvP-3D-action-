@@ -18,16 +18,7 @@ namespace Gameplay.Entities.Player
         {
             _collider.isTrigger = true;
             transform.Translate(Vector3.forward*_dashDistance);
-            StartCoroutine(Reload());
-        }
-        
-        private IEnumerator Reload()
-        {
-            _isReload = true;
-            yield return new WaitForSeconds(_shootRate/2);
-            _collider.isTrigger = false;
-            yield return new WaitForSeconds(_shootRate/2);
-            _isReload = false;
+          
         }
         
         public override void Attack()

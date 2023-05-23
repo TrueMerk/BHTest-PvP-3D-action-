@@ -7,26 +7,50 @@ namespace Gameplay.Entities.Player
     public class PlayerWinPopup : NetworkBehaviour
     {
         [SerializeField] private WinPopup _winPopup;
-        
-        public void Show()
+        private bool _popupShown = false;
+
+
+        [TargetRpc]
+        public void TRpcSetPopupShownFalse()
         {
-            if (isServer)
-            {
-                _winPopup.ShowWinner(connectionToClient.connectionId.ToString());
-                RpcShow();
-            }
-            else if (isClient)
+            
+           CmdSetPSF();
+        }
+
+        [ClientRpc]
+        private void RpcSetPSF()
+        {
+            _popupShown = false;
+        }
+
+        [Command]
+        private void CmdSetPSF()
+        {
+            RpcSetPSF();
+        }
+        
+        [TargetRpc]
+        public void TRpcShow()
+        {
+            if (isLocalPlayer)
             {
                 CmdShow();
+            }
+
+            if (isServer)
+            {
+                RpcShow();
             }
         }
 
         [ClientRpc]
         private void RpcShow()
         {
-            if (_winPopup!=null)
+            Debug.Log("ShowWinner");
+            if (_winPopup != null && !_popupShown)
             {
-                _winPopup.ShowWinner("Имя");
+                _popupShown = true;
+                _winPopup.ShowWinner(gameObject.GetComponent<NetworkIdentity>().netId.ToString());
             }
             
         }
@@ -34,10 +58,7 @@ namespace Gameplay.Entities.Player
         [Command]
         private void CmdShow()
         {
-            if (_winPopup!=null)
-            {
-                _winPopup.ShowWinner(connectionToClient.connectionId.ToString());
-            }
+            RpcShow();
         }
         
         [ClientRpc]

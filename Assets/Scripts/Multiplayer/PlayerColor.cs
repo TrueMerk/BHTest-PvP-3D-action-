@@ -24,10 +24,7 @@ namespace Multiplayer
             {
                 StartCoroutine(Reload());
             }
-            
-            Debug.Log($"Color changed from{newColor}to{oldColor}");
         }
-
 
         public void ChangeColor(Color newColor)
         {
@@ -37,7 +34,10 @@ namespace Multiplayer
                 RpcChangeColor(color);
             }
             
-            CmdChangeColor(newColor);
+            if (isClient)
+            {
+                CmdChangeColor(newColor);
+            }
         }
 
         [Command]
@@ -55,10 +55,11 @@ namespace Multiplayer
         private IEnumerator Reload()
         {
             _isReload = true;
-                
+            
             yield return new WaitForSeconds(_colorChangeTime);
             ChangeColor(Color.white);
             _isReload = false;
         }
+        
     }
 }

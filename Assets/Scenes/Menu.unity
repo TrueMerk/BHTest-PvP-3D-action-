@@ -608,8 +608,8 @@ MonoBehaviour:
     dynamicAdjustmentTolerance: 1
     deliveryTimeEmaDuration: 2
   timeInterpolationGui: 0
-  players: []
   respawnTime: 5
+  activePlayers: []
 --- !u!1 &1202055608
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,7 +845,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _speed: 5
+  _target: {fileID: 0}
+  _sensitivity: {x: 2, y: 2}
+  _distance: 5
+  _height: 2
+  _playerCam: {fileID: 0}
 --- !u!114 &1249130595
 MonoBehaviour:
   m_ObjectHideFlags: 0
