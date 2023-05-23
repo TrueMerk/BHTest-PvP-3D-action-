@@ -29,7 +29,6 @@ namespace Gameplay.Entities.Player
         [TargetRpc]
         public void SetPos(Vector3 respawnPosition)
         {
-            
             _respawnPosition = respawnPosition;
             transform.position = respawnPosition;
             if (isLocalPlayer)
@@ -42,6 +41,7 @@ namespace Gameplay.Entities.Player
         public void TRpcSetStartPositions(List<Vector3> positions)
         {
             startPositions = positions;
+            startPositionsCash = positions;
             if (isLocalPlayer)
             {
                 CmdSetStartPositions(positions);
@@ -52,11 +52,13 @@ namespace Gameplay.Entities.Player
         private void CmdSetStartPositions(List<Vector3> positions)
         {
             RpcSetStartPositions(positions);
+            startPositionsCash = new List<Vector3>(positions);
         }
         
         [ClientRpc]
         private void RpcSetStartPositions(List<Vector3> positions)
         {
+            startPositionsCash = new List<Vector3>(positions);
             startPositions = positions;
         }
         
@@ -88,7 +90,13 @@ namespace Gameplay.Entities.Player
             
             int randomIndex = Random.Range(0, startPositionsCash.Count);
             var startPos = startPositionsCash[randomIndex];
-            startPositionsCash.Remove(startPositionsCash[randomIndex]);
+            //startPositionsCash.RemoveAt(randomIndex); 
+
+            if (startPositionsCash.Count == 0 && isServer)
+            {
+                startPositionsCash = new List<Vector3>(startPositions);
+            }
+    
             return startPos;
             
         }
